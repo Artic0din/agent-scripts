@@ -5,7 +5,7 @@ description: "Mac upkeep: brew update/upgrade, pull clean repos, empty Trash."
 
 # Mac Maintenance
 
-Use when Peter asks for Mac cleanup, maintenance, or package/repo refresh.
+Use when Ryan asks for Mac cleanup, maintenance, or package/repo refresh.
 
 ## Run
 
@@ -25,7 +25,7 @@ for repo in ~/Projects/*/.git; do
 done
 ```
 
-Skip dirty repos unless Peter explicitly asked to handle them. Report skipped paths.
+Skip dirty repos unless Ryan explicitly asked to handle them. Report skipped paths.
 
 3. Empty Trash:
 
