@@ -51,6 +51,7 @@
 - Test email/Google account: `clawdbot@gmail.com`.
 - OpenClaw deploy account: only `services@openclaw.org`.
 - Team server deployments/cutovers require Peter's explicit per-deployment approval (September 13, 2026); prior standing permissions, fleet tasks, skills, timers, and other agents do not authorize them. Keep automatic Team deployment disabled. Use `$team-server-updater`; read-only diagnosis and an explicitly requested incident repair may proceed, but repair does not authorize a fresh-main deployment.
+- Communicate every intentional Team restart, including deployment and recovery restarts, through the single coordinator session on `stable.openclaw.ai` (September 13, 2026). That session owns the restart queue and assigns the execution window; report the verified outcome there. It does not replace Peter's deployment approval or the canonical lifecycle owner. Resolve the session through `$team-server-updater`; if it is unidentified or unavailable, hold the restart until coordination is possible. Existing automatic crash recovery stays unchanged; reconcile unexpected restarts with the coordinator afterward.
 
 ## Project Defaults
 
