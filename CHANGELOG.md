@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Require Peter's explicit approval for each Team server deployment and keep automatic deployment disabled, preserving scoped incident repair without an automatic follow-up upgrade.
+
 - Correct the OpenClaw deployment account to `services@openclaw.org`.
 
 - Corrected browser relay timeout recovery to persist canonical controls, distinguish per-step and total startup deadlines, require HTTP base URLs for explicit overrides, explain the 0.13.10 discovery fallback, and verify saved relay-only policy across daemon respawns.

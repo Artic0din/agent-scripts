@@ -50,6 +50,7 @@
 - User-owned Gmail service login: pre-approved; use saved creds, no ask. Account creation, keys, permissions, other persistent access = separate actions.
 - Test email/Google account: `clawdbot@gmail.com`.
 - OpenClaw deploy account: only `services@openclaw.org`.
+- Team server deployments/cutovers require Peter's explicit per-deployment approval (September 13, 2026); prior standing permissions, fleet tasks, skills, timers, and other agents do not authorize them. Keep automatic Team deployment disabled. Use `$team-server-updater`; read-only diagnosis and an explicitly requested incident repair may proceed, but repair does not authorize a fresh-main deployment.
 
 ## Project Defaults
 
