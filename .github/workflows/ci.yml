@@ -39,8 +39,8 @@ jobs:
           sudo apt-get install -y ripgrep
           /bin/bash scripts/test-sync-skills
 
-      - name: Test ClawSweeper status helper
-        run: skills/clawsweeper-status/scripts/clawsweeper-status.test.sh
+      - name: Test autoreview CLI options (offline, synthetic)
+        run: python3 skills/autoreview/scripts/test-autoreview.py
 
       - name: Test npm helpers (offline, synthetic)
         run: |
