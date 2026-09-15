@@ -1,6 +1,7 @@
 # Agent Scripts
 
-Shared agent instructions, skills, and small portable helpers for Peter's local workspaces.
+Shared agent instructions, skills, and small portable helpers being customised for Ryan's development environment.
+The migration is in progress; the installed global agent configuration has not been switched to this fork.
 
 This repo is the canonical place for:
 - `AGENTS.MD`: shared hard rules for Codex/Claude-style agents
@@ -26,7 +27,7 @@ Rules:
 - Validate after edits: `scripts/validate-skills`.
 - Quote `description` in front matter.
 
-Global discovery is built by `scripts/sync-skills` (idempotent; run on every Mac after cloning or adding skills):
+The upstream `scripts/sync-skills` helper still assumes the workspace layout below and needs separate adaptation before global installation:
 - Codex scans nested dirs, so it gets whole-root links: `~/.codex/skills/agent-scripts -> ~/Projects/agent-scripts/skills`, `~/.codex/skills/manager -> ~/Projects/manager/skills`.
 - Claude Code loads only `~/.claude/skills/<name>/SKILL.md` (exactly one level deep; per-entry symlinks are followed, category subfolders are not scanned — verified on 2.1.197). It gets a flat per-skill link mirror covering both repos plus machine-local `~/.codex/skills/<name>` extras.
 - Name collisions resolve agent-scripts > manager > codex-local; the script prints skipped duplicates and prunes broken/stale managed links.
@@ -46,17 +47,12 @@ This mode validates every candidate before unlinking only the extra nested leave
 
 The read-only `skills/fleet-maintenance/scripts/agent-skill-links-audit.sh` reports same-name nested ancestor loops as `reason=nested-self-link`. This is narrow detection, not an exhaustive graph validator. Its `--repair` remains a broad sync through `~/Projects/agent-scripts/scripts/sync-skills`; it is not the scoped repair above. Run `scripts/test-sync-skills` for isolated fixture coverage; `scripts/test-sync-skills --recurrence-only /absolute/path/to/old-sync-skills` runs the unchanged recurrence assertion against an original helper.
 
-Shared personal skills live as real folders in `skills/`. Public OpenClaw shared skills live in `../agent-skills` and are exposed here with tracked relative symlinks. Repo-owned skills stay canonical in their repo and are exposed here the same way, for example:
+Retained personal skills live as real folders in `skills/`.
+The current skill catalogue is `skills.sh.json`; skill-by-skill customisation is ongoing.
 
-```text
-skills/autoreview -> ../../agent-skills/skills/autoreview
-skills/discrawl -> ../../discrawl/.agents/skills/discrawl
-skills/peekaboo -> ../../peekaboo/skills/peekaboo
-```
-
-Current symlinked repo-owned skills include `birdclaw`, `discrawl`, `gog`, `imsg`, `peekaboo`, `slacrawl`, `wacli`, and `wacrawl`.
-
-Keep `~/Projects/peekaboo` cloned and current before syncing the Peekaboo skill. Its `skills/peekaboo/SKILL.md` owns command, permission, capture, and interaction guidance; edit that source instead of adding another copy here. After updating both repositories, run `scripts/sync-skills` and verify the Peekaboo skill resolves through the Codex and Claude mirrors.
+`autoreview` is maintained directly in `skills/autoreview`, including its executable review helper and acceptance harness.
+Run `python3 skills/autoreview/scripts/test-autoreview.py` for offline CLI checks.
+Run `skills/autoreview/scripts/test-review-harness --engine codex --fixture malicious` and repeat with `--fixture benign` for live review acceptance checks.
 
 ## Agent Instructions
 

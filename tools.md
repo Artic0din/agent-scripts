@@ -54,10 +54,10 @@ sonos open --name "Room" spotify:track:<id>
 
 ---
 
-## peekaboo 👀
+## Computer use
 Screenshot, screen inspection, and click automation.
 
-Use the [Peekaboo skill](skills/peekaboo/SKILL.md), owned by `~/Projects/peekaboo/skills/peekaboo`. It covers binary selection, host permissions, command syntax, and verified background interaction.
+Use the available browser or computer-use tools and their applicable skills, following the routing in `AGENTS.MD`.
 
 ---
 

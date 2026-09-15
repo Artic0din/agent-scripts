@@ -102,7 +102,7 @@ mcporter call hopper.procedure_pseudo_code --args '{"document":"AppKit","procedu
 
 Disassembly tells you which store a value lands in; only the runtime tells you whether it got there. Read the pseudo-code first to learn *which* ivar/collection the API actually writes to, then read that exact store at runtime with `class_copyIvarList` + `object_getIvar` + `perform`. Instrumenting the wrong (legacy) path is the classic time sink: on modern AppKit, `-[NSWindow _addCursorRect:cursor:forView:]` is dead code, and cursor rects are stored in `_NSTrackingAreaAKViewHelper`'s `cursorAreas` set.
 
-Always run the same probe on a second machine at a different OS version before concluding "regression". Several no-op probes look identical on a known-good OS and a known-broken one; a control run is what tells you the probe is measuring nothing. See `$remote-mac` for the fleet and `codexbar-ui-verification-quirks` memory for the cursor-measurement harness.
+Always run the same probe on a second machine at a different OS version before concluding "regression". Several no-op probes look identical on a known-good OS and a known-broken one; a control run is what tells you the probe is measuring nothing. Use a user-designated comparison machine and verify the probe's measurement harness before drawing conclusions.
 
 ## Failure handling
 

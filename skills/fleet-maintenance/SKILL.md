@@ -5,7 +5,7 @@ description: "Mac fleet inventory and upkeep with full/worker profiles: collect 
 
 # Fleet Maintenance
 
-Maintain Peter's Macs while protecting ambiguous local work. Package updates are explicitly allowed during active sessions and may disrupt the software being upgraded. Use `$remote-mac` for inventory/SSH and `$xcode-sync` for all Xcode work.
+Maintain Peter's Macs while protecting ambiguous local work. Package updates are explicitly allowed during active sessions and may disrupt the software being upgraded. Verify inventory and SSH targets before connecting; use `$xcode-sync` for all Xcode work.
 
 ## Desired state
 

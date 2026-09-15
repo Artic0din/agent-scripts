@@ -6,6 +6,19 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed unused messaging, browser, and external-repository skills, and aligned the catalogue and README with the retained local skills.
+- Simplified codexbar around installed CLI capabilities and provider-scoped usage checks, removing account-switching and speculative failure assumptions.
+- Adapted codex-debugging to installed-version diagnosis, discoverable source checkouts, scoped configuration inspection, and available browser tools.
+- Removed the Cloudflare Registrar skill; retained Cloudflare deployment and DNS skills for later customisation.
+- Removed the agent-transcript skill and its local transcript-export helper.
+- Simplified codex-first for native Claude delegation, inherited Codex model/execution settings, portable skill links, isolated autoreview, and evidence-based worker recovery.
+- Restored the local autoreview helper and acceptance harness with executable paths, portable skill instructions, and Codex reasoning/service-tier options.
+- Fixed autoreview following untracked symlinks, mishandling quoted Git filenames, and relying on Claude tool preapproval instead of restricting tool availability.
+- Fixed autoreview omitting landed changes from merge commits and made it reject oversized inputs.
+- Restricted autoreview to Codex and Claude, removed unused engine adapters and JSONL parsing, and disabled inherited Codex integrations and web search when requested.
+
+- Removed OpenClaw relay, ClickClack operations, Peter's remote Mac and Birdclaw routes, Octopool cache guidance, and Obsidian skills; removed the stale ClawSweeper CI step.
+
 - Route intentional Team restarts through one coordinator session on Stable, preserving explicit deployment approval and holding restarts while the coordinator is unidentified or unavailable.
 
 - Require Peter's explicit approval for each Team server deployment and keep automatic deployment disabled, preserving scoped incident repair without an automatic follow-up upgrade.

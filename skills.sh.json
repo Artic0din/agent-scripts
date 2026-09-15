@@ -4,9 +4,9 @@
   "groupings": [
     {
       "title": "Agent Workflows",
-      "description": "Skills for agent instructions, transcript handling, skill hygiene, and reusable workflow design.",
+      "description": "Skills for agent instructions, skill hygiene, and reusable workflow design.",
       "skills": [
-        "agent-transcript",
+        "autoreview",
         "create-cli",
         "frontend-design",
         "markdown-converter",
@@ -15,18 +15,14 @@
       ]
     },
     {
-      "title": "GitHub & OpenClaw",
-      "description": "Skills for GitHub review, cache hygiene, project triage, and OpenClaw agent operations.",
+      "title": "GitHub",
+      "description": "Skills for GitHub review, project triage, and maintainer coordination.",
       "skills": [
-        "clawsweeper-status",
         "codex-debugging",
-        "discord-clawd",
         "github-author-context",
-        "github-cache-hygiene",
         "github-deep-review",
         "github-project-triage",
-        "maintainer-orchestrator",
-        "openclaw-relay"
+        "maintainer-orchestrator"
       ]
     },
     {
@@ -45,13 +41,11 @@
       ]
     },
     {
-      "title": "Browser, Media & AI",
-      "description": "Skills for browser automation, screenshots, image generation, video transcripts, and X API work.",
+      "title": "Media & AI",
+      "description": "Skills for image generation, video transcripts, and X API work.",
       "skills": [
-        "browser-use",
         "nano-banana-pro",
         "openai-image-gen",
-        "peekaboo",
         "video-transcript-downloader",
         "xurl"
       ]
@@ -60,29 +54,21 @@
       "title": "Comms & Knowledge",
       "description": "Skills for messaging, notes, reminders, music, speaking workflows, and personal archives.",
       "skills": [
-        "beeper",
-        "notcrawl",
-        "obsidian",
         "reminders",
         "sonos",
         "speaking",
         "things-todo",
-        "twilio-sms",
-        "whatsapp"
+        "twilio-sms"
       ]
     },
     {
       "title": "Infrastructure & Release",
-      "description": "Skills for domains, DNS, npm, Cloudflare, Wrangler, 1Password, SSH, releases, and remote machines.",
+      "description": "Skills for domains, DNS, npm, Cloudflare, Wrangler, SSH, releases, and remote machines.",
       "skills": [
-        "clickclack",
-        "cloudflare-registrar",
         "domain-dns-ops",
         "mac-maintenance",
         "npm",
-        "one-password",
         "release-tweets",
-        "remote-mac",
         "ssh-doctor",
         "wrangler"
       ]

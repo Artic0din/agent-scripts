@@ -5,7 +5,7 @@ description: "Xcode fleet sync: signed archives, compatibility, install, selecti
 
 # Xcode Sync
 
-Synchronize exact Xcode builds across Peter's supported Macs. Use `$remote-mac` for fleet topology and SSH rules.
+Synchronize exact Xcode builds across the user's selected Macs. Verify fleet topology and SSH targets before connecting.
 
 ## Inventory
 
