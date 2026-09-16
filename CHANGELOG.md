@@ -6,6 +6,9 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Hardened autoreview against untracked-file disclosure, stale-ref mutation, oversized prompts, and Claude project-setting or filesystem access; disabled the unadapted upstream fleet workflow and restored a truthful 1Password guard route.
+- Tailored domain-dns-ops to Ryan's verified Cloudflare zones, Worker and Pages domains, mail routing, and tunnel-aware DNS workflow.
+- Made create-cli's bundled guidelines link independent of checkout location.
 - Removed unused messaging, browser, and external-repository skills, and aligned the catalogue and README with the retained local skills.
 - Simplified codexbar around installed CLI capabilities and provider-scoped usage checks, removing account-switching and speculative failure assumptions.
 - Adapted codex-debugging to installed-version diagnosis, discoverable source checkouts, scoped configuration inspection, and available browser tools.

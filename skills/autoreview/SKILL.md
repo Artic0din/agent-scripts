@@ -29,7 +29,7 @@ Use when:
 - If a review-triggered fix changes code, rerun focused tests and rerun the structured review helper.
 - For security-audit suppression changes, verify accepted findings remain auditable: suppressed findings stay in structured output, active output keeps an unsuppressible suppression notice, and aggregate findings cannot hide unrelated active risk.
 - Never switch or override the requested review engine/model. If the review hits model capacity, retry the same command a few times with the same engine/model.
-- Tools are useful in review mode. The helper allows read-only inspection tools and web search by default so reviewers can check dependency contracts, upstream docs, and current behavior.
+- Codex allows read-only inspection tools and optional web search. Claude is bundle-only with all tools disabled.
 - Security perspective is always included, but it should not cripple legitimate functionality. Report security findings only when the change creates a concrete, actionable risk or removes an important safety check.
 - Do not invoke built-in `codex review`, nested reviewers, or reviewer panels from inside the review. The helper builds one bundle, calls one selected engine, validates one structured result, and stops.
 - Stop as soon as the helper exits 0 with no accepted/actionable findings. Do not run an extra review just to get a nicer "clean" line, a second opinion, or clearer closeout wording.
@@ -45,17 +45,19 @@ Dirty local work:
 <autoreview-helper> --mode local
 ```
 
-Use this only when the patch is actually unstaged/staged/untracked in the
-current checkout. For committed, pushed, or PR work, point the helper at the commit
+Use this only when the patch has staged or tracked unstaged changes in the
+current checkout. Stage intended new files first. For committed, pushed, or PR work, point the helper at the commit
 or branch diff instead; do not force `--mode local` / `--uncommitted` just
-because the helper docs mention dirty work first. A clean local review
-only proves there is no local patch.
+because the helper docs mention dirty work first. Empty targets are rejected.
 
 Branch/PR work:
 
 ```bash
 <autoreview-helper> --mode branch --base origin/main
 ```
+
+Refresh the base ref before this read-only command when current remote state matters.
+The helper never fetches or updates Git refs.
 
 Optional review context is first-class:
 
@@ -113,11 +115,13 @@ The helper:
 - should be left in `--mode auto` or forced to `--mode branch` for PR/branch work; do not force `--mode local` after committing
 - writes only to stdout unless `--output` or `--json-output` is set
 - supports `--dry-run`, `--parallel-tests`, `--prompt`, `--prompt-file`, `--dataset`, `--no-tools`, `--no-web-search`, and commit refs
-- accepts `--thinking` and `--codex-speed` for Codex reviews; omitted options inherit the CLI configuration
-- exposes only the selected tools to Claude and disables inherited MCP servers for that review
+- accepts `--thinking`, `--codex-speed`, and `--codex-config 'model_provider="provider-id"'` for an existing trusted Codex provider; other config overrides are rejected
+- requires Claude CLI support for `--safe-mode` and `--restricted` (verified with 2.1.273); disables user/project/local settings, MCP servers, tools, and hooks while preserving administrator policy and authentication
 - disables inherited MCP servers, apps, plugins, hooks, computer/browser control, image generation, and subagents for Codex reviews; preserves model/provider authentication settings
-- rejects oversized diff/file inputs instead of silently truncating them; split large changes into smaller review targets
-- allows read-only tools and web search by default where the selected CLI supports them; forbids nested review in the prompt; Codex is run through `codex exec` with read-only sandbox and structured output
+- lists untracked filenames without reading their contents; stage a file to opt its content into local review
+- ignores untracked-only dirt when auto-selecting a target and rejects targets with no reviewable paths
+- rejects oversized complete prompts instead of silently truncating them; split large changes into smaller review targets
+- allows Codex read-only tools and optional web search; forbids nested review in the prompt; Codex is run through `codex exec` with read-only sandbox and structured output
 - prints `autoreview clean: no accepted/actionable findings reported` when the selected review command exits 0
 - exits nonzero when accepted/actionable findings are present
 

@@ -59,21 +59,29 @@ with tempfile.TemporaryDirectory() as directory:
         [],
         ["--model", "test-model", "--thinking", "high", "--codex-speed", "fast"],
         ["--thinking", "medium", "--codex-speed", "default"],
+        ["--codex-config", 'model_provider="test"'],
     ):
         argv = [str(helper), "--no-web-search", "--codex-bin", str(executable), *options]
         with patch.object(sys, "argv", argv):
             args = autoreview.parse_args()
-        output = autoreview.run_codex(args, Path(directory), "synthetic review")
+        with patch.object(autoreview, "run", wraps=autoreview.run) as run_mock:
+            output = autoreview.run_codex(args, Path(directory), "synthetic review")
+        if "--codex-config" in options:
+            assert any('model_provider="test"' in call.args[0] for call in run_mock.call_args_list)
         assert json.loads(output) == report
 
 for options in (["--thinking", "invalid"], ["--codex-speed", "invalid"]):
     result = subprocess.run([str(helper), *options], capture_output=True, text=True)
     assert result.returncode == 2 and "invalid choice" in result.stderr
 
+for value in ('sandbox_mode="workspace-write"', 'features.browser_use=true', 'mcp_servers={}', 'model_provider="test"\nfeatures.hooks=true'):
+    result = subprocess.run([str(helper), "--codex-config", value], capture_output=True, text=True)
+    assert result.returncode == 2 and "only accepts" in result.stderr
+
 with tempfile.TemporaryDirectory() as directory:
     repo = Path(directory) / "repo"
     repo.mkdir()
-    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    subprocess.run(["git", "init", "-q", "-b", "feature", str(repo)], check=True)
     outside = Path(directory) / "outside.txt"
     outside.write_text("SYNTHETIC_CONTENT_OUTSIDE_REVIEW")
     (repo / "linked.txt").symlink_to(outside)
@@ -82,15 +90,23 @@ with tempfile.TemporaryDirectory() as directory:
         (repo / name).write_text("print('review me')\n")
     bundle = autoreview.local_bundle(repo)
     assert outside.read_text() not in bundle, "untracked symlinks must not expose their referent"
-    assert "[unreadable:" not in bundle, "valid Git filenames must be read correctly"
-    assert autoreview.review_paths(repo, "local", None, "HEAD") == names | {"linked.txt"}
+    assert "print('review me')" not in bundle, "untracked file contents must not enter the review prompt"
+    assert autoreview.review_paths(repo, "local", None, "HEAD") == set()
+    assert autoreview.choose_target(repo, "auto", "main") == ("branch", "main")
+    for name in names | {"linked.txt"}:
+        assert json.dumps(name, ensure_ascii=False) in bundle
+    result = subprocess.run([str(helper), "--mode", "local"], cwd=repo, capture_output=True, text=True)
+    assert result.returncode != 0 and "stage intended untracked files" in result.stderr
+    subprocess.run(["git", "add", "--", *sorted(names)], cwd=repo, check=True)
+    paths = autoreview.review_paths(repo, "local", None, "HEAD")
+    assert paths == names
     for name in names:
         finding_report = dict(report, findings=[{
             "title": "Synthetic finding", "body": "Synthetic regression check.",
             "priority": "P2", "confidence": 1, "category": "bug",
             "code_location": {"file_path": name, "line": 1},
         }])
-        autoreview.validate_report(finding_report, repo, names, [], [])
+        autoreview.validate_report(finding_report, repo, paths, [], [])
 
 with tempfile.TemporaryDirectory() as directory:
     executable = Path(directory) / "claude"
@@ -99,15 +115,19 @@ with tempfile.TemporaryDirectory() as directory:
         "import json, sys\n"
         "args = sys.argv[1:]\n"
         "assert '--strict-mcp-config' in args\n"
+        "assert '--safe-mode' in args\n"
+        "assert '--restricted' in args\n"
+        "assert '--setting-sources' not in args\n"
         "assert json.loads(args[args.index('--mcp-config') + 1]) == {'mcpServers': {}}\n"
         "available = args[args.index('--tools') + 1]\n"
-        "assert available in ('Read,Grep,Glob', '')\n"
+        "assert available == ''\n"
+        "assert '--allowedTools' not in args\n"
         "assert sys.stdin.read() == 'synthetic review'\n"
         f"print(json.dumps({report!r}))\n"
     )
     executable.chmod(0o700)
     for options in ([], ["--no-tools"]):
-        argv = [str(helper), "--engine", "claude", "--no-web-search", "--claude-bin", str(executable), "--claude-allowed-tools", "Read,Grep,Glob,WebSearch,WebFetch", *options]
+        argv = [str(helper), "--engine", "claude", "--no-web-search", "--claude-bin", str(executable), *options]
         with patch.object(sys, "argv", argv):
             args = autoreview.parse_args()
         assert json.loads(autoreview.run_claude(args, Path(directory), "synthetic review")) == report
@@ -130,6 +150,25 @@ with tempfile.TemporaryDirectory() as directory:
     assert autoreview.review_paths(repo, "commit", None, "HEAD") == {"feature.py"}
     assert "+print('landed feature')" in autoreview.commit_bundle(repo, "HEAD")
 
+with tempfile.TemporaryDirectory() as directory:
+    repo = Path(directory)
+    subprocess.run(["git", "init", "-q", "-b", "main"], cwd=repo, check=True)
+    subprocess.run([
+        "git", "-c", "user.name=Review Fixture", "-c", "user.email=fixture@example.com",
+        "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null",
+        "commit", "--allow-empty", "-qm", "baseline",
+    ], cwd=repo, check=True)
+    subprocess.run(["git", "checkout", "-qb", "feature"], cwd=repo, check=True)
+    (repo / "feature.py").write_text("print('feature')\n")
+    subprocess.run(["git", "add", "feature.py"], cwd=repo, check=True)
+    subprocess.run([
+        "git", "-c", "user.name=Review Fixture", "-c", "user.email=fixture@example.com",
+        "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null",
+        "commit", "-qm", "feature",
+    ], cwd=repo, check=True)
+    assert "+print('feature')" in autoreview.branch_bundle(repo, "main")
+    assert not (repo / ".git" / "FETCH_HEAD").exists(), "branch review must not fetch or mutate refs"
+
 
 assert autoreview.bounded("abcd", 4) == "abcd"
 try:
@@ -138,6 +177,13 @@ except SystemExit as exc:
     assert "exceeds" in str(exc)
 else:
     raise AssertionError("oversized review input must fail instead of silently truncating")
+
+try:
+    autoreview.build_prompt(Path("/repo"), "local", None, "x", "y" * 180_000, "")
+except SystemExit as exc:
+    assert "exceeds" in str(exc)
+else:
+    raise AssertionError("the complete review prompt must be bounded")
 
 
 for payload in (report, {"structured_output": report}, {"result": json.dumps(report)}):

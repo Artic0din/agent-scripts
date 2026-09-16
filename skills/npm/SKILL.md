@@ -16,7 +16,7 @@ Use for npm registry/account tasks: `npm whoami`, package availability, package 
 - Default to `OP_SERVICE_ACCOUNT_TOKEN`; no desktop unlock. The item carries the working registry session (`registry_token`) plus username/password/TOTP fallback.
 - Desktop `npmjs` fallback is explicit only: pass `--account my.1password.com` when Molty is unavailable and the user wants the fallback. Explicit `release`/`publish` requests are consent for its unlock prompt.
 - Stop and ask if the item is missing, the account/vault is ambiguous, credentials are malformed, npm denies package access, or the requested package/version does not match the repo release target.
-- Run npm auth work inside one task window of the shared `op-work` tmux session (`clawdbot-op.sock`; see `one-password`). Reuse the window on failure; kill it when the npm task is done. Never mint an npm-specific socket or session.
+- When `$one-password` verifies that the CLI workflow is configured, run npm auth work inside one task window of its shared `op-work` tmux session. Reuse the window on failure and kill it when the npm task is done.
 - Keep npm auth in a temp npmrc; delete it after the command.
 - All helpers share `scripts/npm-auth.sh`: stored `registry_token` session first, then `scripts/npm-auth-login.mjs` registry login with a fresh six-digit OTP; successful fallback sessions are cached back to the same item. Do not hand-roll field extraction, registry login, or cache writes.
 - Installed skill directory symlinks are supported. Shell entrypoints resolve physical siblings; sourced `npm-auth.sh` owns `NPM_AUTH_SCRIPT_DIR` without changing the caller's `SCRIPT_DIR` or working directory. Node helpers also support file symlinks, including `--preserve-symlinks-main`.

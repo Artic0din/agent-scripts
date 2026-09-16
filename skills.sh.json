@@ -68,6 +68,7 @@
         "domain-dns-ops",
         "mac-maintenance",
         "npm",
+        "one-password",
         "release-tweets",
         "ssh-doctor",
         "wrangler"
