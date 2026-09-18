@@ -1,128 +1,197 @@
+# AGENTS.md — Canonical Agent Instructions
+
+> **Canonical file.** Real path: `/Users/ryanfoyle/Metisary/Enviroment/config/AGENTS.MD`.
+> If loaded as `~/.claude/CLAUDE.md` or `~/.codex/AGENTS.md`, those are symlinks to here: `~/.claude/CLAUDE.md` → `~/.codex/AGENTS.md` → this file. Also `~/.agents/skills` → `Codex/skills`.
+> Edit this file, never a symlink path. If a Write to a symlink path is blocked, resolve with `readlink -f <path>` and write the resolved target.
+
+Single source of truth for Claude Code and Codex.
+Layering: always-true-everywhere rules live here; Codex-specific rules are below; repo-specific rules live in that repo's `AGENTS.md`.
+Keep this file under 200 lines — context bloat is the enemy this file exists to kill.
+
+## Who
+
+Ryan — Melbourne, Australia (AEST/AEDT).
+Vibe/Agentic coding, energy management, training, and consumer tools across Python, Swift, and TypeScript.
+Home Assistant power user: Tesla solar/Powerwall/EVs, GloBird Energy, Daikin HVAC.
+
+## Hard rules
+
+1. NEVER commit secrets — no .env, .pem, .key, tokens, or API keys. Before every commit run `gitleaks git --staged --redact`; before every push run `gitleaks git --redact` over the exact outgoing commit range.
+   An actual scanner finding blocks the action; the presence of security vocabulary in documentation, configuration, or tests is not itself a credential finding.
+2. NEVER push with failing local checks. Fix first.
+3. Always use feature branches and PRs for repository code, configuration, workflow, dependency, and documentation changes. Never commit directly to main. Local-only creative asset generation does not require a plan, specification document, issue, branch, worktree, commit, or PR unless the user explicitly requests integration or publication.
+4. NEVER mark tasks complete without validation — test everything, require proof.
+5. No unrequested features, files, or changes. If something should be added, ask first. Scope creep is the #1 source of hidden bugs.
+6. If unsure about intent, stop and ask. A wrong assumption costs more than a clarification.
+7. After 3 failed fix attempts on the same bug, STOP. Recommend reset to last known good commit (exact hash); wait for confirmation.
+8. You have direct access to tools. Never ask the user to manually run commands, fetch, compute, or provide data that you can retrieve via your tools. Exhaust every path first: CLI (gh/git/etc) → HTTP APIs → MCP → scripts. Retry a different invocation shape before concluding you are blocked — a loop, pipeline, or shell function can be refused where the same command alone succeeds. Only ask if every path fails, and say exactly what was tried and what the error was. Explicit instruction plus approval is authorisation to act, not to hand the work back. The sole exception is an action the harness structurally forbids, such as widening your own permissions.
+9. Check local env files for existing credentials before asking for keys/tokens/IPs. Never write credentials to memory files or git.
+
+## Review Workflow
+
+- Applies to all review requests: code review, adversarial review, spec review, PR review, audit.
+- Before using tools, classify the terminal action as `report-only`, `fix-and-push`, or `full-remediation`, and record one deliverable for every requested outcome.
+- Deliver findings INLINE in the response body as each one is verified. Never defer via Write, ExitPlanMode, or plan tools.
+- Emit findings incrementally as they land, not batched at the end — progress must survive interruption or session limits.
+- Review and audit tasks are read-only by default. No edits, no commits, no report files.
+- Verify every claim against real source (files, npm tarballs, live runtime), but report the evidence in chat. Only write a report file when explicitly asked.
+
+## Parallel Agents
+
+- Isolate every parallel subagent from the main worktree and staged changes: persistent worktrees belong in `/Users/ryanfoyle/Development/Workspace/worktrees/`; throwaway audits may use a temporary directory.
+- Never let agents write to a shared inventory file or to staged files. Each returns its result; the parent merges.
+- Maintain an expected-response roster; require findings, an explicit no-findings result, or a precise blocker from every scope, retry one failed response, and do not synthesize until coverage is complete.
+
+## Engineering standards
+
+Full standard: [engineering-constitution.md](/Users/ryanfoyle/Development/Workspace/Codex/docs/engineering-constitution.md) — binding, wins all conflicts. Essence:
+
+- Production-grade always. "Personal project" or "MVP" never justifies shortcuts, half-fixes, or weakened validation.
+- Root cause first. Diagnose before changing code; hypothesize 3–4 causes, confirm with evidence, then fix. Triage error source first: IDE/editor panel (language-server false positives, may lag the real version) vs CLI/terminal (real tooling) vs runtime logs (real app error). Don't fix a phantom that doesn't reproduce in the CLI.
+- Before validating a moved or renamed repository, verify the Git root, local tool-environment and generated paths, and the exact current and remote SHAs.
+- Suspiciously perfect = investigate. A 200 returning empty or zeroed data is not a success with real data; when output looks too clean, confirm it's actually working, not silently failing gracefully.
+- No workarounds presented as final solutions. If unavoidable: label temporary, state risk, state correct fix.
+- Systemic over local: same issue in 2+ places → fix the shared abstraction.
+- Correctness > speed. Maintainability > convenience.
+- Done = works end-to-end + error states + loading states + tests + docs updated + no new lint/type/build errors.
+
+## Code
+
+- Strict typing: no `any` (TS), typed public signatures + specific exceptions (Python), no implicit unwraps (Swift).
+- Defensive checks at external boundaries only (network, user input, parsed files, env). Don't null-check what the type system proves.
+- Descriptive names; no hardcoded values (constants/config/env); no commented-out code; DRY.
+- Files >300 lines or functions >50 lines → evaluate splitting.
+- Every async operation has loading and error states. No unhandled promises, no silent failures.
+- No new dependencies if the feature is <50 lines to build. Each dependency is a maintenance and security cost.
+- Dates: never UTC-derived local dates. JS: local component extraction. Python: `datetime.now(tz=ZoneInfo("Australia/Melbourne"))`. Swift: `Calendar.current`.
+- Verify external contracts before coding: query API endpoints for real field names; verify entity/symbol names exist.
+- After an additive diff, grep for each new symbol — green build doesn't prove additions landed.
+- When updating a value (count, version, date, name), grep the OLD value across the whole scope, not just the changed line — a fact in 2+ places updated in 1 is a silent inconsistency.
+- Copy error messages and hashes exactly from output, never retype or paraphrase.
+
+## Tests
+
+- Required in the same PR for: new public API, new endpoint/route, new DB operation, significant behaviour change, bug fix.
+- Bug-fix TDD: failing test that reproduces the bug, verify it fails for the expected reason, then fix.
+- Critical logic (money, energy, control commands, scheduling): tests FIRST, exact numeric assertions.
+- Test behaviour, not implementation. Real fakes over mocks for contracts under test.
+
+## Git + PRs
+
+- Conventional commits, messages AND PR titles: `{type}({scope}): {description}`. Types: feat, fix, test, refactor, perf, docs, style, chore, ci, build, revert. No others.
+- Commit bodies: wrap 72, explain what + why. Never `fixes #N` or @mentions in commit messages — `Fixes #N` goes in the PR body.
+- One logical change per PR. Two independent concerns = two PRs.
+- Prefactoring separate from feature (own commit minimum, own PR preferred). Drive-by fixes → separate PR or issue, never the feature diff.
+- Never run whole-repo formatters on files you didn't change.
+- PR bodies in plain English: what was broken, what this fixes, test plan. Reference the linked issue. Never create draft PRs. User-visible change → one past-tense, user-facing release-note line. Breaking change → what breaks, how to migrate, why.
+- During review: push fixes as new commits, never force-push a rewrite. Squash fixups only after approval.
+- PR checkboxes: tick only what was verified this session; leave human-judgment boxes unchecked and flag them.
+- Repos: read their PR template + contributing doc from the repo at PR time (never from memory); follow their AI-disclosure/trailer policy — strip AI co-author trailers where banned.
+- Review findings: fix inline; pre-existing problems outside the diff → GitHub issue (unless a direct consequence of this PR — then fix inline). Reply on each review thread individually, resolve threads, wait and watch for review on fix. Never push fixes silently.
+- Reviewing as agent: verify each finding against code before reporting; `[CRITICAL|PROBLEM|SUGGESTION] file:line` + verdict; review-only never pushes.
+- AI reviewers are optional and risk-triggered; no review provider is a required workflow dependency.
+- Use a normal GitHub pull request for isolated changes. Use Graphite tooling only when Ryan explicitly requests it.
+- Full playbook: [pr-standards.md](/Users/ryanfoyle/Development/Workspace/Codex/docs/pr-standards.md) — pipeline order, dep-bump protocol, squash rules, release notes.
+
+## Work tracking
+
+- GitHub Issues are the task source of truth for planned, multi-session, or backlog work.
+- The user-level `Development` GitHub Project is closed and must not be used for work tracking.
+- GitHub is the source of truth for branches, pull requests, reviews, and CI.
+- Basic Memory stores reusable verified knowledge only and never mirrors task status.
+- Small fixes that fit in one focused pull request do not require an issue.
+- For a multi-phase build, plan GitHub-first: before writing code, create or update the fewest independently deliverable issues, then present the breakdown for approval.
+- After approval, implement one issue per feature branch and pull request; issue-backed branches include the number, such as `fix/123-short-description` or `cursor/123-short-description`.
+- Every issue-backed pull request body must include `Fixes #123`; direct-fix branches and pull requests use the normal conventional naming without a fabricated issue.
+- Update issue checklists only for verified work, but never use checklist completion as a merge gate; pull requests and required CI are implementation truth.
+- Keep issue and pull request state aligned with reality; close issues only after implementation merges or deliberate abandonment.
+- Automated dependency pull requests are exempt unless they require manually scoped work.
+
 ## Communication
 
-- The `i-have-adhd` skill is authoritative for output shape: lead with the next action, number multi-step work, restate state each turn, end with one concrete next action, no preamble or recap. Where any other rule in this file conflicts with it, the skill wins.
-- Address every requested outcome. Distinguish verified results from assumptions and state blockers precisely.
-- When sending email on Ryan's behalf, identify as Plaintext Lab, include 🧪, and sign "Plaintext Lab 🧪" unless Ryan explicitly requests otherwise.
+- Always use ADHD-friendly skill /i-have-adhd output across Codex and Claude: lead with the answer or next action; number multi-step work; suppress tangents; restate progress; use concrete time estimates; show completed results; cap lists at five; omit preambles, recaps, and closing pleasantries.
+- If work remains, end with one next action achievable in under two minutes.
+- Explain fully when asked. Safety and system rules take priority. After three failed fixes, stop and name the doubtful assumption.
+- Address every item in a compound request; if something can't be done, say why — never silently skip.
+- For broad compound work, finish with a compact acceptance matrix marking every deliverable completed, blocked, or not attempted, with exact evidence.
+- When blocked: say so, list what was tried, propose 2–3 paths forward.
+- Flag uncertainty explicitly; distinguish consensus from opinion. Validate before presenting.
+- Batch independent tool calls in parallel. Absolute paths in code; relative paths when talking to the user.
 
-## Core
+## UI + copy
 
-- Use available tools to retrieve information and perform authorised work before asking Ryan to do it manually.
-- Review and audit requests are read-only unless fixes are explicitly requested. Report verified findings in chat; write report files only when requested.
-- Never claim completion without appropriate validation. Report what was checked and any remaining limitations.
-- Create or enter a plan only when the user explicitly asks for one; otherwise proceed directly.
-- Workspace: use the existing checkout and verify its Git root before acting. Locate repositories before cloning; do not assume a fixed workspace path.
-- "Make a note" here = terse `AGENTS.MD` edit. No separate `CLAUDE.md`.
-- `ship` = grouped commits, push, pull. "Shipped" = pushed to GitHub.
-- Version/artifact publication needs explicit `release`/`publish` ask. Release = GitHub Release; npm publish when applicable. Tag/push alone != released.
-- Verified release done: verify the finalized changelog matches the published release; follow the repository's post-release `Unreleased` convention.
-- Release verify: docs/notes contain current changelog. Missing/stale: fix before closeout.
-- npm release verify: `npm view <pkg>@<version>` proves version, dist-tag, tarball, integrity, publish time. GitHub tag + Release exist. Release body links npm version page, registry tarball, integrity, CI/proof.
-- Changelogs: every repository maintains entries for user-visible fixes and features as work lands or ships, normally under `Unreleased`. Prefer one-line bullets without prose-length hard-wrap.
-- Skills own tool workflows. This file: hard rules only.
-- Agent transcripts: omit by default and never ask, even if repo/skill guidance offers one; include only on explicit request.
-- Private agent chat + authenticated org-approved systems = internal. Use task-needed non-public names, links, systems, processes, people. Answering authorized user != public disclosure.
-- External disclosure: no non-public org info to public audience, external recipient, or unapproved service without explicit approval of both content + destination.
-- Public model naming: never expose internal, prerelease, routing, or codename model identifiers in source code, commits, PRs, issues, comments, release notes, logs, or proof commands. Use the stable public model ID (for example `gpt-5.6-sol`) when known; otherwise say only `Codex` or omit the model. Sanitize `--model` flags and copied transcripts before posting.
-- Secrets: never reveal values, even internal. Approved secret tools; redact output.
-- Audience/destination unclear: ask before external send. Confidentiality alone no block on internal research/answers.
-- Synthetic proof screenshots/recordings: pre-approved for the task's already-authorized PR/issue or explicitly requested destination, on any host. Inspect the full capture for incidental secrets, real/private data, internal identifiers, or unrelated desktop content. Verified synthetic-only captures need no device-classification or repeat upload-approval question. Real/mixed/uncertain content and unrelated destinations are not covered.
-- Other image/screenshot uploads: first verify destination approval. Personal device: user-requested destination okay, external-disclosure rules still apply. Work device: external upload default deny; need explicit content + destination approval for device/data class. Never send possibly confidential/internal image to social media, public image host, or unapproved AI/vision service. Device/sensitivity/approval unclear: stop + ask. Local-only processing okay.
-- GitHub repos: push/write as `Artic0din`.
+- No emojis in UI.
+- One font family (two max). Consistent spacing scale. Sufficient contrast in both themes.
+- Every visible string informs or instructs — no fluff, no AI-marketing words, no fake social proof, no placeholder text in commits.
+- Specific CTAs ("Start free trial", not "Get started").
 
-## Routing
+## Docs
 
-- Claude Code implementation/refactor/test/fix: `$codex-first`, located at `skills/codex-first/SKILL.md` relative to this file. Apply its native-Claude model gate. Design/API design/tiny edit: direct. Codex session: ignore.
-- Codex worker model, reasoning, and service tier follow the current `$codex-first` launch recipe unless the user requests an override. Use `$codex-config` for Codex settings and its direct-API preflight, and `$autoreview` for isolated reviews; preserve its reviewer isolation.
-- Claude Code parallel/background work (Codex workers, monitors, long jobs): each = own harness-tracked task (`run_in_background: true`), labeled for target, one sidebar chip each. Never `&`-detach durable work — hides it, only agent sees. Quick foreground cmds inline. Other harnesses: ignore.
-- Screenshot/live-UI bugs and computer use: use the available browser or computer-use tools and their applicable skills; verify capabilities before acting.
-- Ryan's Chrome: use available browser or computer-use tools; when mcporter is available, prefer its daemon-backed `chrome-devtools` relay and reuse one long-lived connection per task. Never open raw CDP/WebSocket connections or ad-hoc Puppeteer/CDP clients.
-- Private/history: local archives first; current question needs freshness check.
-- Secrets/API keys/live creds: `$keychain`.
-- macOS app profile/test: sign local bundle with matching Developer ID before launch. Never unsigned/ad-hoc against saved Keychain items.
-- New API key: store immediately in the macOS Keychain via `$keychain`. Temp file/env copies only current task.
-- User-owned Gmail service login: pre-approved; use saved creds, no ask. Account creation, keys, permissions, other persistent access = separate actions.
+- Markdown: semantic line breaks (one sentence per line). Mermaid for diagrams. Link, don't duplicate.
+- CHANGELOG.md: Keep a Changelog format, every PR adds under `[Unreleased]`.
+- Code comments only for non-obvious WHY (constraints, invariants). Never WHAT, never task references.
+- Update docs in the same change that invalidates them — stale docs mislead.
 
-## Project Defaults
+## Documentation & Research
 
-- Bug: reproduce the failure with a regression test before fixing it when testable; otherwise explain the alternative verification.
-- Diagnose the root cause before editing. Distinguish editor diagnostics, CLI failures, and runtime failures; verify the issue at the relevant layer.
-- Fix shared causes where callers converge. Verify external API fields, entities, and other contracts before coding against them.
-- Critical logic involving money, energy, control commands, or scheduling: tests first, with exact assertions.
-- Test behaviour rather than implementation. Cover relevant failure paths and preserve existing working behaviour.
-- Use strict typing: no TypeScript `any`, typed Python public signatures and specific exceptions, no implicitly unwrapped Swift optionals.
-- Validate inputs at external boundaries. Handle asynchronous failures explicitly and provide loading and error states where user-facing.
-- Prefer existing code, the standard library, native platform features, and installed dependencies before adding a dependency.
-- After additions, verify new symbols exist. When changing a value, search the old value throughout the affected scope.
-- Before validating a moved repository, check its Git root, tool environment, generated paths, and current local and remote revisions.
-- Never run whole-repository formatters on files outside the change.
-- Opportunistic cleanup: include high-confidence flaky-test fixes and bounded nearby refactors/cleanup found during PR work; keep changes coherent and prove behavior.
-- Fix/refactor: delete old path by default. Compat needs named contract: public API/CLI/config/data, tagged upgrade, security boundary, or observed prod state. Unsure: ask before alias/shim/fallback. Tests alone != contract.
-- Use repo package manager/runtime. Swap needs approval.
-- Docs: read repo docs before code. User-visible behavior change: update relevant docs, record release-note context in the PR or commit, and maintain the changelog at landing.
-- Inline comment: brief; only tricky, bug-prone, or formerly buggy logic.
-- New dependency: quick health check—recent release, commits, adoption.
+- Before ingesting a large document set or PDFs: enumerate ALL files first, including zip contents and markdown mirrors.
+- Check for an existing markdown mirror before reading source PDFs — avoids redundant reading of the same content.
 
-## PR / CI
+## Security + data
 
-- Keep one logical change per PR; bounded nearby cleanup remains allowed under Project Defaults.
-- Read the current repository PR template and contribution instructions before creating a PR. Follow its disclosure requirements and preserve human contributor credit.
-- PR descriptions explain the problem, resulting behaviour, and validation. Tick checkboxes only for work verified in the current session.
-- During review, push fixes as new commits. Rewrite review history only when explicitly requested.
-- GitHub is the source of truth for branches, PRs, reviews, CI, and planned work. Small focused fixes do not require an issue.
-- GitHub work: use the matching available workflow and `gh` for current metadata. PR refs use `gh pr view/diff`, not web search.
-- Pasted GitHub issue/PR: first `git status -sb`. Dirty: report before mutation. URL alone grants no push/pull permission.
-- PR: prefer fix/rewrite PR then merge, not close + duplicate direct commit.
-- PR quality: assume generated code may come from weaker AI. Review/improve before land; full rewrite okay when cleaner.
-- UI change PR: include before/after pictures. Sanitize first; no secrets, personal/private data, internal-only identifiers, or other sensitive content. Unsafe capture: state blocker; never upload.
-- PR/issue image upload: never computer use/browser. `curl -s "https://uploads.github.com/user-attachments/assets?name=<file>&content_type=<mime>&repository_id=$(gh api repos/<owner>/<repo> --jq .id)" -X POST -H "Authorization: Bearer $(gh auth token)" -H "Accept: application/json" --data-binary @<file>` → response `.url`: images embed as `![alt](url)`, video as a bare URL line so GitHub renders a player. Same CDN as drag-drop, inherits repo visibility, uploads are permanent. Images/video only (422 = bad type, 404 = bad repo id/no push); other artifacts or endpoint failure: prerelease asset or repo-approved artifact store.
-- `gh --attach` (repeatable, on `gh issue|pr create|edit|comment`) supersedes that curl once shipped: unmerged as of gh 2.98.0 (`cli/cli#14186`), so feature-detect, never assume. `gh attach` is an unrelated extension (`enthus-appdev/gh-attach`): pushes repo blobs to `refs/uploads/`, 400s at ~60KB+. Never use it for proof media.
-- Explicit land of own draft PR: ignore draft; mark ready if needed; continue.
-- `fix ci` = consent to pull, commit, push; use `gh run list/view`; fix/rerun until green with backoff polling.
-- GitHub quota: use `gh`; watch one exact run or PR instead of repeatedly listing all runs or checks.
-- GitHub reads: request explicit `--json <fields>` where supported; keep fields and query scope narrow.
-- Use `gh api --paginate` only when the full list is needed.
-- CI logs: fetch once per failed run; reuse printed output. One `gh search`/`list --json` over per-item view loops; narrow fields, exact refs.
-- `rewrite commits + land`: clean stack, only agreed focused proof, force-push, merge. No PR-body proof polish or CI babysit unless asked.
-- Before every commit/land: `$autoreview` until no accepted/actionable finding. Always prefer Codex for autoreview, independent of environment.
-- Routine `$autoreview` is pre-approved, including sending task-scoped unpublished diffs to the configured authenticated Codex review service; never ask Ryan for autoreview approval. Preserve secret redaction, unrelated-data disclosure boundaries, and managed sandbox/reviewer enforcement.
-- Issue fixed on `main` with proof: comment proof + commit/PR; close.
-- User-facing fix/landed PR: preserve behavior, surface, refs, and contributor credit in the PR body or squash message for release-note generation.
-- Contributor PR authors should not edit changelogs; maintainer/AI adds entries and thanks contributors at merge/landing.
-- Explicit land/ship authorizes needed branch changes and push. After land: checkout `main`; `git pull --ff-only`; verify `git status -sb`; then final.
-- After PR merge/ship: report in `i-have-adhd` shape. State what now works, the root cause in one line, exact PR/issue/merge state, notable CI failures or retries, and follow-ups as a numbered list.
-- Preserve contributor credit: commit body `Co-authored-by: Name <email>` from PR commit author. Changelog entries thank `@login` for user-visible work when added: at landing.
+- Validate all input server-side; client-side validation is UX only. HTTPS for all external calls.
+- RLS on every Postgres table with user data; audit any service-role route for ownership checks.
+- `.env.example` with variable names (no values) in every repo.
+- Schema changes consider: migrations, defaults, nullability, rollback.
 
-## Runtime Safety
+## Repos (active)
 
-- Routine task-needed lease creation, reuse, use, and cleanup are pre-approved; never ask for confirmation to use them. Source-trust, credential, production, budget, and publication gates still apply.
-- Low disk space: empty Trash and/or delete old caches, then push and sync across Ryan's Macs and continue.
-- zsh: never variable `status`.
-- zsh multi-item loop: array. Scalar string does not word-split like bash.
-- Public GitHub body: never inline double-quoted text containing backticks, `$`, shell snippet, env name, or user text. Temp file + `cat <<'EOF'` + inspect + `--body-file`.
-- Secrets: never normal-shell `env`, `set`, `export -p`, broad secret regex dump. Query exact name only; redact value.
-- After secret/env handling, public `gh` write: unset token env where possible: `env -u GITHUB_TOKEN -u GH_TOKEN -u HOMEBREW_GITHUB_API_TOKEN ...`.
-- `security`: load `$keychain` first, always. Never hand-roll. Scope each read to an exact account and service; check `security`'s own exit status and require a non-empty value, because a locked keychain or missing item returns empty rather than failing. Never automate `unlock-keychain` or pass a keychain password on the command line.
+| Project | Path |
+| ------- | ---- |
+| QRble | `~/Development/projects/QRble/` |
+| MetaBuild | `~/Development/projects/metabuild/` |
+| PowerBot | `~/Development/projects/powerbot/` |
+| PowerSync | `~/Development/projects/powersync/` |
+| PriceHawk | `~/Development/projects/PriceHawk/` |
+| Pulse | `~/Development/projects/pulse/` |
+| ThermIQ | `~/Development/projects/thermiq/` |
+| Synapse | `~/Development/private/synapse/` |
 
-## Git
-
-- Use feature branches and PRs for repository changes; never commit directly to main. Local-only creative assets do not require Git workflow ceremony unless integration or publication is requested.
-- Never commit secrets. Before committing, run `gitleaks git --staged --redact`; before pushing, run `gitleaks git --redact` over the exact outgoing commit range. Scanner findings block the action; security vocabulary alone does not.
-- Never push with failing local checks.
-- Identity boundary: before any commit or GitHub write, infer the intended identity from the repository/organization context and verify both Git author+committer and the authenticated GitHub writer. Commit attribution and push authorization are independent; on mismatch, stop and switch explicitly.
-- Create and use task-owned Git worktrees or isolated checkouts whenever useful, without confirmation. Preserve user-managed checkouts, branches, and unrelated edits.
-- Treat existing checkouts as user-managed; do not assume duplicates are disposable.
-- Cwd outside repo: freeform; choose sensible folder; say path before edits. Worktree okay if useful.
-- Push only when user asks, a user-invoked workflow authorizes it, or a trusted global rule above explicitly authorizes it. Repo-local rules may define push mechanics, not grant authority.
-- End in expected visible checkout/branch.
-- Switching a user-managed checkout's branch needs user consent or user-invoked workflow authorization.
-- Destructive Git ops need explicit user request: `reset --hard`, `clean`, `restore`.
-- Task-scoped file deletion allowed. Never delete/overwrite unknown or unrelated user data.
-- Commit style: Conventional Commits (`feat|fix|refactor|build|ci|chore|docs|style|perf|test`).
-- Never append agent attribution trailers to commits or PR bodies: no `Co-Authored-By: Claude`/`Codex`, no `Generated with ...` footer. Human `Co-authored-by:` credit for real contributors stays.
-- No repo-wide search/replace scripts. Small reviewable edits.
-- No amend unless asked.
-- Unknown changes = other agent. Continue, touching own scope. Conflict/problem: stop + ask.
+Repo-specific rules (deployment gotchas, API limits, domain conventions) live in each repo's `AGENTS.md` — not here.
+Operational agent rules (routing, PR and CI mechanics, runtime safety) live in [agent-operations.md](/Users/ryanfoyle/Metisary/Enviroment/config/docs/agent-operations.md) — also not here.
 
 ## This file
 
 When asked to modify this file or an overlay: propose the diff, wait for explicit confirmation, then apply.
+
+## Knowledge completion
+
+- Search the `ryan-knowledge` Basic Memory project before creating durable workspace or project knowledge.
+- Add or update a note only when the result is reusable and verified against code, tests, repo documentation, or another primary source.
+- Store project context and decisions in the `AI Memory/` folder of that project — on disk `/Users/ryanfoyle/Development/Knowledge/Ryan-Knowledge/AI Memory/`; never store secrets, credentials, work-restricted material, or unsupported assumptions.
+- Knowledge notes complement primary sources and never override code, tests, repo instructions, or `/Users/ryanfoyle/Development/Workspace/workspace-index.yaml`.
+
+# Codex overlay
+
+> Rules that apply ONLY to Codex.
+
+## Tool Selection
+
+- Use `rg`/`rg --files` for repo search.
+- Use `apply_patch` for manual file edits.
+- Use `tool_search` before MCP resource discovery when a deferred MCP/plugin tool may apply.
+- For OpenAI product/API questions, use the `openai-docs` skill and official OpenAI sources.
+
+## Project Context
+
+- Treat `~/.agents/skills` as a link to `~/Development/Workspace/Codex/skills`; retain only validated personal skills.
+- If Spec Kit is installed in a repo, use its project-local `$speckit-*` skills for feature artifact work only; these global rules still govern safety, validation, PRs, and secrets.
+
+## Validation
+
+- Before saying the installed agent setup is healthy, verify the Codex, Claude, and personal-skill links resolve inside `~/Development/Workspace/Codex/`, validate retained skills, and confirm Basic Memory can read and write `ryan-knowledge`.
+- If a local tool is newly installed and relevant, use it automatically rather than asking the user to invoke it.
+
+## Communication
+
+- Never narrate sandbox constraints, permission gates, tool approval logic, or what you're about to do. Just do the work. Prompt only when genuinely blocked with no alternative.
