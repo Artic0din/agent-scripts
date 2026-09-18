@@ -87,19 +87,20 @@ automate `unlock-keychain`, and never pass a keychain password on the command li
 shell history and the process list. If a read fails because the keychain is locked, report that and
 let Ryan unlock it.
 
-## Existing pattern
+## Helper shape
 
-`$codex-huge-context` already uses this shape for the Codex API key, as the auth command in
-`config.toml`:
+When a tool needs a credential from an external command rather than inline, give it a helper that
+writes only the secret to stdout and nothing else:
 
 ```zsh
 #!/bin/zsh
 set -euo pipefail
 exec /usr/bin/security find-generic-password \
-  -a Codex \
-  -s "Codex OpenAI inference API" \
+  -a <account> \
+  -s <service> \
   -w ~/Library/Keychains/login.keychain-db
 ```
 
-The secret goes straight to stdout for the caller to consume. Follow that shape for new credential
-routes rather than inventing another.
+`exec` keeps the secret out of any intermediate shell variable, and a missing item exits 44 with the
+message on stderr, so the caller sees a failure rather than an empty value. No such helper is
+configured on this Mac yet; confirm the account and service with Ryan before writing one.

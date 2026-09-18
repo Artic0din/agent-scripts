@@ -52,7 +52,7 @@ Keep high reasoning and Fast service as the worker defaults unless the user requ
 Do not hardcode a model or switch providers to recover from an error.
 Apply an explicit user model override with `--model` on every fresh or resumed launch.
 
-If the selected provider uses the direct API large-context setup, consult [codex-huge-context](../codex-huge-context/SKILL.md) and run its applicable preflight first.
+Codex here authenticates through ChatGPT OAuth and uses the model's default context window; see [codex-config](../codex-config/SKILL.md) for its settings and restart rules.
 Resolve sibling skills from this loaded skill's real directory, following symlinks.
 Verify host-specific configuration before using that workflow; do not copy upstream paths, provider settings, or credentials into this environment.
 

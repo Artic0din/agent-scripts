@@ -6,6 +6,14 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Renamed `codex-huge-context` to `codex-config` and rewrote it around the setup Ryan actually runs. His
+  Codex authenticates with ChatGPT OAuth (`auth_mode = "chatgpt"`, `OPENAI_API_KEY` null) and has no
+  provider table or custom catalogue, so the direct-API route, its Keychain auth helper, and the 245-line
+  preflight with its tests were removed. The 922K/700K override is now documented as a thing not to add:
+  on the ChatGPT route it yields `context_length_exceeded` with a compaction request too large to succeed.
+  Kept the provider-independent parts: model and reasoning settings, the shared app-server restart rule,
+  login handling, fleet rollout, and verification. Repointed `codex-first`, `project-structure`, and
+  `keychain`, whose example cited an auth helper that was never configured here.
 - Replaced the `one-password` skill with `keychain`, built on `/usr/bin/security`, because Ryan uses the
   macOS Keychain and Apple Passwords rather than 1Password, which is installed on none of his Macs. The
   guard shape is preserved and the tmux credential sandbox is gone: a Keychain secret pipes straight into
