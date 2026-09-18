@@ -74,8 +74,7 @@ OP
 cat >"$test_root/bin/tmux" <<'TMUX'
 #!/bin/bash
 set -euo pipefail
-[[ "$1" == -S && "$2" == "$MAC_RELEASE_TEST_CASE/sockets/clawdbot-op.sock" ]]
-shift 2
+[[ "$1" != -S ]]
 printf '%s\n' "$1" >>"$MAC_RELEASE_TEST_CASE/tmux-calls"
 case "$1" in
   has-session) [[ "$2 $3" == '-t op-work' ]] ;;
@@ -211,7 +210,6 @@ export MAC_RELEASE_CODESIGN_OP_ITEM=codesign
 export MAC_RELEASE_OP_ENV_REFS='EXTRA_SECRET=op://Fixture/env/value'
 export MAC_RELEASE_SPARKLE_OP_REF=op://Fixture/sparkle/value
 export MAC_RELEASE_OP_WAIT_SECONDS=2
-export CLAWDBOT_TMUX_SOCKET_DIR="$MAC_RELEASE_TEST_CASE/sockets"
 if [[ "$MAC_RELEASE_TEST_FAULT" == missing ]]; then
   # Missing-field diagnostics must not echo a requested label either.
   case "$MAC_RELEASE_TEST_TARGET" in

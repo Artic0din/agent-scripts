@@ -29,7 +29,7 @@ Use when:
 - If a review-triggered fix changes code, rerun focused tests and rerun the structured review helper.
 - For security-audit suppression changes, verify accepted findings remain auditable: suppressed findings stay in structured output, active output keeps an unsuppressible suppression notice, and aggregate findings cannot hide unrelated active risk.
 - Never switch or override the requested review engine/model. If the review hits model capacity, retry the same command a few times with the same engine/model.
-- Codex allows read-only inspection tools and optional web search. Claude is bundle-only with all tools disabled.
+- Codex inspects a tracked-HEAD projection (empty on an unborn branch) under a permission profile that denies reads outside it; the local diff is supplied in the prompt. Optional web search remains available. Claude is bundle-only with all tools disabled.
 - Security perspective is always included, but it should not cripple legitimate functionality. Report security findings only when the change creates a concrete, actionable risk or removes an important safety check.
 - Do not invoke built-in `codex review`, nested reviewers, or reviewer panels from inside the review. The helper builds one bundle, calls one selected engine, validates one structured result, and stops.
 - Stop as soon as the helper exits 0 with no accepted/actionable findings. Do not run an extra review just to get a nicer "clean" line, a second opinion, or clearer closeout wording.
@@ -121,7 +121,7 @@ The helper:
 - lists untracked filenames without reading their contents; stage a file to opt its content into local review
 - ignores untracked-only dirt when auto-selecting a target and rejects targets with no reviewable paths
 - rejects oversized complete prompts instead of silently truncating them; split large changes into smaller review targets
-- allows Codex read-only tools and optional web search; forbids nested review in the prompt; Codex is run through `codex exec` with read-only sandbox and structured output
+- allows Codex tools only inside a tracked-HEAD projection, passes only a fixed system `PATH` to tool subprocesses, and optionally allows web search; forbids nested review in the prompt and uses structured output
 - prints `autoreview clean: no accepted/actionable findings reported` when the selected review command exits 0
 - exits nonzero when accepted/actionable findings are present
 

@@ -6,6 +6,15 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Replaced the `one-password` skill with `keychain`, built on `/usr/bin/security`, because Ryan uses the
+  macOS Keychain and Apple Passwords rather than 1Password, which is installed on none of his Macs. The
+  guard shape is preserved and the tmux credential sandbox is gone: a Keychain secret pipes straight into
+  one command, so there is no environment to contain. Documents the empty-output trap, where a locked
+  keychain or missing item returns nothing rather than failing, and gives a verified guard for it.
+- Removed the `npm` skill and its eight scripts. Its pipeline required `op`, `tmux`, and an npm login that
+  do not exist here, and Ryan publishes no packages; the one publishable package in his repos is another
+  maintainer's. Repointed `codex-huge-context`, `oracle`, `twilio-sms`, and `hopper-debugger` at `$keychain`
+  without inventing Keychain item names, which each skill's own pass will confirm.
 - Made `global-gitignore-audit.sh` report a missing fleet inventory instead of dying with a Node stack
   trace, matching the script's existing prerequisite messages and pointing at `--fleet PATH`.
 - Remapped the manager and Codex paths Ryan confirmed: the fleet inventory and manager skills now live

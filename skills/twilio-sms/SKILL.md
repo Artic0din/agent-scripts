@@ -13,7 +13,7 @@ Use for Twilio phone-number and SMS work: create/buy numbers, list owned numbers
 
 - Never print Account SIDs, auth tokens, API secrets, TOTP codes, or full 1Password item JSON.
 - Do not store real phone numbers, SIDs, names, or account-specific item IDs in this skill.
-- Use `$one-password` for secret reads. `op` stays tmux-only.
+- Use `$keychain` for secret reads. The Keychain item name is not recorded yet; confirm it with Ryan before the first read.
 - If desktop 1Password access is needed, unset service-account auth for those commands: `env -u OP_SERVICE_ACCOUNT_TOKEN op ...`.
 - Print credential shape only: field present, length, prefix class if useful.
 - Public writes or logs: avoid leaking message bodies unless the user asked to read/check SMS.

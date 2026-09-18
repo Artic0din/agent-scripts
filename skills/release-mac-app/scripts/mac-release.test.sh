@@ -180,7 +180,6 @@ exec node -e 'process.stdout.write((require("fs").statSync(process.argv[1]).mode
 STAT
 chmod +x "$test_root/bin/stat"
 export PATH="$test_root/bin:$PATH"
-export CLAWDBOT_TMUX_SOCKET_DIR="$test_root/sockets"
 
 # shellcheck source=lib/mac_release.sh
 source "$script_dir/lib/mac_release.sh"

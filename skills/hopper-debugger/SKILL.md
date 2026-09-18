@@ -55,7 +55,7 @@ EOF
 
 Hopper 6.x still uses the bundle id and preferences domain **`com.cryptic-apps.hopper-web-4`**. The absence of a `hopper-web-6` domain does **not** mean the app is unlicensed. Check the real state in the About panel (`Hopper Disassembler > About Hopper Disassembler`); it prints the licensee, order id, and update-plan expiry. There is no Register/License menu item in Hopper 6.
 
-Peter's license: order `HOP140213-7833-95831`, updates through 2027-05-17. The `.hopperLicense` file is in 1Password (Molty vault, document item "Hopper Disassembler License (HOP140213-7833-95831)"); load `$one-password` to retrieve it. Opening a `.hopperLicense` file with Hopper does **not** register it — Hopper disassembles it as a document.
+Licensing is not configured here: the upstream license belonged to the fork's author and is not Ryan's to use. Record his own license location before any retrieval step. Opening a `.hopperLicense` file with Hopper does **not** register it — Hopper disassembles it as a document.
 
 ## Opening documents
 

@@ -67,9 +67,8 @@
       "skills": [
         "domain-dns-ops",
         "fleet-maintenance",
+        "keychain",
         "mac-maintenance",
-        "npm",
-        "one-password",
         "release-tweets",
         "ssh-doctor",
         "wrangler"

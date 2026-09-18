@@ -25,6 +25,23 @@ report = {
 
 with tempfile.TemporaryDirectory() as directory:
     executable = Path(directory) / "codex"
+    repo = Path(directory) / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q", "-b", "feature"], cwd=repo, check=True)
+    (repo / "tracked.txt").write_text("tracked\n")
+    outside = Path(directory) / "outside.txt"
+    outside.write_text("outside\n")
+    (repo / "external-link").symlink_to(outside)
+    subprocess.run(["git", "add", "tracked.txt", "external-link"], cwd=repo, check=True)
+    subprocess.run(
+        ["git", "-c", "user.name=Fixture", "-c", "user.email=fixture@example.com", "commit", "-qm", "fixture"],
+        cwd=repo,
+        check=True,
+    )
+    (repo / "secret.txt").write_text("must stay outside projection\n")
+    companion = Path(directory) / "codex-code-mode-host"
+    companion.write_text("#!/bin/sh\nexit 0\n")
+    companion.chmod(0o700)
     executable.write_text(
         "#!/usr/bin/env python3\n"
         "import json, pathlib, sys\n"
@@ -32,13 +49,24 @@ with tempfile.TemporaryDirectory() as directory:
         "if args[-3:] == ['mcp', 'list', '--json']:\n"
         "    print(json.dumps([{'name': 'test.server', 'enabled': True}]))\n"
         "    sys.exit(0)\n"
-        "assert args[args.index('-s') + 1] == 'read-only'\n"
+        "assert '-s' not in args and '--sandbox' not in args\n"
+        "assert 'default_permissions=\"autoreview\"' in args\n"
+        "assert 'permissions.autoreview.filesystem={\":root\"=\"deny\",\":minimal\"=\"read\",\":workspace_roots\"={\".\"=\"read\"}}' in args\n"
+        "assert 'shell_environment_policy.inherit=\"none\"' in args\n"
+        "assert 'shell_environment_policy.set={PATH=\"/usr/bin:/bin:/usr/sbin:/sbin\"}' in args\n"
         "assert '--ephemeral' in args\n"
+        "assert '--skip-git-repo-check' in args\n"
         "assert '--dangerously-bypass-approvals-and-sandbox' not in args\n"
         "assert '--search' not in args\n"
         "assert 'web_search=\"disabled\"' in args\n"
         "assert 'mcp_servers={\"test.server\"={enabled=false}}' in args\n"
         "assert 'features.apps=false' in args and 'features.plugins=false' in args\n"
+        "projection = pathlib.Path(args[args.index('-C') + 1])\n"
+        "runtime = pathlib.Path(sys.argv[0]).parent\n"
+        "assert runtime.parent == projection and (runtime / 'codex-code-mode-host').exists()\n"
+        "assert (projection / 'tracked.txt').read_text() == 'tracked\\n'\n"
+        "assert not (projection / 'secret.txt').exists() and not (projection / '.git').exists()\n"
+        "assert not (projection / 'external-link').is_symlink()\n"
         "assert sys.stdin.read() == 'synthetic review'\n"
         "if '--model' in args:\n"
         "    assert args[args.index('--model') + 1] == 'test-model'\n"
@@ -65,10 +93,32 @@ with tempfile.TemporaryDirectory() as directory:
         with patch.object(sys, "argv", argv):
             args = autoreview.parse_args()
         with patch.object(autoreview, "run", wraps=autoreview.run) as run_mock:
-            output = autoreview.run_codex(args, Path(directory), "synthetic review")
+            output = autoreview.run_codex(args, repo, "synthetic review")
         if "--codex-config" in options:
             assert any('model_provider="test"' in call.args[0] for call in run_mock.call_args_list)
         assert json.loads(output) == report
+
+    relative_bin = repo / "bin"
+    relative_bin.mkdir()
+    relative_codex = relative_bin / "codex"
+    relative_codex.write_text(executable.read_text())
+    relative_codex.chmod(0o700)
+    relative_companion = relative_bin / companion.name
+    relative_companion.write_text(companion.read_text())
+    relative_companion.chmod(0o700)
+    argv = [str(helper), "--no-web-search", "--codex-bin", "./bin/codex"]
+    with patch.object(sys, "argv", argv):
+        args = autoreview.parse_args()
+    assert json.loads(autoreview.run_codex(args, repo, "synthetic review")) == report
+
+with tempfile.TemporaryDirectory() as directory:
+    repo = Path(directory) / "repo"
+    projection = Path(directory) / "projection"
+    repo.mkdir()
+    projection.mkdir()
+    subprocess.run(["git", "init", "-q", "-b", "feature"], cwd=repo, check=True)
+    autoreview.build_codex_projection(repo, projection)
+    assert not list(projection.iterdir())
 
 for options in (["--thinking", "invalid"], ["--codex-speed", "invalid"]):
     result = subprocess.run([str(helper), *options], capture_output=True, text=True)
@@ -107,6 +157,22 @@ with tempfile.TemporaryDirectory() as directory:
             "code_location": {"file_path": name, "line": 1},
         }])
         autoreview.validate_report(finding_report, repo, paths, [], [])
+
+with tempfile.TemporaryDirectory() as directory:
+    repo = Path(directory)
+    subprocess.run(["git", "init", "-q", "-b", "feature"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "core.quotePath", "false"], cwd=repo, check=True)
+    raw_name = b"bad-\xff.txt"
+    blob = subprocess.run(
+        ["git", "hash-object", "-w", "--stdin"], cwd=repo, input=b"review me\n", stdout=subprocess.PIPE, check=True
+    ).stdout.strip()
+    subprocess.run(
+        ["git", "update-index", "-z", "--index-info"],
+        cwd=repo,
+        input=b"100644 " + blob + b"\t" + raw_name + b"\0",
+        check=True,
+    )
+    assert "\\377" in autoreview.local_bundle(repo)
 
 with tempfile.TemporaryDirectory() as directory:
     executable = Path(directory) / "claude"

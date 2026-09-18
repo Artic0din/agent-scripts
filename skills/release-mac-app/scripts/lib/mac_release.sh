@@ -145,15 +145,10 @@ mac_release_load_1password_env() {
   fi
 
   require_bin tmux op node
-  local account vault socket_dir socket session op_window work_dir script runner env_file log_file status_file
+  local account vault session op_window work_dir script runner env_file log_file status_file
   local service_account_token_file sparkle_temp_key_file needs_service_account=0
   account=${MAC_RELEASE_OP_ACCOUNT:-my.1password.com}
   vault=${MAC_RELEASE_OP_VAULT:-}
-  socket_dir=${CLAWDBOT_TMUX_SOCKET_DIR:-${TMPDIR:-/tmp}/clawdbot-tmux-sockets}
-  mkdir -p "$socket_dir"
-  # Shared op tmux server/session (see one-password skill): every op flow uses
-  # clawdbot-op.sock + op-work and its own window; extra sessions alert Peter.
-  socket=${MAC_RELEASE_OP_TMUX_SOCKET:-"$socket_dir/clawdbot-op.sock"}
   session=${MAC_RELEASE_OP_TMUX_SESSION:-op-work}
   op_window=
   work_dir=$(mktemp -d /tmp/mac-release-op.XXXXXX)
@@ -174,8 +169,8 @@ mac_release_load_1password_env() {
     # Kill only our task window; the op-work session stays for other flows.
     local pane_pid=
     if [[ -n "${op_window:-}" ]]; then
-      pane_pid=$(tmux -S "$socket" display-message -p -t "$op_window" '#{pane_pid}' 2>/dev/null || true)
-      tmux -S "$socket" kill-window -t "$op_window" 2>/dev/null || true
+      pane_pid=$(tmux display-message -p -t "$op_window" '#{pane_pid}' 2>/dev/null || true)
+      tmux kill-window -t "$op_window" 2>/dev/null || true
       if [[ -n "$pane_pid" ]]; then
         local wait_count=0
         while kill -0 "$pane_pid" 2>/dev/null && ((wait_count < 40)); do
@@ -427,11 +422,11 @@ RUNNER
   } >"$runner"
   chmod 700 "$runner"
 
-  tmux -S "$socket" has-session -t "$session" 2>/dev/null ||
-    tmux -S "$socket" new-session -d -s "$session" -n shell
+  tmux has-session -t "$session" 2>/dev/null ||
+    tmux new-session -d -s "$session" -n shell
   : >"$log_file"
   # Start directly: an interactive shell can discard input sent before its prompt is ready.
-  op_window=$(tmux -S "$socket" new-window -d -t "$session" -n mac-release -P -F '#{window_id}' \
+  op_window=$(tmux new-window -d -t "$session" -n mac-release -P -F '#{window_id}' \
     /bin/bash --noprofile --norc -p -c \
     "env -u BASH_ENV /bin/bash $(mac_release_tmux_quote "$runner"); printf '%s\n' \$? > $(mac_release_tmux_quote "$status_file")")
 

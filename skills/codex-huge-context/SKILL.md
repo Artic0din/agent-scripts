@@ -100,7 +100,7 @@ exec /usr/bin/security find-generic-password \
 
 Resolve and verify the host's actual Keychain path at installation time; the example is host-specific. Keep that absolute, non-secret path inside the external executable, not `$HOME`/`~`, a provider override, or non-empty `auth.args`. Managed autoreview replaces the client's HOME/USERPROFILE and XDG config/data/state/cache directories. Implicit Keychain selection can then return exit 44 (`SecKeychainSearchCopyNext` item not found) even though parent-session delivery succeeds. Repair the wrapper's Keychain selection—not the reviewer's HOME, filesystem grants, or credential access. Inspect an existing helper before changing it; it may already use explicit selection.
 
-Use `$one-password` before handling the API key. The canonical value is the `OPENAI_API_KEY` field in Molty's `AI API Key - OpenAI - OPENAI_API_KEY - Serviceable Access` item. Read it through the service-account workflow inside the shared `op-work` tmux session and store/update only the Keychain copy. Never print, copy over SSH, place in a profile, or write it to a temporary file.
+Use `$keychain` before handling the API key. The canonical copy is the Keychain item read by the auth command above. Never print it, copy it over SSH, place it in a profile, or write it to a temporary file.
 
 The Keychain item should allow `/usr/bin/security`. A Keychain read normally produces no prompt. A login Keychain locked after reboot, or a command launched via noninteractive SSH, can fail with error 36 (`User interaction is not allowed`). Do not work around that failure with a plaintext file or a long-lived secret daemon: unlock the host from its local graphical session, install the item there, then use Codex from that local session.
 
