@@ -6,6 +6,9 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed the `hopper-debugger` and `oracle` skills at Ryan's request, and dropped both from the
+  catalogue. This also retires four of the unmapped upstream directories: `~/Projects/oracle`,
+  `~/Projects/oracle/dist/scripts`, `~/Projects/Peekaboo`, and the Dropbox Hopper path.
 - Renamed `codex-huge-context` to `codex-config` and rewrote it around the setup Ryan actually runs. His
   Codex authenticates with ChatGPT OAuth (`auth_mode = "chatgpt"`, `OPENAI_API_KEY` null) and has no
   provider table or custom catalogue, so the direct-API route, its Keychain auth helper, and the 245-line

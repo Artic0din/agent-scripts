@@ -10,7 +10,6 @@
         "create-cli",
         "frontend-design",
         "markdown-converter",
-        "oracle",
         "skill-cleaner"
       ]
     },
@@ -29,7 +28,6 @@
       "title": "Apple & Native Apps",
       "description": "Skills for Swift, SwiftUI, Instruments, Hopper, app releases, and macOS VM labs.",
       "skills": [
-        "hopper-debugger",
         "instruments-profiling",
         "native-app-performance",
         "release-mac-app",
