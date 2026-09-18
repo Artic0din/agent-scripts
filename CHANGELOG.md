@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Extracted the canonical environment paths into `scripts/canonical-paths.sh`, sourced by both
+  `sync-skills` and the skill-link audit, so the two can no longer disagree about where the repo lives.
+- CI now runs on every branch push, not only `main` and pull requests, so a broken suite is caught at the
+  first push instead of surviving several commits on a feature branch.
 - Removed the `release-mac-app` skill and its Sparkle release machinery: 2,968 lines across six files,
   plus `docs/RELEASING-MAC.md`, `docs/mac-app.md`, the `release/sparkle_lib.sh` compatibility shim, and the
   CI step covering its three credential-boundary suites. No repository of Ryan's uses Sparkle, nothing
