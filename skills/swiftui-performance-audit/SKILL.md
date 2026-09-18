@@ -11,6 +11,13 @@ _Attribution: copied from @Dimillian’s `Dimillian/Skills` (2025-12-31)._
 
 Audit SwiftUI view performance end-to-end, from instrumentation and baselining to root-cause analysis and concrete remediation steps.
 
+> **Requires full Xcode.** This machine has Command Line Tools only
+> (`xcode-select -p` reports `/Library/Developer/CommandLineTools`), so `xctrace`,
+> `simctl`, and Instruments are absent. The Swift 6.4 toolchain is present, so
+> code-level work still applies. Install Xcode with the `xcodes` CLI before using
+> the recording steps below.
+
+
 ## Workflow Decision Tree
 
 - If the user provides code, start with "Code-First Review."

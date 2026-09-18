@@ -7,6 +7,13 @@ description: "Native app performance: xctrace, Time Profiler, traces, hotspots."
 
 Goal: record Time Profiler via `xctrace`, extract samples, symbolicate, and propose hotspots without opening Instruments.
 
+> **Requires full Xcode.** This machine has Command Line Tools only
+> (`xcode-select -p` reports `/Library/Developer/CommandLineTools`), so `xctrace`,
+> `simctl`, and Instruments are absent. The Swift 6.4 toolchain is present, so
+> code-level work still applies. Install Xcode with the `xcodes` CLI before using
+> the recording steps below.
+
+
 ## Quick start (CLI)
 
 1) Record Time Profiler (attach):

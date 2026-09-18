@@ -10,6 +10,12 @@ metadata:
 Use this skill when the user wants performance profiling or stack analysis for native apps.
 Focus: Time Profiler, `xctrace` CLI, and picking the correct binary/app instance.
 
+> **Requires full Xcode.** This machine has Command Line Tools only
+> (`xcode-select -p` reports `/Library/Developer/CommandLineTools`), so `xctrace`,
+> `simctl`, and Instruments are absent. The Swift 6.4 toolchain is present, so
+> code-level work still applies. Install Xcode with the `xcodes` CLI before using
+> the recording steps below.
+
 ## Quick Start (CLI)
 
 - List templates: `xcrun xctrace list templates`
@@ -85,5 +91,5 @@ Use these rules:
 
 - Confirm trace process path matches target build.
 - Confirm stacks show expected app frames.
-- Capture covers the slow operation (startup/refresh). 
+- Capture covers the slow operation (startup/refresh).
 - Export stacks for automated diffing if optimizing.
