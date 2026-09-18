@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Made `global-gitignore-audit.sh` report a missing fleet inventory instead of dying with a Node stack
+  trace, matching the script's existing prerequisite messages and pointing at `--fleet PATH`.
 - Remapped the manager and Codex paths Ryan confirmed: the fleet inventory and manager skills now live
   under `~/Metisary/Enviroment/manager/`, conference strategy under the same root, and the Codex catalogue,
   auth command, and keychain point at his own home. The two `config.toml` values stay absolute because TOML

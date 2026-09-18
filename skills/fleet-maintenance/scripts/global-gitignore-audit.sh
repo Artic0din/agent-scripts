@@ -57,6 +57,12 @@ if [[ -z "$node_bin" ]]; then
   exit 1
 fi
 
+if [[ ! -f "$fleet" ]]; then
+  printf 'global-gitignore: fleet inventory not found at %s\n' "$fleet" >&2
+  printf 'global-gitignore: run an inventory first, or pass --fleet PATH\n' >&2
+  exit 1
+fi
+
 # JavaScript template literals below are intentionally protected from shell expansion.
 # shellcheck disable=SC2016
 patterns_text=$("$node_bin" -e '
