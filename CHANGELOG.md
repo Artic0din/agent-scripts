@@ -6,6 +6,11 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Adapted `github-author-context` to Ryan's GitHub use: skip himself and bot authors, drop the private
+  OpenClaw maintainer tooling and contributor-note helper, and route durable findings to `ryan-knowledge`.
+  Corrected two inherited command bugs found by running them — `gh search prs` has no `--state merged`
+  (merged is its own flag), and on a private repository search is unavailable while `gh pr list --author`
+  returns an empty list instead of failing, so author activity must be filtered client-side.
 - Refreshed the vendored `frontend-design` skill from the installed Anthropic plugin revision
   `ea0a38e1d671`, picking up the design-process, AI-default calibration, restraint, and writing-in-design
   sections the old snapshot predated. The copy stays in this repo because Codex cannot load Claude plugins.
