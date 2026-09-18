@@ -14,8 +14,8 @@ Use for Cloudflare Wrangler CLI work: deploys, tails, KV/R2/D1/Queues/Workers, s
 - `wrangler whoami` before account-sensitive work.
 - One Cloudflare account applies here. `$domain-dns-ops` holds the canonical account ID, zones, and
   Worker domains; read it rather than repeating the identifiers.
-- `wrangler` is not installed. `QRble` and `Synapse` both carry a `wrangler.toml`, so use the repo
-  wrapper above rather than expecting a global binary.
+- There may be no global `wrangler`; `QRble` and `Synapse` each ship a `wrangler.toml`, so prefer the
+  repo wrapper above. Check rather than assume: `command -v wrangler || echo "use the repo wrapper"`.
 
 ## Pitfalls
 

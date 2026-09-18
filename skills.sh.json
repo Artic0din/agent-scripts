@@ -42,7 +42,7 @@
     },
     {
       "title": "Media & AI",
-      "description": "Skills for image generation, video transcripts, and X API work.",
+      "description": "Skills for video transcripts and X API work.",
       "skills": [
         "video-transcript-downloader",
         "xurl"
