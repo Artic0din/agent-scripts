@@ -29,7 +29,7 @@ hard rules and links here; tool-specific items migrate into the owning skill ove
 - Release verify: docs/notes contain current changelog. Missing/stale: fix before closeout.
 - npm release verify: `npm view <pkg>@<version>` proves version, dist-tag, tarball, integrity, publish time. GitHub tag + Release exist. Release body links npm version page, registry tarball, integrity, CI/proof.
 - Changelogs: every repository maintains entries for user-visible fixes and features as work lands or ships, normally under `Unreleased`. Prefer one-line bullets without prose-length hard-wrap.
-- Skills own tool workflows. This file: hard rules only.
+- Skills own tool workflows; `AGENTS.MD` holds the hard rules, and this document the operational ones.
 - Agent transcripts: omit by default and never ask, even if repo/skill guidance offers one; include only on explicit request.
 - Private agent chat + authenticated org-approved systems = internal. Use task-needed non-public names, links, systems, processes, people. Answering authorized user != public disclosure.
 - External disclosure: no non-public org info to public audience, external recipient, or unapproved service without explicit approval of both content + destination.
@@ -42,7 +42,7 @@ hard rules and links here; tool-specific items migrate into the owning skill ove
 
 ## Routing
 
-- Claude Code implementation/refactor/test/fix: `$codex-first`, located at `skills/codex-first/SKILL.md` relative to this file. Apply its native-Claude model gate. Design/API design/tiny edit: direct. Codex session: ignore.
+- Claude Code implementation/refactor/test/fix: `$codex-first`, located at `skills/codex-first/SKILL.md` from the repository root. Apply its native-Claude model gate. Design/API design/tiny edit: direct. Codex session: ignore.
 - Codex worker model, reasoning, and service tier follow the current `$codex-first` launch recipe unless the user requests an override. Use `$codex-config` for Codex settings and its direct-API preflight, and `$autoreview` for isolated reviews; preserve its reviewer isolation.
 - Claude Code parallel/background work (Codex workers, monitors, long jobs): each = own harness-tracked task (`run_in_background: true`), labeled for target, one sidebar chip each. Never `&`-detach durable work — hides it, only agent sees. Quick foreground cmds inline. Other harnesses: ignore.
 - Screenshot/live-UI bugs and computer use: use the available browser or computer-use tools and their applicable skills; verify capabilities before acting.
