@@ -44,6 +44,10 @@ JSON
 
 node "$profile" validate --fleet "$scratch/valid.json" >"$scratch/output.json"
 grep -q '"valid": true' "$scratch/output.json"
+node -e '
+  const keys = Object.keys(JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))).sort();
+  if (keys.join(",") !== "errors,valid") { console.error("validate output contract drifted:", keys); process.exit(1); }
+' "$scratch/output.json"
 
 node -e '
   const fs = require("node:fs");
