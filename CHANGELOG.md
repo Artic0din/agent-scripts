@@ -6,6 +6,9 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Restored `preflight.rb` and its test into `codex-config/scripts/` after removing them without naming
+  them first, and restored the CI step at the new path. The skill now records what the preflight covers
+  and that it fails by design against the current ChatGPT-auth setup, which has no direct provider.
 - Removed the `hopper-debugger` and `oracle` skills at Ryan's request, and dropped both from the
   catalogue. This also retires four of the unmapped upstream directories: `~/Projects/oracle`,
   `~/Projects/oracle/dist/scripts`, `~/Projects/Peekaboo`, and the Dropbox Hopper path.

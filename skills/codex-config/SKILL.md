@@ -84,6 +84,25 @@ Expect the installed version, `Logged in using ChatGPT`, and the exact probe res
 proof, send the prompt text and Enter as separate terminal actions, and do not read echoed input as
 the model's reply.
 
+## Direct-API preflight
+
+`scripts/preflight.rb` validates a direct OpenAI API setup: the `openai_api_direct` provider block,
+the safe-input and compaction values, all four catalogue entries, and that the Keychain auth helper
+returns a non-empty credential without printing it. `--private-home` additionally re-runs the helper
+under fresh HOME and XDG directories as a delivery diagnostic.
+
+It is retained for the direct-API route described above as something not to add casually. None of
+that is configured here, so running it against the current setup fails at the provider check — that
+is the correct result, not a fault. Use it only if Ryan deliberately moves inference to a direct API
+provider, and treat a failure as a reason to stop rather than to lower a threshold.
+
+```bash
+ruby skills/codex-config/scripts/preflight.rb
+```
+
+`scripts/preflight.test.rb` is synthetic and offline, runs in CI, and passes independently of the
+host's Codex configuration.
+
 ## Fleet rollout
 
 Use `$fleet-maintenance` first for its host list, reachability rules, and remote PATH handling.
