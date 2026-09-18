@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed `maintainer-orchestrator`, its 214-line openclaw authorship reference, the 53-line policy test,
+  and its CI step. The skill coordinated a multi-repository OSS maintainer queue, and its reference file was
+  a dated commit-count audit of 24 `openclaw/*` repositories used to decide what fell outside the fork
+  author's responsibility. Ryan has eight repositories across two owners, authored by himself and two bots.
 - Recorded the Xcode prerequisite on the three Apple skills that need it — `instruments-profiling`,
   `native-app-performance`, and `swiftui-performance-audit`. The note states the requirement and gives a
   check to run rather than asserting what is currently installed, so it cannot go stale once Xcode is
