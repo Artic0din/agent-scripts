@@ -6,9 +6,13 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Activated the environment on the MacBook Air on 2026-09-18: rules pointers for Claude, Codex and
+  Antigravity, the Codex whole-root skills link, per-skill mirrors for Claude and Antigravity, agent links,
+  and additive hook and permission merges. Pre-activation copies of every touched file are under
+  `~/Metisary/Enviroment/backups/activation-2026-09-18/`.
 - Documented the activated state: what an installed machine's pointers and mirrors look like, the audit
-  that reports whether a given machine matches, the hand steps `install.sh` should automate, and where to
-  keep pre-activation backups.
+  that reports whether a given machine matches (rules pointers and skill mirrors only), the hand steps
+  `install.sh` should automate, and the backup convention.
 - Adopted Ryan's global rules file as `AGENTS.MD`, verbatim apart from its own canonical-path header and one
   link line, so the rules every tool reads are now versioned here. The fork's operational rules moved to
   `docs/agent-operations.md`, linked from `AGENTS.MD` and from `tools.md`.

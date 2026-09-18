@@ -5,7 +5,7 @@ One source of rules, skills, agents, hooks and MCP config, linked into each tool
 
 ## Layout
 
-Whether a given machine's tool links are in place is reported by the audit script named under Install; do not assume from this file.
+The audit script named under Install reports whether a machine's rules pointers and its Claude and Codex skill mirrors are in place; the hook merges, agent links and Antigravity steps are not audited yet.
 
 | Path | Purpose |
 | --- | --- |
@@ -36,14 +36,15 @@ On an activated machine, `~/.codex/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.claude
 machine rather than assuming; the audit exits non-zero and lists each drifted link:
 
 ```bash
-skills/fleet-maintenance/scripts/agent-skill-links-audit.sh
+bash ~/Metisary/Enviroment/config/skills/fleet-maintenance/scripts/agent-skill-links-audit.sh
 ```
 
 The sync does not cover the rest of an install, which is currently done by hand and is what
 `install.sh` should automate: merging the `config/` hook and permission entries into each tool's live
 settings (additive only), linking `agents/` into `~/.claude/agents` and `~/.codex/agents`, and the
 Antigravity rules link and skills mirror. Before activating a machine, copy every file those steps
-touch to `~/Metisary/Enviroment/backups/activation-<date>/`. Done once by hand, not linkable: `claude mcp add`,
+touch to `~/Metisary/Enviroment/backups/activation-YYYY-MM-DD/`; existing snapshots are listed by
+`ls ~/Metisary/Enviroment/backups/`, and the activation entry in `CHANGELOG.md` names each one. Done once by hand, not linkable: `claude mcp add`,
 `codex mcp add`, the two UI pastes in `config/ui-paste.md`, and exporting
 `GITHUB_PERSONAL_ACCESS_TOKEN` in the shell that launches Codex. The Codex MCP template inherits that
 variable by exact name (`env_vars`) because Codex does not expand `${VAR}` in `env`; source the value
