@@ -33,7 +33,10 @@ builds the per-machine skill mirror and instruction pointers:
 None of the links are installed yet: `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` still resolve to
 `~/Development/Workspace/Codex/AGENTS.md`, and `~/.codex/skills/agent-scripts` does not exist. Nothing
 here reaches a tool until the sync runs. Done once by hand, not linkable: `claude mcp add`,
-`codex mcp add`, and the two UI pastes in `config/ui-paste.md`.
+`codex mcp add`, the two UI pastes in `config/ui-paste.md`, and exporting
+`GITHUB_PERSONAL_ACCESS_TOKEN` in the shell that launches Codex. The Codex MCP template inherits that
+variable by exact name (`env_vars`) because Codex does not expand `${VAR}` in `env`; source the value
+from the Keychain via `$keychain`, and if it is unset the GitHub server starts with no token.
 
 Run `scripts/test-sync-skills` for isolated fixture coverage of the sync and audit.
 
