@@ -5,7 +5,16 @@ description: "GitHub deep review: bugs, PRs, best fix, stale-or-real, read code 
 
 # GitHub Deep Review
 
-Review like Peter: high-confidence, evidence-first, code-aware, and willing to say "not proven" when the trail is weak. The goal is not a generic summary. The goal is to understand the bug class, find the real cause if possible, decide the best fix after reading enough code, and call out whether a larger refactor would improve the design.
+High-confidence, evidence-first, code-aware review that is willing to say "not proven" when the
+trail is weak. The goal is not a generic summary. The goal is to understand the bug class, find the
+real cause if possible, decide the best fix after reading enough code, and call out whether a larger
+refactor would improve the design.
+
+Before using any tool, classify the terminal action as `report-only`, `fix-and-push`, or
+`full-remediation`, and say which it is. Review is `report-only` by default: no edits, no commits, no
+report files. Deliver each finding inline in the response as it is verified, rather than batching
+them at the end or deferring them into a written file, so the work survives an interruption. Write a
+report file only when explicitly asked.
 
 ## Start
 
@@ -17,8 +26,13 @@ gh pr view <n> --json number,title,state,author,body,comments,reviews,files,comm
 gh pr diff <n> --patch
 ```
 
-For PRs, collect author context by default unless the author is Peter (`steipete` or an obvious Peter-owned account). Use the local workflow in `~/Metisary/Enviroment/config/skills/github-author-context/SKILL.md` and include a short `Author context:` block near the top of the review when the author is not Peter.
-After merge/rejection/close/review, use that same author-context workflow to append a contributor note only when the interaction creates durable future-review signal.
+For PRs on repositories Ryan does not own, collect author context through `$github-author-context`
+and include its short `Author context:` block near the top of the review. Skip that pass for
+`Artic0din` and for bot authors such as `app/copilot-swe-agent` and `app/dependabot`, which is nearly
+every PR on his own repositories; review the diff on its merits instead.
+
+Afterwards, record a contributor note only when the interaction creates durable future-review signal,
+following the same skill.
 
 For repo-local review, also inspect:
 
@@ -82,7 +96,12 @@ Call out when a fix is only symptom-level. If a slightly larger refactor makes t
 
 ## PR Review Shape
 
-Lead with findings when reviewing a PR. Findings need file/line/symbol references and a concrete failure mode. Avoid vague "consider" comments.
+Lead with findings when reviewing a PR. Tag each one `[CRITICAL]`, `[PROBLEM]`, or `[SUGGESTION]`
+with a `file:line` reference and a concrete failure mode, and end with a verdict. Avoid vague
+"consider" comments. Verify a finding against the code before reporting it.
+
+A problem that predates the diff belongs in a GitHub issue rather than this review, unless it is a
+direct consequence of the change under review.
 
 If no blocking issues:
 

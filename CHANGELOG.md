@@ -6,6 +6,11 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Adapted `github-deep-review` to Ryan's review rules: classify the terminal action up front, stay
+  report-only by default, deliver findings inline as each is verified, tag them
+  `[CRITICAL|PROBLEM|SUGGESTION] file:line` with a verdict, and route pre-existing problems to an issue
+  rather than the diff under review. Author context now routes through `$github-author-context` and is
+  skipped for Ryan and for bot authors. The evidence, provenance, and fix-quality sections are unchanged.
 - Relocated every self-reference after the repo moved to `~/Metisary/Enviroment/config`, replacing 18
   `~/Projects/agent-scripts` and `/Users/steipete/Projects/agent-scripts` paths across the README, docs, and
   skills; each relocated path was checked to resolve. Recorded that the global symlinks are not installed:
