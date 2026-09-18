@@ -414,7 +414,6 @@ function renderBrewfile(inventory, hostId) {
 
 function validateInventory(inventory) {
   const errors = [];
-  const warnings = [];
   const profileNames = Object.keys(inventory.profiles || {}).sort();
   if (JSON.stringify(profileNames) !== JSON.stringify(["full", "worker"])) {
     errors.push(`profiles must be exactly full and worker; found: ${profileNames.join(", ") || "none"}`);
@@ -445,13 +444,9 @@ function validateInventory(inventory) {
     if (!inventory.profiles?.[host.profile]) errors.push(`${hostId}: unknown profile ${host.profile}`);
     for (const account of host.accounts || []) {
       if (!account.username) errors.push(`${hostId}: account missing username`);
-      if (account.onepassword_item_id == null) warnings.push(`${hostId}/${account.username}: 1Password item pending`);
-      if (account.onepassword_item_id && /^op:\/\//.test(account.onepassword_item_id)) {
-        errors.push(`${hostId}/${account.username}: store an opaque item ID, not an op:// reference`);
-      }
     }
   }
-  return { valid: errors.length === 0, errors, warnings };
+  return { valid: errors.length === 0, errors };
 }
 
 const command = process.argv[2];

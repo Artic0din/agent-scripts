@@ -25,7 +25,7 @@ source ~/.profile >/dev/null 2>&1 || true
 things auth
 ```
 
-`THINGS_AUTH_TOKEN` should come from `~/.profile` or 1Password. Never print it.
+`THINGS_AUTH_TOKEN` comes from `~/.profile` today; a Keychain item read through `$keychain` is the preferred home once one exists (item name not recorded yet — confirm with Ryan). Never print it.
 `things update --dry-run` must redact it as `auth-token=***`.
 
 ## Start
