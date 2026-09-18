@@ -39,8 +39,8 @@ new_case() {
   fixture_home=$(cd "$case_root/home" && pwd -P)
   claude="$fixture_home/.claude/skills"
   codex="$fixture_home/.codex/skills"
-  agent="$fixture_home/Projects/agent-scripts/skills"
-  manager="$fixture_home/Projects/manager/skills"
+  agent="$fixture_home/Metisary/Enviroment/config/skills"
+  manager="$fixture_home/Metisary/Enviroment/manager/skills"
   output="$case_root/output"
 }
 run_sync() { HOME="$fixture_home" /bin/bash "$sync" "$@"; }
@@ -52,12 +52,12 @@ make_skill() {
 }
 base_fixture() {
   mkdir -p "$claude" "$codex" "$agent" "$manager"
-  printf 'fixture instructions\n' >"$fixture_home/Projects/agent-scripts/AGENTS.MD"
+  printf 'fixture instructions\n' >"$fixture_home/Metisary/Enviroment/config/AGENTS.MD"
   ln -s "$agent" "$codex/agent-scripts"
   ln -s "$manager" "$codex/manager"
-  ln -s "$fixture_home/Projects/agent-scripts/AGENTS.MD" "$fixture_home/.codex/AGENTS.md"
-  ln -s "$fixture_home/Projects/agent-scripts/AGENTS.MD" "$fixture_home/.claude/AGENTS.md"
-  ln -s "$fixture_home/Projects/agent-scripts/AGENTS.MD" "$fixture_home/.claude/CLAUDE.md"
+  ln -s "$fixture_home/Metisary/Enviroment/config/AGENTS.MD" "$fixture_home/.codex/AGENTS.md"
+  ln -s "$fixture_home/Metisary/Enviroment/config/AGENTS.MD" "$fixture_home/.claude/AGENTS.md"
+  ln -s "$fixture_home/Metisary/Enviroment/config/AGENTS.MD" "$fixture_home/.claude/CLAUDE.md"
 }
 six_skills() {
   local name
@@ -196,7 +196,7 @@ printf 'nested file\n' >"$claude/boxd-cli/other-file"
 # Scoped mode needs neither canonical repo nor shared instruction pointers.
 unlink "$fixture_home/.claude/AGENTS.md"
 printf 'real instructions\n' >"$fixture_home/.claude/AGENTS.md"
-mv "$fixture_home/Projects" "$fixture_home/Projects-unavailable"
+mv "$fixture_home/Metisary" "$fixture_home/Metisary-unavailable"
 snapshot "$fixture_home" >"$case_root/before"
 run_sync --repair-nested-self-links --dry-run -- boxd-cli >"$output"
 unchanged
@@ -415,11 +415,31 @@ printf 'ordinary sync ownership, conflicts and precedence: PASS\n'
 new_case broad-audit-repair
 base_fixture
 make_skill "$agent/mirrored"
-mkdir -p "$fixture_home/Projects/agent-scripts/scripts"
-cp "$sync" "$fixture_home/Projects/agent-scripts/scripts/sync-skills"
-chmod 755 "$fixture_home/Projects/agent-scripts/scripts/sync-skills"
+mkdir -p "$fixture_home/Metisary/Enviroment/config/scripts"
+cp "$sync" "$fixture_home/Metisary/Enviroment/config/scripts/sync-skills"
+cp "$script_dir/canonical-paths.sh" "$fixture_home/Metisary/Enviroment/config/scripts/canonical-paths.sh"
+chmod 755 "$fixture_home/Metisary/Enviroment/config/scripts/sync-skills"
 run_audit --repair >"$output"
 [ "$(readlink "$claude/mirrored")" = "$agent/mirrored" ] || fail 'broad repair did not use canonical fixture owner'
 contains 'status=current'
 printf 'canonical broad audit repair routing: PASS\n'
+
+new_case missing-canonical-paths
+base_fixture
+detached="$case_root/detached"
+mkdir -p "$detached"
+cp "$sync" "$detached/sync-skills"
+code=0
+HOME="$fixture_home" /bin/bash "$detached/sync-skills" >"$output" 2>&1 || code=$?
+[ "$code" -eq 1 ] || fail "sync without canonical-paths.sh should exit 1, got $code"
+contains 'missing'
+detached_audit="$case_root/detached-audit/a/b/scripts"
+mkdir -p "$detached_audit"
+cp "$audit" "$detached_audit/agent-skill-links-audit.sh"
+code=0
+HOME="$fixture_home" /bin/bash "$detached_audit/agent-skill-links-audit.sh" >"$output" 2>&1 || code=$?
+[ "$code" -eq 2 ] || fail "audit without canonical-paths.sh should exit 2, got $code"
+contains 'reason=missing-canonical-paths'
+printf 'missing canonical-paths guard: PASS\n'
+
 printf 'sync-skills tests: ok (Bash %s)\n' "$BASH_VERSION"

@@ -40,11 +40,18 @@ if [ "$#" -gt 0 ]; then
   esac
 fi
 
-AGENT_SKILLS="$HOME/Projects/agent-scripts/skills"
-MANAGER_SKILLS="$HOME/Projects/manager/skills"
-CODEX_ROOT="$HOME/.codex/skills"
-CLAUDE_ROOT="$HOME/.claude/skills"
-AGENTS_MD="$HOME/Projects/agent-scripts/AGENTS.MD"
+canonical_paths="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/canonical-paths.sh"
+if [ ! -f "$canonical_paths" ]; then
+  printf 'sync-skills: missing %s; copy it alongside this script\n' "$canonical_paths" >&2
+  exit 1
+fi
+# shellcheck source=canonical-paths.sh
+. "$canonical_paths"
+AGENT_SKILLS="$CANONICAL_AGENT_SKILLS"
+MANAGER_SKILLS="$CANONICAL_MANAGER_SKILLS"
+CODEX_ROOT="$CANONICAL_CODEX_ROOT"
+CLAUDE_ROOT="$CANONICAL_CLAUDE_ROOT"
+AGENTS_MD="$CANONICAL_AGENTS_MD"
 
 # This mode exits before any ordinary mirror or instruction-pointer work.
 if [ "$repair" -eq 1 ]; then

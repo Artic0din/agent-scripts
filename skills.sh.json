@@ -4,85 +4,67 @@
   "groupings": [
     {
       "title": "Agent Workflows",
-      "description": "Skills for agent instructions, transcript handling, skill hygiene, and reusable workflow design.",
+      "description": "Skills for agent instructions, skill hygiene, and reusable workflow design.",
       "skills": [
-        "agent-transcript",
+        "autoreview",
+        "codex-config",
+        "codex-first",
+        "codexbar",
         "create-cli",
         "frontend-design",
         "markdown-converter",
-        "oracle",
+        "project-structure",
         "skill-cleaner"
       ]
     },
     {
-      "title": "GitHub & OpenClaw",
-      "description": "Skills for GitHub review, cache hygiene, project triage, and OpenClaw agent operations.",
+      "title": "GitHub",
+      "description": "Skills for GitHub review, project triage, and maintainer coordination.",
       "skills": [
-        "clawsweeper-status",
         "codex-debugging",
-        "discord-clawd",
         "github-author-context",
-        "github-cache-hygiene",
         "github-deep-review",
-        "github-project-triage",
-        "maintainer-orchestrator",
-        "openclaw-relay"
+        "github-project-triage"
       ]
     },
     {
       "title": "Apple & Native Apps",
       "description": "Skills for Swift, SwiftUI, Instruments, Hopper, app releases, and macOS VM labs.",
       "skills": [
-        "hopper-debugger",
         "instruments-profiling",
         "native-app-performance",
-        "release-mac-app",
         "swift-concurrency-expert",
         "swiftui-liquid-glass",
         "swiftui-performance-audit",
         "swiftui-view-refactor",
-        "vm-lab"
+        "xcode-sync"
       ]
     },
     {
-      "title": "Browser, Media & AI",
-      "description": "Skills for browser automation, screenshots, image generation, video transcripts, and X API work.",
+      "title": "Media & AI",
+      "description": "Skills for video transcripts and X API work.",
       "skills": [
-        "browser-use",
-        "nano-banana-pro",
-        "openai-image-gen",
-        "peekaboo",
         "video-transcript-downloader",
         "xurl"
       ]
     },
     {
       "title": "Comms & Knowledge",
-      "description": "Skills for messaging, notes, reminders, music, speaking workflows, and personal archives.",
+      "description": "Skills for reminders, notes, music, and personal archives.",
       "skills": [
-        "beeper",
-        "notcrawl",
-        "obsidian",
         "reminders",
         "sonos",
-        "speaking",
-        "things-todo",
-        "twilio-sms",
-        "whatsapp"
+        "things-todo"
       ]
     },
     {
       "title": "Infrastructure & Release",
-      "description": "Skills for domains, DNS, npm, Cloudflare, Wrangler, 1Password, SSH, releases, and remote machines.",
+      "description": "Skills for domains, DNS, npm, Cloudflare, Wrangler, SSH, releases, and Ryan's Macs.",
       "skills": [
-        "clickclack",
-        "cloudflare-registrar",
         "domain-dns-ops",
+        "fleet-maintenance",
+        "keychain",
         "mac-maintenance",
-        "npm",
-        "one-password",
-        "release-tweets",
-        "remote-mac",
         "ssh-doctor",
         "wrangler"
       ]

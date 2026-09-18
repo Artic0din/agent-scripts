@@ -1,35 +1,51 @@
 ---
 name: codex-debugging
-description: "Codex debugging: codex-rs core/tui/exec/cli/app-server/config."
+description: "Diagnose Codex CLI/app, configuration, tool, MCP, and runtime failures using installed-version evidence and a minimal reproduction."
 ---
 
 # Codex Debugging
 
-Use when investigating Codex CLI/app behavior, config parsing, tool behavior, prompts, MCP/app wiring, or runtime bugs.
+Use when investigating Codex CLI/app behaviour, configuration, prompts, tools, MCP/app connections, or runtime failures.
+Diagnosis is read-only unless the user has also requested a fix.
 
-## Source First
+## Establish the failure
 
-Prefer local source before web/docs:
-
-```bash
-cd ~/Projects/codex
-sed -n '1,220p' codex-rs/AGENTS.md
-```
-
-Then search targeted areas:
+Identify the affected surface: desktop app, CLI/TUI, app server, configuration, or tool integration.
+Distinguish editor diagnostics from CLI errors and runtime failures.
+Capture the exact error and a minimal reproduction at that same layer.
+For CLI work, locate the executable and inspect its installed version and relevant subcommand help:
 
 ```bash
-rg "<symbol|setting|error|feature>" codex-rs/{core,tui,exec,cli,app-server,app-server-protocol,config}
+command -v codex
+codex --version
+codex --help
 ```
 
-## Workflow
+For app-only failures, verify the app version separately; a working CLI does not prove the app is healthy.
+Inspect only the relevant configuration keys and log excerpts.
+Respect a configured `CODEX_HOME` rather than assuming every installation uses `~/.codex`.
+Account for project configuration and explicit command-line overrides when checking effective settings.
+Redact credentials, private conversation content, and internal model identifiers from reported evidence.
 
-1. Identify whether the behavior is CLI, TUI, app server, protocol, config, or exec/tooling.
-2. Read the owning module and adjacent tests before proposing changes.
-3. Check local config in `~/.codex/config.toml` only after understanding the source contract.
-4. Prefer small repros or focused tests over broad speculation.
+## Verify the contract
 
-## Notes
+Use installed help, relevant local files, and reproducible behaviour first.
+When source inspection is needed, locate an existing Codex checkout and verify its Git root and revision against the affected build.
+Read its applicable agent instructions, then use `rg` to find the owning module and adjacent tests.
+Confirm directory names in that checkout rather than assuming a fixed source layout.
 
-- For OpenAI API/product docs, use the official-docs path only when source is insufficient.
-- For local browser automation in CLI, use `$browser-use`; the bundled Browser plugin is Codex app-only.
+If no relevant checkout exists, use the available OpenAI documentation skill and official documentation or version-matched upstream source.
+State when source does not match the installed version; do not treat a difference on upstream main as proof of a local defect.
+Do not clone, install, upgrade, switch providers, or alter global configuration merely to begin diagnosis.
+
+For browser or computer interaction, use the tools and applicable skills actually available in the active harness.
+Check their capabilities instead of assuming a particular browser plugin or local integration exists.
+
+## Fix and verify
+
+Explain the confirmed cause and the smallest supported correction.
+When a fix is authorised, preserve unrelated settings, authentication, and execution-policy boundaries.
+Reproduce testable code defects with a failing regression check before changing the implementation.
+For configuration or runtime fixes, repeat the original failing operation and check a nearby working path.
+Report the evidence, changes, verification result, and remaining uncertainty separately.
+Do not claim runtime recovery from source inspection or a successful build alone.

@@ -2,9 +2,11 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
   pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
   smoke:
@@ -39,29 +41,14 @@ jobs:
           sudo apt-get install -y ripgrep
           /bin/bash scripts/test-sync-skills
 
-      - name: Test ClawSweeper status helper
-        run: skills/clawsweeper-status/scripts/clawsweeper-status.test.sh
+      - name: Test autoreview CLI options (offline, synthetic)
+        run: python3 skills/autoreview/scripts/test-autoreview.py
 
-      - name: Test npm helpers (offline, synthetic)
+      - name: Test Codex preflight (offline, synthetic)
         run: |
           test_home="$(mktemp -d)"
           trap 'rm -rf "$test_home"' EXIT
-          timeout 60s env -i HOME="$test_home" PATH="$PATH" node --test skills/npm/scripts/*.test.mjs </dev/null
-          timeout 30s env -i HOME="$test_home" PATH="$PATH" /bin/bash skills/npm/scripts/npm-auth.test.sh </dev/null
-
-      - name: Test Codex context and private-home auth preflight (offline, synthetic)
-        run: |
-          test_home="$(mktemp -d)"
-          trap 'rm -rf "$test_home"' EXIT
-          timeout 60s env -i HOME="$test_home" PATH="$PATH" ruby skills/codex-huge-context/scripts/preflight.test.rb </dev/null
-
-      - name: Test macOS release credential boundaries (synthetic)
-        run: |
-          /bin/bash skills/release-mac-app/scripts/mac-release.test.sh
-          /bin/bash skills/release-mac-app/scripts/mac-release-provider.test.sh
-
-      - name: Test maintainer orchestrator worker boundary
-        run: scripts/test-maintainer-orchestrator-policy
+          timeout 60s env -i HOME="$test_home" PATH="$PATH" ruby skills/codex-config/scripts/preflight.test.rb </dev/null
 
       - name: Build browser helper
         run: |

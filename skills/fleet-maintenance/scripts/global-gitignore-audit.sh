@@ -7,7 +7,7 @@ usage() {
 }
 
 repair=false
-fleet="$HOME/Projects/manager/fleet/inventory.json"
+fleet="$HOME/Metisary/Enviroment/manager/fleet/inventory.json"
 host_id=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -54,6 +54,12 @@ fi
 
 if [[ -z "$node_bin" ]]; then
   printf 'global-gitignore: node is unavailable\n' >&2
+  exit 1
+fi
+
+if [[ ! -f "$fleet" ]]; then
+  printf 'global-gitignore: fleet inventory not found at %s\n' "$fleet" >&2
+  printf 'global-gitignore: run an inventory first, or pass --fleet PATH\n' >&2
   exit 1
 fi
 

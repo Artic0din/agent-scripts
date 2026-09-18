@@ -1,62 +1,52 @@
 ---
 name: codexbar
-description: "AI service usage/quota via CodexBar CLI: Codex/OpenAI, Claude, Kimi and other provider limits, credits, reset times."
+description: "Check AI subscription usage, remaining limits, credits, and reset times with the installed CodexBar CLI."
 ---
 
 # CodexBar
 
-Use this when asked about AI subscription usage, rate limits, remaining credits, or "how much Codex/Claude/Kimi do I have left".
+Use when asked about AI subscription usage, rate limits, remaining credits, or how much Codex/Claude usage is left.
 
 ## CLI
 
-- Binary: `codexbar` (Homebrew)
-- Default invocation honors the in-app provider toggles:
+Locate the installed CLI and check its supported flags before fetching usage:
 
 ```bash
-codexbar usage
-codexbar usage --format json
+command -v codexbar
+codexbar --version
+codexbar usage --help
 ```
 
-- Specific provider (`--provider` accepts codex, claude, kimi, gemini, copilot, cursor, openrouter, and many more — see `codexbar --help`):
+Query the provider requested by the user:
 
 ```bash
-codexbar usage --provider codex --json
-codexbar usage --provider claude --json
+codexbar usage --provider codex --format json
+codexbar usage --provider claude --format json
 ```
 
-- Multiple accounts: `--account <label>`, `--account-index <n>`, or `--all-accounts` (single provider only).
+For an overview of enabled providers, use `codexbar usage --format json`.
+Use `--account <label>` or `--account-index <n>` only when a specific configured account is needed.
+Use `--all-accounts` only for a requested account-wide comparison; account selection requires one provider.
+Confirm other provider identifiers and source options in the installed help rather than keeping a provider list here.
 
-## Auth model
+## Authentication and failures
 
-Provider fetches ride existing sessions — OAuth caches, CLI credentials, or browser cookies. No secrets are passed on the command line.
+Use CodexBar's existing authentication and automatic source selection by default.
+Available sources and fallback behaviour vary by provider and installed version.
+Inspect the specific provider error before changing the source or proposing a login repair.
+Never print tokens, cookies, raw credential files, or authentication debug dumps.
+Keep credential retrieval and repair in the approved credential workflow; do not add credentials to command arguments.
 
-- Codex: OpenAI web dashboard via oauth; falls back to Codex CLI.
-- Claude: claude.ai API via browser session cookie; falls back to Claude CLI. "No Claude session key found in browser cookies" means log in to claude.ai in a supported browser (or rely on the CLI fallback).
-- Token-based providers read the CodexBar config file.
+If a request is slow or silent, inspect elapsed time, process state, and relevant redacted errors.
+Silence alone does not establish a hang, authentication failure, or macOS permission prompt.
+Use visible app inspection only when evidence points to a dialog or app problem.
+If the CLI is unavailable, report that limitation and use an available authenticated usage interface when appropriate; do not invent dashboard endpoints or install tools implicitly.
 
-## Dashboard endpoints
+## Report the result
 
-The menu bar app serves its dashboard on loopback. The page pulls
-`/dashboard/v1/snapshot` and `/cost`; there is no `/api/*` namespace, so those
-paths 404 rather than telling you that you guessed. The snapshot endpoint
-requires auth, so when the CLI is unavailable the quickest honest check is to
-open the dashboard in a browser.
-
-`usage --all-accounts` polls every account serially and takes well over ninety
-seconds. If it produces *zero* bytes on both stdout and stderr, it is not slow,
-it is blocked: the CLI is a helper inside `CodexBar.app`, and a pending macOS
-Gatekeeper prompt stops it dead with no output. Screenshot the screen before
-debugging the command.
-
-## Interpreting output
-
-- Errors for providers that were never configured are noise, not failures — only report providers the user actually uses.
-- Report percentage left, pace vs. expected, and reset time; the pace line ("in deficit"/"in reserve") is the actionable bit.
-- Claude rows read `claude-swap` **stored backups**, which produces two
-  confusing readings. The currently active slot shows as having no stored
-  credentials, because the live login is an `active profile` and its backup only
-  materialises when you switch away. And `claude-swap` keeps a `last seen`
-  percentage that keeps rendering for accounts whose credentials are gone, so a
-  dead account can read as healthy for days. A plausible percentage is not proof
-  of a working credential; only `refresh token yes` in
-  `claude-swap list --token-status` is.
+Report the requested provider/account, each returned limit window, usage or remaining percentage, and reset time when supplied.
+Label used and remaining values explicitly; do not confuse one with the other.
+Include credits and pace only when the returned data supports them, keeping credits separate from subscription limits.
+Check provider-level errors and freshness as well as command exit status.
+Mark cached or stale readings as such, and do not present missing values or failed refreshes as zero usage or available quota.
+Ignore unconfigured providers outside the request; report failures for requested providers clearly.

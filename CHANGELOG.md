@@ -6,6 +6,148 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed `docs/npm-publish-with-1password.md`, the last file still routing through the deleted `npm` and
+  `one-password` skills, and dropped the `op` reference it left in `docs/RELEASING.md`.
+- Final sweep of everything outside `skills/`. Rewrote `tools.md` around the CLIs actually installed here
+  (`gh`, `repobar`, `mcporter`, `gitleaks`, `xcodes`, `yt-dlp`, `imsg`) instead of the fork author's `bird`,
+  `sonoscli`, and Sweetistics; Sonos is reached through the Claude connector, not a CLI. The repo-sync audit
+  and update scripts now require an explicit root rather than defaulting to `~/Projects`, which is empty
+  here, and `fleet-maintenance` says so. Made the README's sync examples and the sectriage `package`
+  line generic. Removed three empty, untracked skill directories left behind by earlier deletions.
+- Reconciled `skills.sh.json` with the skills that exist: dropped four catalogue entries for removed
+  skills and added five that were never listed. All 31 skills are now grouped, and every grouped name
+  resolves to a real `SKILL.md`.
+- Cleared the remaining upstream identity from every skill. `wrangler` carried two Cloudflare account IDs
+  belonging to the fork author and now defers to `$domain-dns-ops` for the canonical account; `skill-cleaner`
+  dropped its OpenClaw log roots, Dropbox skill root, and a `~/.openclaw` probe; the fleet collector now
+  looks for Ryan's fifteen installed CLIs rather than the fork's crawlers; `xurl` lost its upstream plugin
+  metadata; `project-structure` and `things-todo` lost their last named references.
+- Removed `speaking`. It was the fork author's conference workflow end to end, including a live Google Sheet
+  identifier and his own travel decisions, and the `gog` CLI every command depends on is not installed.
+- Removed `maintainer-orchestrator`, its 214-line openclaw authorship reference, the 53-line policy test,
+  and its CI step. The skill coordinated a multi-repository OSS maintainer queue, and its reference file was
+  a dated commit-count audit of 24 `openclaw/*` repositories used to decide what fell outside the fork
+  author's responsibility. Ryan has eight repositories across two owners, authored by himself and two bots.
+- Recorded the Xcode prerequisite on the three Apple skills that need it — `instruments-profiling`,
+  `native-app-performance`, and `swiftui-performance-audit`. The note states the requirement and gives a
+  check to run rather than asserting what is currently installed, so it cannot go stale once Xcode is
+  added. None of the six Apple skills carried upstream contamination, and the three needing no Xcode are
+  unchanged.
+- Extracted the canonical environment paths into `scripts/canonical-paths.sh`, sourced by both
+  `sync-skills` and the skill-link audit, so the two can no longer disagree about where the repo lives.
+- CI now runs on every branch push, not only `main` and pull requests, so a broken suite is caught at the
+  first push instead of surviving several commits on a feature branch.
+- Removed the `release-mac-app` skill and its Sparkle release machinery: 2,968 lines across six files,
+  plus `docs/RELEASING-MAC.md`, `docs/mac-app.md`, the `release/sparkle_lib.sh` compatibility shim, and the
+  CI step covering its three credential-boundary suites. No repository of Ryan's uses Sparkle, nothing
+  sourced the shim, and the skill carried most of the remaining 1Password coupling.
+- Removed the tracked `tmp/` scratch files left by the fork's pr474 chunking commits.
+- Fixed `sync-skills` and its test fixture, which were left on the old `~/Projects/agent-scripts` layout
+  when the skill-link audit moved to `~/Metisary/Enviroment/config`, breaking `test-sync-skills`.
+- Updated `AGENTS.MD` for the renamed skills: `$codex-huge-context` is now `$codex-config`,
+  `$one-password` is now `$keychain`, and the `op` service-account and `op-work` tmux rule is replaced by
+  the `security` rule, which requires scoped reads and a non-empty value because a locked keychain or
+  missing item returns empty rather than failing.
+- Removed Peekaboo everywhere at Ryan's request: dropped the `vm-lab` skill, whose purpose was Peekaboo
+  validation inside Parallels and whose Parallels, Ghostty, and Peekaboo-checkout dependencies are all
+  absent; removed it from `fleet-profile.mjs`'s detected-CLI list, from `github-project-triage`'s UI proof
+  path, and as the Swift size example in `project-structure`. The Homebrew formula was uninstalled too.
+- Restored `preflight.rb` and its test into `codex-config/scripts/` after removing them without naming
+  them first, and restored the CI step at the new path. The skill now records what the preflight covers
+  and that it fails by design against the current ChatGPT-auth setup, which has no direct provider.
+- Removed the `hopper-debugger` and `oracle` skills at Ryan's request, and dropped both from the
+  catalogue. This also retires four of the unmapped upstream directories: `~/Projects/oracle`,
+  `~/Projects/oracle/dist/scripts`, `~/Projects/Peekaboo`, and the Dropbox Hopper path.
+- Renamed `codex-huge-context` to `codex-config` and rewrote it around the setup Ryan actually runs. His
+  Codex authenticates with ChatGPT OAuth (`auth_mode = "chatgpt"`, `OPENAI_API_KEY` null) and has no
+  provider table or custom catalogue, so the direct-API route, its Keychain auth helper, and the 245-line
+  preflight with its tests were removed. The 922K/700K override is now documented as a thing not to add:
+  on the ChatGPT route it yields `context_length_exceeded` with a compaction request too large to succeed.
+  Kept the provider-independent parts: model and reasoning settings, the shared app-server restart rule,
+  login handling, fleet rollout, and verification. Repointed `codex-first`, `project-structure`, and
+  `keychain`, whose example cited an auth helper that was never configured here.
+- Replaced the `one-password` skill with `keychain`, built on `/usr/bin/security`, because Ryan uses the
+  macOS Keychain and Apple Passwords rather than 1Password, which is installed on none of his Macs. The
+  guard shape is preserved and the tmux credential sandbox is gone: a Keychain secret pipes straight into
+  one command, so there is no environment to contain. Documents the empty-output trap, where a locked
+  keychain or missing item returns nothing rather than failing, and gives a verified guard for it.
+- Removed the `npm` skill and its eight scripts. Its pipeline required `op`, `tmux`, and an npm login that
+  do not exist here, and Ryan publishes no packages; the one publishable package in his repos is another
+  maintainer's. Repointed `codex-huge-context`, `oracle`, `twilio-sms`, and `hopper-debugger` at `$keychain`
+  without inventing Keychain item names, which each skill's own pass will confirm.
+- Made `global-gitignore-audit.sh` report a missing fleet inventory instead of dying with a Node stack
+  trace, matching the script's existing prerequisite messages and pointing at `--fleet PATH`.
+- Remapped the manager and Codex paths Ryan confirmed: the fleet inventory and manager skills now live
+  under `~/Metisary/Enviroment/manager/`, conference strategy under the same root, and the Codex catalogue,
+  auth command, and keychain point at his own home. The two `config.toml` values stay absolute because TOML
+  does not expand `~`; the keychain path inside the zsh auth script does expand and is left as `~`.
+- Restored four `fleet-maintenance` scripts removed earlier on a bad availability check:
+  `agent-cli-audit.sh` (Codex 0.155.0 and Claude 2.1.276 are installed in `~/.local/bin`, not Homebrew),
+  `fleet-profile.mjs` (its `collect` needs no inventory), `agent-skill-links-audit.sh` (124 Claude and
+  94 Codex skills are mirrored), and both test suites, which pass. Repointed the skill-link audit at
+  `~/Metisary/Enviroment/config`; it now independently reports the same install drift as a manual check.
+- Adapted `github-project-triage` to Ryan's GitHub: owners `Artic0din` and `Plaintext-Lab` (several repos
+  were transferred to the org and now redirect), and a project-board pass over the `Development` board,
+  which the skill's name implied but never used. Kept RepoBar as the broad-discovery pass and documented
+  its installed path, with `gh repo list --json issues,pullRequests` as the fallback; those counts are
+  open items only, verified against a live repo. Kept `peekaboo` as the live UI proof path. Removed the
+  clawdbot, clawtributors, gitcrawl, and browser-use routes, none of which are installed. The bundled
+  activity helper no longer defaults to `openclaw/openclaw` and now requires `--repo` with a clear error.
+- Adapted `github-deep-review` to Ryan's review rules: classify the terminal action up front, stay
+  report-only by default, deliver findings inline as each is verified, tag them
+  `[CRITICAL|PROBLEM|SUGGESTION] file:line` with a verdict, and route pre-existing problems to an issue
+  rather than the diff under review. Author context now routes through `$github-author-context` and is
+  skipped for Ryan and for bot authors. The evidence, provenance, and fix-quality sections are unchanged.
+- Relocated every self-reference after the repo moved to `~/Metisary/Enviroment/config`, replacing 18
+  `~/Projects/agent-scripts` and `/Users/steipete/Projects/agent-scripts` paths across the README, docs, and
+  skills; each relocated path was checked to resolve. Recorded that the global symlinks are not installed:
+  `~/.claude/CLAUDE.md` still resolves to `~/Development/Workspace/Codex/AGENTS.md`, a different file.
+  Left `skill-cleaner`'s TypeScript path matching and `release-mac-app`'s in-progress edits alone.
+- Adapted `github-author-context` to Ryan's GitHub use: skip himself and bot authors, drop the private
+  OpenClaw maintainer tooling and contributor-note helper, and route durable findings to `ryan-knowledge`.
+  Corrected two inherited command bugs found by running them — `gh search prs` has no `--state merged`
+  (merged is its own flag), and on a private repository search is unavailable while `gh pr list --author`
+  returns an empty list instead of failing, so author activity must be filtered client-side.
+- Refreshed the vendored `frontend-design` skill from the installed Anthropic plugin revision
+  `ea0a38e1d671`, picking up the design-process, AI-default calibration, restraint, and writing-in-design
+  sections the old snapshot predated. The copy stays in this repo because Codex cannot load Claude plugins.
+  Kept the repo's `LICENSE.txt`, which retains the Anthropic copyright notice the plugin's copy omits.
+- Re-enabled `fleet-maintenance` for Ryan's verified three-Mac LAN fleet: host table with SSH reach and
+  the non-interactive PATH gotcha, explicit repository roots, and health, Homebrew, npm, repo, macOS, and
+  Xcode passes. Removed the upstream Tailscale mesh, inventory profiles, Octopool, 1Password escrow, and
+  attribution-stripping requirements, none of which exist in Ryan's environment.
+- Repointed `codex-huge-context` and `xcode-sync` host resolution at `fleet-maintenance` instead of the
+  absent `computers.yaml` and Tailscale state, and dropped the deleted skill-link audit from the README.
+- Fixed `mac-maintenance` scanning the empty `~/Projects`, so its repository pass now reaches Ryan's real
+  checkouts instead of silently doing nothing.
+- Hardened autoreview against untracked-file disclosure, out-of-checkout Codex reads, project-controlled Claude execution, stale-ref mutation, oversized prompts, and non-UTF-8 paths; disabled the unadapted upstream fleet workflow, restored a truthful 1Password guard route, and aligned release credential routing.
+- Tailored domain-dns-ops to Ryan's verified Cloudflare zones, Worker and Pages domains, mail routing, and tunnel-aware DNS workflow.
+- Made create-cli's bundled guidelines link independent of checkout location.
+- Removed unused messaging, browser, and external-repository skills, and aligned the catalogue and README with the retained local skills.
+- Simplified codexbar around installed CLI capabilities and provider-scoped usage checks, removing account-switching and speculative failure assumptions.
+- Adapted codex-debugging to installed-version diagnosis, discoverable source checkouts, scoped configuration inspection, and available browser tools.
+- Removed the Cloudflare Registrar skill; retained Cloudflare deployment and DNS skills for later customisation.
+- Removed the agent-transcript skill and its local transcript-export helper.
+- Simplified codex-first for native Claude delegation, inherited Codex model/execution settings, portable skill links, isolated autoreview, and evidence-based worker recovery.
+- Restored the local autoreview helper and acceptance harness with executable paths, portable skill instructions, and Codex reasoning/service-tier options.
+- Fixed autoreview following untracked symlinks, mishandling quoted Git filenames, and relying on Claude tool preapproval instead of restricting tool availability.
+- Fixed autoreview omitting landed changes from merge commits and made it reject oversized inputs.
+- Restricted autoreview to Codex and Claude, removed unused engine adapters and JSONL parsing, and disabled inherited Codex integrations and web search when requested.
+
+- Removed OpenClaw relay, ClickClack operations, Peter's remote Mac and Birdclaw routes, Octopool cache guidance, and Obsidian skills; removed the stale ClawSweeper CI step.
+
+- Route intentional Team restarts through one coordinator session on Stable, preserving explicit deployment approval and holding restarts while the coordinator is unidentified or unavailable.
+
+- Require Peter's explicit approval for each Team server deployment and keep automatic deployment disabled, preserving scoped incident repair without an automatic follow-up upgrade.
+
+- Correct the OpenClaw deployment account to `services@openclaw.org`.
+
+- Corrected browser relay timeout recovery to persist canonical controls, distinguish per-step and total startup deadlines, require HTTP base URLs for explicit overrides, explain the 0.13.10 discovery fallback, and verify saved relay-only policy across daemon respawns.
+
+- Pin macOS release credential runners to system Bash so the shared tmux server's PATH cannot select an incompatible shell.
+
+- Fixed false macOS signing-canary failures on long signature reports while preserving Apple trust and Developer ID authority checks.
+
 - Run the Codex direct-route preflight regression suite in CI with a clean environment and temporary HOME, covering private-home auth delivery and secret-safe failures without live credentials.
 
 - Make Codex Keychain helper guidance independent of private reviewer HOME paths and add a secret-safe `--private-home` delivery diagnostic without changing reviewer isolation or provider selection.

@@ -5,7 +5,7 @@ description: "Things 3 via things CLI: add, list, search, update, delete, verify
 
 # Things Todo
 
-Use this for Things 3 tasks on Peter's Macs. Prefer `things` for Things-backed
+Use this for Things 3 tasks on Ryan's Macs. Prefer `things` for Things-backed
 todos; use `$reminders` only when the user asks for Apple Reminders.
 
 ## Tool

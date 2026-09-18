@@ -12,8 +12,10 @@ Use for Cloudflare Wrangler CLI work: deploys, tails, KV/R2/D1/Queues/Workers, s
 - Retrieval first for flags/config: `wrangler --help`, subcommand `--help`, local `node_modules/wrangler/config-schema.json`, then Cloudflare docs.
 - Prefer repo wrapper: `npm exec --yes --package wrangler -- wrangler ...` unless repo has its own script.
 - `wrangler whoami` before account-sensitive work.
-- ReleaseBar prod account: `Steipete@gmail.com's Account` / `de09342a728de2c25c85cc6b34d68739`.
-- OpenClaw projects: use OpenClaw account / `91b59577e757131d68d55a471fe32aca`. Ask if unsure.
+- One Cloudflare account applies here. `$domain-dns-ops` holds the canonical account ID, zones, and
+  Worker domains; read it rather than repeating the identifiers.
+- There may be no global `wrangler`; `QRble` and `Synapse` each ship a `wrangler.toml`, so prefer the
+  repo wrapper above. Check rather than assume: `command -v wrangler || echo "use the repo wrapper"`.
 
 ## Pitfalls
 

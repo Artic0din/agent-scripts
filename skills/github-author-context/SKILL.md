@@ -5,68 +5,83 @@ description: "GitHub contributor context: identity, activity, trust, company/tea
 
 # GitHub Author Context
 
-Build a compact maintainer-facing profile for a PR author or GitHub user. Use this by default during PR review unless the author is Peter (`steipete`, `Peter Steinberger`, or an obvious Peter-owned bot/account).
+Build a compact profile of a PR author or GitHub user before reviewing their work.
+
+Most useful on repositories Ryan does not own. His own repositories are authored by
+himself and by bots, so the profile pass rarely earns its cost there.
+
+## When to skip
+
+- `Artic0din` is Ryan. Skip unless he explicitly asks.
+- Bot authors carry no trust signal. `gh` reports them as `app/<name>`, and
+  `.author.is_bot` is `true`; `app/copilot-swe-agent` and `app/dependabot` are the two
+  seen here. Record the bot name and review the diff on its merits instead.
+
+```bash
+gh pr view <n> --json author -q '{login:.author.login,bot:.author.is_bot}'
+```
 
 ## Inputs
 
 Prefer a GitHub login. From a PR:
 
 ```bash
-gh pr view <n> --json author,url,headRepository,baseRepository -q '{author:.author.login,url:.url,repo:.baseRepository.nameWithOwner}'
+gh pr view <n> --json author,url,headRepository,baseRepository \
+  -q '{author:.author.login,url:.url,repo:.baseRepository.nameWithOwner}'
 ```
 
-Skip the profile pass for `steipete` unless the user explicitly asks.
+## Source order
 
-## Source Order
-
-1. OpenClaw contributor notes:
+1. Live GitHub public profile:
 
 ```bash
-~/Projects/maintainers/scripts/clawtributors find github <login>
+gh api "users/<login>" \
+  --jq '{login,name,company,location,bio,blog,twitter_username,created_at,followers,following,public_repos}'
 ```
 
-If a contributor file matches in `~/Projects/maintainers/contributors/people`, read only:
+2. Target-repo activity. Which command works depends on repository visibility, and
+   picking the wrong one returns a confidently empty answer:
 
-- `Identity`
-- `Signals`
-- `Context`
-- `Evidence`
-- `Notes`
-
-Fallback only when the new contributor file is missing and old maintainer context might help:
+**Public repositories** — search works:
 
 ```bash
-rg -n -i "<login>|<name>|<discord>" ~/Projects/openclaw-maintainers/people ~/Projects/openclaw-maintainers/data
+gh search prs --repo <owner/repo> --author <login> --merged --limit 20 --json number,title,url
+gh search prs --repo <owner/repo> --author <login> --state open --limit 20 --json number,title,url
+gh search issues --repo <owner/repo> --author <login> --state open --limit 20 --json number,title,url
 ```
 
-If an old person file matches, read only the relevant sections:
+`--state merged` is not valid here; merged state is the separate `--merged` flag.
 
-- `Verdict`
-- `Identity`
-- `Company Affiliation`
-- `Metrics`
-- `Discord Communication`
-- `Evidence`
-- `Risks` / `Concerns` / `Recommendation` when present
-
-2. Live GitHub public profile:
+**Private repositories** — search is not available, and `gh pr list --author` silently
+returns `[]` instead of failing. Verified on `Artic0din/Pulse`: `--author Artic0din`
+returned nothing while that author had 40 merged pull requests. List first, then filter
+client-side:
 
 ```bash
-gh api "users/<login>" --jq '{login,name,company,location,bio,blog,twitter_username,created_at,followers,following,public_repos}'
+gh pr list --repo <owner/repo> --state merged --limit 100 \
+  --json number,title,mergedAt,author -q '[.[] | select(.author.login=="<login>")]'
 ```
 
-3. Target-repo activity:
+Never read an empty result as "no history" without confirming the query could have
+returned anything. Check visibility when unsure:
 
 ```bash
-gh search prs --repo <owner/repo> --author <login> --state merged --limit 20 --json number,title,mergedAt,url
-gh search prs --repo <owner/repo> --author <login> --state open --limit 20 --json number,title,updatedAt,url
-gh search issues --repo <owner/repo> --author <login> --state open --limit 20 --json number,title,updatedAt,url
+gh repo view <owner/repo> --json isPrivate -q .isPrivate
+```
+
+Collaborator permission, on either kind of repo:
+
+```bash
 gh api "repos/<owner>/<repo>/collaborators/<login>/permission" --jq '{permission,user:.user.login}' 2>/dev/null || true
 ```
 
-For OpenClaw, prefer the new `openclaw/maintainers` contributor file over recomputing activity unless freshness clearly matters.
+The permission endpoint needs push access on the repository being queried. With it, a
+non-collaborator returns `permission: none`. Without it — the normal case on a repo Ryan
+does not own — it returns HTTP 403 `Must have push access to view collaborator
+permission`, which is why the call ends in `|| true`. Neither result is an error to
+report, and neither says anything about the author.
 
-4. Local git evidence when useful:
+3. Local git evidence, when the repo is checked out:
 
 ```bash
 git log --all --author="<login>" --since="90 days ago" --oneline --decorate --no-merges | head -40
@@ -81,22 +96,23 @@ Keep it short. Add this block near the top of a PR review:
 Author context: @login
 - Who: <name/company/location/role, confidence>
 - Activity: <merged/open PRs, issues, reviews/commits if known>
-- OpenClaw signal: <maintainer/candidate/drive-by/vendor/security/unknown>
+- Standing: <maintainer/collaborator/repeat contributor/drive-by/bot/unknown>
 - Risk: <review-load, broad PRs, low history, company-governance, none obvious>
 ```
 
-Do not quote private phone/email/contact details unless Peter asks. Separate employer from company-directed OpenClaw work; almost everyone has an employer.
+State confidence. A public profile is self-reported: an empty `company` field is
+absence of evidence, not evidence of independence. Separate someone's employer from
+work their employer directed; almost everyone has an employer.
 
-## Contributor Notes
+Never quote private phone, email, or contact details unless Ryan asks. Do not compile a
+profile beyond what the review needs.
 
-After a merge/rejection/close/review, add a note only if it creates future review value: first good merge, unusually strong work, repeated quality problems, slop, no-repro churn, exceptional responsiveness, lack of follow-through, or identity confirmation.
+## Durable notes
 
-Use the maintainer repo helper so Markdown stays consistent:
+Record a contributor finding only when it creates future review value: a first good
+merge, unusually strong work, repeated quality problems, no-repro churn, or identity
+confirmation. Ordinary review noise is not worth keeping.
 
-```bash
-~/Projects/maintainers/scripts/clawtributors note github <login> --kind merged --pr <n> --summary "Focused bug fix. Tests credible. Smooth review."
-~/Projects/maintainers/scripts/clawtributors note github <login> --kind rejected --pr <n> --summary "Broad generated refactor; no reproducible bug; asked to split."
-~/Projects/maintainers/scripts/clawtributors link github <login> discord <id> --username <discord> --confidence high --evidence "Self-linked authored PRs in #clawtributors."
-```
-
-Keep notes terse, factual, dated, and linked. Do not record ordinary noise.
+Notes belong in the `ryan-knowledge` Basic Memory project, which is the existing home
+for durable verified knowledge. Search it before writing, and keep each note terse,
+dated, and linked to the pull request it came from.

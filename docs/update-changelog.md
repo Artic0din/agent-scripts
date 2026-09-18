@@ -32,7 +32,7 @@ Purpose: curate user-facing changes since the last release tag and record them i
    - If preparing a release, keep the “Unreleased” block separate from the versioned section and move the curated notes under the new version when tagging.
 5) **Sanity checks**
    - Markdown renders; no duplicate entries; wording concise.
-   - If a release just shipped, start a fresh `Unreleased` section for the next patch (per `docs/RELEASING-MAC.md` guidance).
+   - If a release just shipped, start a fresh `Unreleased` section for the next patch (per `docs/RELEASING.md` guidance).
 
 ## Quick format example
 ```markdown

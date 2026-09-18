@@ -598,8 +598,6 @@ function recentLogFiles(): string[] {
   if (deepLogs) {
     roots.push(
       path.join(home, ".codex/archived_sessions"),
-      path.join(home, ".openclaw"),
-      path.join(home, ".clawd"),
     );
   }
   const history = path.join(home, ".codex/history.jsonl");
