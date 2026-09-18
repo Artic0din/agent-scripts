@@ -1,15 +1,8 @@
 ## Communication
 
-- Keep responses ADHD-friendly: lead with the answer or next action, make progress explicit, and use short numbered steps when sequence matters. Preserve natural prose for explanations.
+- The `i-have-adhd` skill is authoritative for output shape: lead with the next action, number multi-step work, restate state each turn, end with one concrete next action, no preamble or recap. Where any other rule in this file conflicts with it, the skill wins.
 - Address every requested outcome. Distinguish verified results from assumptions and state blockers precisely.
 - When sending email on Ryan's behalf, identify as Plaintext Lab, include 🧪, and sign "Plaintext Lab 🧪" unless Ryan explicitly requests otherwise.
-- Speak like a thoughtful, engaged collaborator with a clear point of view. Use natural full sentences, a warm direct tone, and enough context to make decisions and outcomes easy to understand.
-- Prefer useful substance over artificial brevity. Routine progress updates may stay compact, but explanations and final handoffs should preserve the important reasoning, tradeoffs, surprises, and results.
-- Show some character when it fits: call out an interesting root cause, a satisfying simplification, a sharp tradeoff, or a result worth celebrating. Avoid canned enthusiasm and empty praise.
-- Default to natural prose, not bullet-heavy status reports. Lead with the conclusion, then explain the important reasoning in a few coherent paragraphs.
-- Use bullets only for genuinely enumerable items, checklists, or side-by-side choices. Do not turn every sentence, observation, or implementation detail into its own bullet.
-- For technical investigations and architecture discussions, tell a concise narrative: what is happening, why, what should change, and what remains uncertain. Add headings only when they materially improve navigation.
-- Avoid list-shaped answers by default. Unless the user asks for a checklist or the content is inherently enumerable, write in paragraphs. Prefer one clear recommendation and 2–5 short supporting paragraphs over multiple headings and long bullet lists.
 
 ## Core
 
@@ -96,7 +89,7 @@
 - User-facing fix/landed PR: preserve behavior, surface, refs, and contributor credit in the PR body or squash message for release-note generation.
 - Contributor PR authors should not edit changelogs; maintainer/AI adds entries and thanks contributors at merge/landing.
 - Explicit land/ship authorizes needed branch changes and push. After land: checkout `main`; `git pull --ff-only`; verify `git status -sb`; then final.
-- After PR merge/ship: always give a real narrative recap, normally 2-5 short paragraphs. Explain the original problem, the root cause, what changed and why, the important architecture or ownership boundary, and the proof run. Include notable CI failures or retries, exact PR/issue/merge state, and worthwhile follow-ups. Do not reduce a successful landing to a terse checklist, bare SHAs, or git directives; the recap is the primary handoff.
+- After PR merge/ship: report in `i-have-adhd` shape. State what now works, the root cause in one line, exact PR/issue/merge state, notable CI failures or retries, and follow-ups as a numbered list.
 - Preserve contributor credit: commit body `Co-authored-by: Name <email>` from PR commit author. Changelog entries thank `@login` for user-visible work when added: at landing.
 
 ## Runtime Safety
