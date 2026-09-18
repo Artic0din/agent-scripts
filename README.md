@@ -5,7 +5,7 @@ One source of rules, skills, agents, hooks and MCP config, linked into each tool
 
 ## Layout
 
-Target layout. The tool links described here are created by the installer and are not in place yet; see Install.
+The tool links described here are in place on the MacBook Air as of 2026-09-18; the other Macs are not activated yet. See Install.
 
 | Path | Purpose |
 | --- | --- |
@@ -30,9 +30,14 @@ builds the per-machine skill mirror and instruction pointers:
 - Name collisions resolve agent-scripts > codex-local; the script prints skipped duplicates and prunes broken or stale managed links, and never clobbers real files.
 - `sync-skills` and `skills/fleet-maintenance/scripts/agent-skill-links-audit.sh` share `scripts/canonical-paths.sh`, so the sync and the audit cannot disagree about where the repo lives.
 
-None of the links are installed yet: `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` still resolve to
-`~/Development/Workspace/Codex/AGENTS.md`, and `~/.codex/skills/agent-scripts` does not exist. Nothing
-here reaches a tool until the sync runs. Done once by hand, not linkable: `claude mcp add`,
+On the MacBook Air the sync has run: `~/.codex/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.claude/AGENTS.md`
+and `~/.gemini/GEMINI.md` resolve to this repo's `AGENTS.MD`, `~/.codex/skills/agent-scripts` links to
+`skills/`, and every skill here is mirrored into `~/.claude/skills` and `~/.gemini/skills`. The sync does
+not cover the rest of an install, which was done by hand and is what `install.sh` should automate:
+merging the `config/` hook and permission entries into each tool's live settings (additive only),
+linking `agents/` into `~/.claude/agents` and `~/.codex/agents`, and the Antigravity rules link and
+skills mirror. Pre-activation copies of every touched file live under
+`~/Metisary/Enviroment/backups/activation-2026-09-18/`. Done once by hand, not linkable: `claude mcp add`,
 `codex mcp add`, the two UI pastes in `config/ui-paste.md`, and exporting
 `GITHUB_PERSONAL_ACCESS_TOKEN` in the shell that launches Codex. The Codex MCP template inherits that
 variable by exact name (`env_vars`) because Codex does not expand `${VAR}` in `env`; source the value
