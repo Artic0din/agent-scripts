@@ -6,6 +6,13 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Adapted `github-project-triage` to Ryan's GitHub: owners `Artic0din` and `Plaintext-Lab` (several repos
+  were transferred to the org and now redirect), and a project-board pass over the `Development` board,
+  which the skill's name implied but never used. Kept RepoBar as the broad-discovery pass and documented
+  its installed path, with `gh repo list --json issues,pullRequests` as the fallback; those counts are
+  open items only, verified against a live repo. Kept `peekaboo` as the live UI proof path. Removed the
+  clawdbot, clawtributors, gitcrawl, and browser-use routes, none of which are installed. The bundled
+  activity helper no longer defaults to `openclaw/openclaw` and now requires `--repo` with a clear error.
 - Adapted `github-deep-review` to Ryan's review rules: classify the terminal action up front, stay
   report-only by default, deliver findings inline as each is verified, tag them
   `[CRITICAL|PROBLEM|SUGGESTION] file:line` with a verdict, and route pre-existing problems to an issue

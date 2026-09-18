@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo="openclaw/openclaw"
+repo=""
 months="12"
 include_global="0"
 
 usage() {
-  printf 'Usage: %s [--repo owner/repo] [--months N] [--global] <github-login> [login...]\n' "$0"
+  printf 'Usage: %s --repo owner/repo [--months N] [--global] <github-login> [login...]\n' "$0"
 }
 
 die() {
@@ -129,6 +129,8 @@ done
   usage >&2
   exit 2
 }
+
+[[ -n "$repo" ]] || die "--repo owner/name is required"
 
 need gh
 need jq
