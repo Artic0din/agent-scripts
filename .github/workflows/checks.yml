@@ -1,0 +1,12 @@
+name: Checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  baseline:
+    uses: Artic0din/reusable-workflows/.github/workflows/baseline.yml@main
+    with:
+      required-files: README.md, .gitignore, AGENTS.MD

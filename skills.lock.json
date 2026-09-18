@@ -1,0 +1,12 @@
+{
+  "skills": {
+    "i-have-adhd": {
+      "source": "local"
+    },
+    "ponytail": {
+      "source": "https://github.com/DietrichGebert/ponytail.git",
+      "ref": "main",
+      "path": "skills/ponytail"
+    }
+  }
+}

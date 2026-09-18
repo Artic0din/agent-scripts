@@ -1,0 +1,10 @@
+# Copy to ~/.codex/config.toml. The real file stays machine-local: it may hold credentials.
+approval_policy = "on-request"
+
+[features]
+hooks = true
+
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_TOKEN}" }
