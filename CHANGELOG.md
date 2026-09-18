@@ -6,6 +6,9 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Adopted Ryan's global rules file as `AGENTS.MD`, verbatim apart from its own canonical-path header and one
+  link line, so the rules every tool reads are now versioned here. The fork's operational rules moved to
+  `docs/agent-operations.md`, linked from `AGENTS.MD` and from `tools.md`.
 - Adopted the rebuilt environment layout: `agents/` definitions for Claude, Codex, and Antigravity;
   per-tool hook, settings, and MCP files under `config/`; the engineering constitution and PR standards
   under `docs/`; a baseline `checks.yml` workflow; and `skills.lock.json` for install-managed externals.
