@@ -6,7 +6,15 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
-- Hardened autoreview against untracked-file disclosure, stale-ref mutation, oversized prompts, and Claude project-setting or filesystem access; disabled the unadapted upstream fleet workflow and restored a truthful 1Password guard route.
+- Re-enabled `fleet-maintenance` for Ryan's verified three-Mac LAN fleet: host table with SSH reach and
+  the non-interactive PATH gotcha, explicit repository roots, and health, Homebrew, npm, repo, macOS, and
+  Xcode passes. Removed the upstream Tailscale mesh, inventory profiles, Octopool, 1Password escrow, and
+  attribution-stripping requirements, none of which exist in Ryan's environment.
+- Repointed `codex-huge-context` and `xcode-sync` host resolution at `fleet-maintenance` instead of the
+  absent `computers.yaml` and Tailscale state, and dropped the deleted skill-link audit from the README.
+- Fixed `mac-maintenance` scanning the empty `~/Projects`, so its repository pass now reaches Ryan's real
+  checkouts instead of silently doing nothing.
+- Hardened autoreview against untracked-file disclosure, out-of-checkout Codex reads, project-controlled Claude execution, stale-ref mutation, oversized prompts, and non-UTF-8 paths; disabled the unadapted upstream fleet workflow, restored a truthful 1Password guard route, and aligned release credential routing.
 - Tailored domain-dns-ops to Ryan's verified Cloudflare zones, Worker and Pages domains, mail routing, and tunnel-aware DNS workflow.
 - Made create-cli's bundled guidelines link independent of checkout location.
 - Removed unused messaging, browser, and external-repository skills, and aligned the catalogue and README with the retained local skills.

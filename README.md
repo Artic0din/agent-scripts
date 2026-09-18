@@ -45,7 +45,7 @@ For the specific legacy topology `~/.claude/skills/NAME/NAME -> ~/.codex/skills/
 
 This mode validates every candidate before unlinking only the extra nested leaves. It preserves the real skill directories, assets, and valid Codex backlinks, and exits before creating roots, building mirrors, pruning, or touching instruction pointers. Names must start with an ASCII letter or digit and contain only letters, digits, `.`, `_`, or `-`; duplicates, missing names, and unknown arguments are rejected. A missing nested leaf is a no-op only with the expected surrounding topology. Redirected/inaccessible roots, unexpected objects or literal targets, and changed directory/link identities cause refusal. Rechecks before each unlink are not atomic concurrency protection; a later error stops the batch and reports removals already completed, without rollback.
 
-The read-only `skills/fleet-maintenance/scripts/agent-skill-links-audit.sh` reports same-name nested ancestor loops as `reason=nested-self-link`. This is narrow detection, not an exhaustive graph validator. Its `--repair` remains a broad sync through `~/Projects/agent-scripts/scripts/sync-skills`; it is not the scoped repair above. Run `scripts/test-sync-skills` for isolated fixture coverage; `scripts/test-sync-skills --recurrence-only /absolute/path/to/old-sync-skills` runs the unchanged recurrence assertion against an original helper.
+Run `scripts/test-sync-skills` for isolated fixture coverage; `scripts/test-sync-skills --recurrence-only /absolute/path/to/old-sync-skills` runs the unchanged recurrence assertion against an original helper.
 
 Retained personal skills live as real folders in `skills/`.
 The current skill catalogue is `skills.sh.json`; skill-by-skill customisation is ongoing.

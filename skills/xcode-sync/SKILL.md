@@ -5,14 +5,13 @@ description: "Xcode fleet sync: signed archives, compatibility, install, selecti
 
 # Xcode Sync
 
-Synchronize exact Xcode builds across the user's selected Macs. Verify fleet topology and SSH targets before connecting.
+Synchronize exact Xcode builds across Ryan's selected Macs. Verify host identity before connecting.
 
 ## Inventory
 
-1. Read `~/Projects/manager/computers.yaml`; use live `tailscale status --json` for reachability/IPs.
-2. Exclude handed-off and unknown hosts. Verify `hostname`, user, macOS, architecture, and hardware UUID before writes.
-3. Deduplicate Tailscale nodes by hardware UUID; one Mac may have multiple live node records.
-4. Run `scripts/xcode-host-inventory.sh` locally or remotely:
+1. Take the host list, SSH aliases, and remote PATH handling from `$fleet-maintenance`.
+2. Verify `hostname`, user, macOS, and architecture before any write.
+3. Run `scripts/xcode-host-inventory.sh` locally or remotely:
 
 ```bash
 skills/xcode-sync/scripts/xcode-host-inventory.sh
@@ -20,7 +19,7 @@ ssh -o RequestTTY=no -o RemoteCommand=none HOST 'bash -s' \
   < skills/xcode-sync/scripts/xcode-host-inventory.sh
 ```
 
-Treat unreachable hosts as pending, not synchronized. Try live Tailscale IP, Tailscale SSH, then mDNS/LAN only when network topology permits.
+Treat unreachable hosts as pending, not synchronized.
 
 ## Simulator hygiene
 

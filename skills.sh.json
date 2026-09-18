@@ -63,9 +63,10 @@
     },
     {
       "title": "Infrastructure & Release",
-      "description": "Skills for domains, DNS, npm, Cloudflare, Wrangler, SSH, releases, and remote machines.",
+      "description": "Skills for domains, DNS, npm, Cloudflare, Wrangler, SSH, releases, and Ryan's Macs.",
       "skills": [
         "domain-dns-ops",
+        "fleet-maintenance",
         "mac-maintenance",
         "npm",
         "one-password",

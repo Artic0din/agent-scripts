@@ -1,4 +1,4 @@
 interface:
   display_name: "Fleet Maintenance"
-  short_description: "Disabled until Ryan's Mac fleet is configured"
-  default_prompt: "Use $fleet-maintenance to check whether Ryan's fleet workflow is configured; stop while it remains disabled."
+  short_description: "Audit and update Ryan's Macs over LAN SSH"
+  default_prompt: "Use $fleet-maintenance to audit Ryan's Macs, then report host health, disk, Homebrew, npm, and repository state before any mutation."
