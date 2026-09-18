@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Updated `AGENTS.MD` for the renamed skills: `$codex-huge-context` is now `$codex-config`,
+  `$one-password` is now `$keychain`, and the `op` service-account and `op-work` tmux rule is replaced by
+  the `security` rule, which requires scoped reads and a non-empty value because a locked keychain or
+  missing item returns empty rather than failing.
 - Removed Peekaboo everywhere at Ryan's request: dropped the `vm-lab` skill, whose purpose was Peekaboo
   validation inside Parallels and whose Parallels, Ghostty, and Peekaboo-checkout dependencies are all
   absent; removed it from `fleet-profile.mjs`'s detected-CLI list, from `github-project-triage`'s UI proof

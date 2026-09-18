@@ -32,14 +32,14 @@
 ## Routing
 
 - Claude Code implementation/refactor/test/fix: `$codex-first`, located at `skills/codex-first/SKILL.md` relative to this file. Apply its native-Claude model gate. Design/API design/tiny edit: direct. Codex session: ignore.
-- Codex worker model, reasoning, and service tier follow the current `$codex-first` launch recipe unless the user requests an override. Use `$codex-huge-context` for direct API context preflight and `$autoreview` for isolated reviews; preserve its reviewer isolation.
+- Codex worker model, reasoning, and service tier follow the current `$codex-first` launch recipe unless the user requests an override. Use `$codex-config` for Codex settings and its direct-API preflight, and `$autoreview` for isolated reviews; preserve its reviewer isolation.
 - Claude Code parallel/background work (Codex workers, monitors, long jobs): each = own harness-tracked task (`run_in_background: true`), labeled for target, one sidebar chip each. Never `&`-detach durable work — hides it, only agent sees. Quick foreground cmds inline. Other harnesses: ignore.
 - Screenshot/live-UI bugs and computer use: use the available browser or computer-use tools and their applicable skills; verify capabilities before acting.
 - Ryan's Chrome: use available browser or computer-use tools; when mcporter is available, prefer its daemon-backed `chrome-devtools` relay and reuse one long-lived connection per task. Never open raw CDP/WebSocket connections or ad-hoc Puppeteer/CDP clients.
 - Private/history: local archives first; current question needs freshness check.
-- Secrets/API keys/live creds: `$one-password`.
+- Secrets/API keys/live creds: `$keychain`.
 - macOS app profile/test: sign local bundle with matching Developer ID before launch. Never unsigned/ad-hoc against saved Keychain items.
-- New API key: immediately store via 1Password service account. Temp file/env copies only current task.
+- New API key: store immediately in the macOS Keychain via `$keychain`. Temp file/env copies only current task.
 - User-owned Gmail service login: pre-approved; use saved creds, no ask. Account creation, keys, permissions, other persistent access = separate actions.
 
 ## Project Defaults
@@ -101,7 +101,7 @@
 - Public GitHub body: never inline double-quoted text containing backticks, `$`, shell snippet, env name, or user text. Temp file + `cat <<'EOF'` + inspect + `--body-file`.
 - Secrets: never normal-shell `env`, `set`, `export -p`, broad secret regex dump. Query exact name only; redact value.
 - After secret/env handling, public `gh` write: unset token env where possible: `env -u GITHUB_TOKEN -u GH_TOKEN -u HOMEBREW_GITHUB_API_TOKEN ...`.
-- `op`: load `$one-password` first, always. Never hand-roll. Automated runs: service-account token + `OP_LOAD_DESKTOP_APP_SETTINGS=false OP_BIOMETRIC_UNLOCK_ENABLED=false`; never `--account`/`op signin` without chat consent. One tmux session `op-work` only. Violation = macOS App Data dialog spam at Ryan.
+- `security`: load `$keychain` first, always. Never hand-roll. Scope each read to an exact account and service; check `security`'s own exit status and require a non-empty value, because a locked keychain or missing item returns empty rather than failing. Never automate `unlock-keychain` or pass a keychain password on the command line.
 
 ## Git
 
