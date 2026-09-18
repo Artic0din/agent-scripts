@@ -1,0 +1,3 @@
+# Documentation examples of what NOT to do; fake Stripe-shaped strings, not credentials.
+.github/instructions/code-review-generic.instructions.md:stripe-access-token:142
+.github/instructions/security-and-owasp.instructions.md:stripe-access-token:421
