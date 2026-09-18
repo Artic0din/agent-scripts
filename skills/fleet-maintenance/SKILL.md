@@ -14,7 +14,7 @@ For a single explicitly chosen Mac, use `$mac-maintenance` instead.
 | --- | --- | --- |
 | `Ryans-MacBook-Air` | local | Daily driver. Homebrew at `/opt/homebrew`. |
 | `MacBook-Pro` | `ssh mbp` (192.168.1.9) | Homebrew at `/opt/homebrew`. Key `~/.ssh/id_ed25519_migrate` via the `mbp` alias in `~/.ssh/config`. |
-| iMac | 192.168.1.210 | No SSH alias and no Remote Login as of 2026-09-18. Report `pending`; do not attempt repair. |
+| iMac | `ssh imac` (192.168.1.210) | Alias resolves, but Remote Login was still off on 2026-09-18 and port 22 timed out. Report `pending`; do not attempt repair. |
 
 Confirm identity before mutating any host:
 
