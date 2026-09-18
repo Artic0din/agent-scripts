@@ -1,7 +1,7 @@
 # AGENTS.md — Canonical Agent Instructions
 
 > **Canonical file.** Real path: `/Users/ryanfoyle/Metisary/Enviroment/config/AGENTS.MD`.
-> If loaded as `~/.claude/CLAUDE.md` or `~/.codex/AGENTS.md`, those are symlinks to here: `~/.claude/CLAUDE.md` → `~/.codex/AGENTS.md` → this file. Also `~/.agents/skills` → `Codex/skills`.
+> If loaded as `~/.claude/CLAUDE.md` or `~/.codex/AGENTS.md`, those are symlinks to this file. Also `~/.agents/skills` → `Codex/skills` (legacy personal skills) and `~/.codex/skills/agent-scripts` → this repo's `skills/`.
 > Edit this file, never a symlink path. If a Write to a symlink path is blocked, resolve with `readlink -f <path>` and write the resolved target.
 
 Single source of truth for Claude Code and Codex.
@@ -44,7 +44,7 @@ Home Assistant power user: Tesla solar/Powerwall/EVs, GloBird Energy, Daikin HVA
 
 ## Engineering standards
 
-Full standard: [engineering-constitution.md](/Users/ryanfoyle/Development/Workspace/Codex/docs/engineering-constitution.md) — binding, wins all conflicts. Essence:
+Full standard: [engineering-constitution.md](/Users/ryanfoyle/Metisary/Enviroment/config/docs/engineering-constitution.md) — binding, wins all conflicts. Essence:
 
 - Production-grade always. "Personal project" or "MVP" never justifies shortcuts, half-fixes, or weakened validation.
 - Root cause first. Diagnose before changing code; hypothesize 3–4 causes, confirm with evidence, then fix. Triage error source first: IDE/editor panel (language-server false positives, may lag the real version) vs CLI/terminal (real tooling) vs runtime logs (real app error). Don't fix a phantom that doesn't reproduce in the CLI.
@@ -91,7 +91,7 @@ Full standard: [engineering-constitution.md](/Users/ryanfoyle/Development/Worksp
 - Reviewing as agent: verify each finding against code before reporting; `[CRITICAL|PROBLEM|SUGGESTION] file:line` + verdict; review-only never pushes.
 - AI reviewers are optional and risk-triggered; no review provider is a required workflow dependency.
 - Use a normal GitHub pull request for isolated changes. Use Graphite tooling only when Ryan explicitly requests it.
-- Full playbook: [pr-standards.md](/Users/ryanfoyle/Development/Workspace/Codex/docs/pr-standards.md) — pipeline order, dep-bump protocol, squash rules, release notes.
+- Full playbook: [pr-standards.md](/Users/ryanfoyle/Metisary/Enviroment/config/docs/pr-standards.md) — pipeline order, dep-bump protocol, squash rules, release notes.
 
 ## Work tracking
 
@@ -158,7 +158,7 @@ Full standard: [engineering-constitution.md](/Users/ryanfoyle/Development/Worksp
 | Synapse | `~/Development/private/synapse/` |
 
 Repo-specific rules (deployment gotchas, API limits, domain conventions) live in each repo's `AGENTS.md` — not here.
-Operational agent rules (routing, PR and CI mechanics, runtime safety) live in [agent-operations.md](/Users/ryanfoyle/Metisary/Enviroment/config/docs/agent-operations.md) — also not here.
+Operational agent rules (routing, PR and CI mechanics, GitHub posting, disclosure and identity guardrails, runtime safety) live in [agent-operations.md](/Users/ryanfoyle/Metisary/Enviroment/config/docs/agent-operations.md) — also not here.
 
 ## This file
 
@@ -189,7 +189,7 @@ When asked to modify this file or an overlay: propose the diff, wait for explici
 
 ## Validation
 
-- Before saying the installed agent setup is healthy, verify the Codex, Claude, and personal-skill links resolve inside `~/Development/Workspace/Codex/`, validate retained skills, and confirm Basic Memory can read and write `ryan-knowledge`.
+- Before saying the installed agent setup is healthy, verify the Codex and Claude links resolve inside `~/Metisary/Enviroment/config/` and the legacy personal-skill links inside `~/Development/Workspace/Codex/`, validate retained skills, and confirm Basic Memory can read and write `ryan-knowledge`.
 - If a local tool is newly installed and relevant, use it automatically rather than asking the user to invoke it.
 
 ## Communication
