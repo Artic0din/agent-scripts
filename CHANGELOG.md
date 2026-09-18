@@ -6,6 +6,11 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Restored four `fleet-maintenance` scripts removed earlier on a bad availability check:
+  `agent-cli-audit.sh` (Codex 0.155.0 and Claude 2.1.276 are installed in `~/.local/bin`, not Homebrew),
+  `fleet-profile.mjs` (its `collect` needs no inventory), `agent-skill-links-audit.sh` (124 Claude and
+  94 Codex skills are mirrored), and both test suites, which pass. Repointed the skill-link audit at
+  `~/Metisary/Enviroment/config`; it now independently reports the same install drift as a manual check.
 - Adapted `github-project-triage` to Ryan's GitHub: owners `Artic0din` and `Plaintext-Lab` (several repos
   were transferred to the org and now redirect), and a project-board pass over the `Development` board,
   which the skill's name implied but never used. Kept RepoBar as the broad-discovery pass and documented

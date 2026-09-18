@@ -102,6 +102,38 @@ Classify startup-disk space by absolute and relative capacity:
 
 Do not start Xcode expansion on warning or critical space.
 
+## Agent tooling audits
+
+Run these on every reachable host; all three are read-only.
+
+Host snapshot — hostname, hardware UUID, architecture, macOS version and build, accounts, and
+installed software. It needs no inventory file:
+
+```bash
+node skills/fleet-maintenance/scripts/fleet-profile.mjs collect
+ssh -o RequestTTY=no -o RemoteCommand=none mbp 'node --input-type=module - collect' \
+  < skills/fleet-maintenance/scripts/fleet-profile.mjs
+```
+
+Its `plan`, `brewfile`, and `validate` subcommands need a desired-state inventory, which does not
+exist yet. Use `collect` until one does.
+
+Codex and Claude CLI versions and non-interactive auth. Both live in `~/.local/bin`, not Homebrew:
+
+```bash
+skills/fleet-maintenance/scripts/agent-cli-audit.sh
+```
+
+Skill mirror drift between this repo, `~/.codex/skills`, and `~/.claude/skills`:
+
+```bash
+skills/fleet-maintenance/scripts/agent-skill-links-audit.sh
+```
+
+Drift is expected while the repo is deliberately not installed: it reports the missing
+`~/.codex/skills/agent-scripts` root and the `AGENTS.md` links still pointing at
+`~/Development/Workspace/Codex`. Do not run `--repair` until that install is intended.
+
 ## Repository sync
 
 Audit first; it is read-only and marks each repo `candidate` or skipped:
