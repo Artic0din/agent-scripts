@@ -5,10 +5,13 @@ One source of rules, skills, agents, hooks and MCP config, linked into each tool
 
 ## Layout
 
+Target layout. The tool links described here are created by the installer and are not in place yet; see Install.
+
 | Path | Purpose |
 | --- | --- |
-| `AGENTS.MD` | Global hard rules. Linked to Claude, Codex, Antigravity. Pasted into Cursor and Copilot. |
+| `AGENTS.MD` | Global hard rules. The installer links it into Claude, Codex and Antigravity; it is pasted into Cursor and Copilot. |
 | `skills/` | Skills, one folder each with `SKILL.md`. Personal and vendored skills are committed here. |
+| `skills.sh.json` | Catalogue of every folder in `skills/`, grouped for routing. |
 | `skills.lock.json` | Third-party skills that `install.sh` will fetch into `skills/.external/` (gitignored). |
 | `.github/instructions/` | GitHub Copilot custom instructions, scoped by `applyTo`. |
 | `hooks/` | Repository hook scripts. The tool configs under `config/` currently reference `~/.claude/hooks/`. |
@@ -59,7 +62,7 @@ description: "Short generic trigger phrase."
 
 - Keep descriptions short and generic; optimize for routing, not documentation.
 - Keep skill bodies terse and operational; put repeatable commands in `skills/<name>/scripts/`.
-- Validate after edits with `scripts/validate-skills` (also the pre-commit hook: `git config core.hooksPath hooks`).
+- Validate after edits with `scripts/validate-skills`. To run it as a pre-commit hook, opt in once with `git config core.hooksPath hooks`.
 - `skills.sh.json` is the catalogue; every folder in `skills/` is listed there.
 - `skill-cleaner` audits prompt budget and duplicates; run it after adding a batch of skills.
 
@@ -69,7 +72,19 @@ description: "Short generic trigger phrase."
 
 ## Helpers
 
-- `scripts/sync-skills`: builds the mirror described above; idempotent; `--repair-nested-self-links` with `--dry-run` handles the legacy nested-link topology, with an explicit allowlist.
+- `scripts/sync-skills`: builds the mirror described above; idempotent; prints changes only. No arguments runs the ordinary sync; `--help` prints usage. Only the scoped `--repair-nested-self-links` mode accepts `--dry-run`.
+
+For the specific legacy topology `~/.claude/skills/NAME/NAME -> ~/.codex/skills/NAME -> ~/.claude/skills/NAME`, invoke the sync owner directly with an explicit allowlist, dry run first:
+
+```bash
+/absolute/path/to/config/scripts/sync-skills --repair-nested-self-links --dry-run -- skill-one skill-two
+```
+
+```bash
+/absolute/path/to/config/scripts/sync-skills --repair-nested-self-links -- skill-one skill-two
+```
+
+This mode validates every candidate before unlinking only the extra nested leaves. It preserves the real skill directories, assets, and valid Codex backlinks, and exits before creating roots, building mirrors, pruning, or touching instruction pointers. Names must start with an ASCII letter or digit and contain only letters, digits, `.`, `_`, or `-`; duplicates, missing names, and unknown arguments are rejected. A missing nested leaf is a no-op only with the expected surrounding topology. Redirected or inaccessible roots, unexpected objects or literal targets, and changed directory or link identities cause refusal. Rechecks before each unlink are not atomic concurrency protection: a later error stops the batch and reports removals already completed, without rollback.
 - `scripts/validate-skills`: checks every `skills/*/SKILL.md` for front matter, `name`, and `description`.
 - `scripts/docs-list.ts`: walks `docs/`, enforces `summary` and `read_when` front matter, prints onboarding summaries.
 - `scripts/browser-tools.ts`: standalone Chrome DevTools helper (`start --profile`, `nav`, `eval`, `screenshot`, `console`, `network`, `search --content`, `content`, `inspect`, `kill --all --force`); build a binary with `bun build scripts/browser-tools.ts --compile --target bun --outfile bin/browser-tools`.
