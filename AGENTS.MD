@@ -1,7 +1,7 @@
 # AGENTS.md — Canonical Agent Instructions
 
 > **Canonical file.** Real path: `/Users/ryanfoyle/Metisary/Enviroment/config/AGENTS.MD`.
-> If loaded as `~/.claude/CLAUDE.md` or `~/.codex/AGENTS.md`, those are symlinks to this file. Also `~/.agents/skills` → `Codex/skills` (legacy personal skills) and `~/.codex/skills/agent-scripts` → this repo's `skills/`.
+> If loaded as `~/.claude/CLAUDE.md` or `~/.codex/AGENTS.md`, those are symlinks to this file. Also `~/.agents/skills` → `~/Development/Workspace/Codex/skills` (legacy personal skills) and `~/.codex/skills/agent-scripts` → this repo's `skills/`.
 > Edit this file, never a symlink path. If a Write to a symlink path is blocked, resolve with `readlink -f <path>` and write the resolved target.
 
 Single source of truth for Claude Code and Codex.
@@ -189,7 +189,7 @@ When asked to modify this file or an overlay: propose the diff, wait for explici
 
 ## Validation
 
-- Before saying the installed agent setup is healthy, verify the Codex and Claude links resolve inside `~/Metisary/Enviroment/config/` and the legacy personal-skill links inside `~/Development/Workspace/Codex/`, validate retained skills, and confirm Basic Memory can read and write `ryan-knowledge`.
+- Before saying the installed agent setup is healthy, verify `~/.codex/AGENTS.md`, `~/.claude/CLAUDE.md`, and `~/.codex/skills/agent-scripts` resolve inside `~/Metisary/Enviroment/config/` and the legacy personal-skill links inside `~/Development/Workspace/Codex/`, validate retained skills, and confirm Basic Memory can read and write `ryan-knowledge`.
 - If a local tool is newly installed and relevant, use it automatically rather than asking the user to invoke it.
 
 ## Communication
