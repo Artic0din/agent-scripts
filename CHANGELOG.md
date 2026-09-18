@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Refreshed the vendored `frontend-design` skill from the installed Anthropic plugin revision
+  `ea0a38e1d671`, picking up the design-process, AI-default calibration, restraint, and writing-in-design
+  sections the old snapshot predated. The copy stays in this repo because Codex cannot load Claude plugins.
+  Kept the repo's `LICENSE.txt`, which retains the Anthropic copyright notice the plugin's copy omits.
 - Re-enabled `fleet-maintenance` for Ryan's verified three-Mac LAN fleet: host table with SSH reach and
   the non-interactive PATH gotcha, explicit repository roots, and health, Homebrew, npm, repo, macOS, and
   Xcode passes. Removed the upstream Tailscale mesh, inventory profiles, Octopool, 1Password escrow, and
