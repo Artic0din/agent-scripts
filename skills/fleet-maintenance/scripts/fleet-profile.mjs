@@ -414,7 +414,6 @@ function renderBrewfile(inventory, hostId) {
 
 function validateInventory(inventory) {
   const errors = [];
-  const warnings = [];
   const profileNames = Object.keys(inventory.profiles || {}).sort();
   if (JSON.stringify(profileNames) !== JSON.stringify(["full", "worker"])) {
     errors.push(`profiles must be exactly full and worker; found: ${profileNames.join(", ") || "none"}`);
@@ -447,7 +446,7 @@ function validateInventory(inventory) {
       if (!account.username) errors.push(`${hostId}: account missing username`);
     }
   }
-  return { valid: errors.length === 0, errors, warnings };
+  return { valid: errors.length === 0, errors };
 }
 
 const command = process.argv[2];
