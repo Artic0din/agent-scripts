@@ -49,7 +49,7 @@ node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --
 - It reads `~/.codex/models_cache.json` for GPT-5.5 `context_window`; fallback is 272,000 tokens and 2%.
 - It scans only normal Codex/plugin/repo skill roots by default. Extra folders such as Dropbox archives are included only with `--root <path>`.
 - `--root-only` requires at least one `--root <path>`, skips the live Codex inventory, and scans only those supplied roots.
-- It realpath-dedupes roots, so symlinked roots such as `~/.codex/skills/agent-scripts -> ~/Projects/agent-scripts/skills` do not create false duplicates.
+- It realpath-dedupes roots, so symlinked roots such as `~/.codex/skills/agent-scripts -> ~/Metisary/Enviroment/config/skills` do not create false duplicates.
 - For duplicate names, it reports description/body similarity and suggests deletion candidates only when bodies are near copies. Keep priority defaults to direct Codex system skills, then direct Codex skills, then plugin skills, then personal/repo copies.
 - It scans `~/.codex/history.jsonl` and recent `~/.codex/sessions/**/*.jsonl` by default. Add `--deep-logs` for archived sessions and common OpenClaw/Clawd log folders.
 - Usage evidence is heuristic: user `$skill`/`use skill` mentions and paths observed in tool-call arguments.

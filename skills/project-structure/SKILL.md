@@ -13,7 +13,7 @@ Compress a TS or Swift repo into one map file an agent can load whole. Backed by
 node <this-skill-dir>/map.ts <repoRoot> [flags]
 ```
 
-`<this-skill-dir>` is the base directory of this skill as announced when the skill loads (canonical: `~/Projects/agent-scripts/skills/project-structure`).
+`<this-skill-dir>` is the base directory of this skill as announced when the skill loads (canonical: `~/Metisary/Enviroment/config/skills/project-structure`).
 
 Output: one map file (default `project-structure-map.txt` in cwd) plus a JSON stats line (files, symbols, bytes, approxTokens) on stdout.
 

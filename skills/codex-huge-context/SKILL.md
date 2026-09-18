@@ -165,7 +165,7 @@ any remote files. Keep a per-host result with:
 - direct API probe result;
 - shared app-server version and whether a restart remains pending.
 
-The `agent-scripts` skill checkout is normally exposed by `~/.codex/skills/agent-scripts`. After pushing this skill, fast-forward only eligible `~/Projects/agent-scripts` checkouts. Never reset, stash, overwrite an active or dirty checkout, or interrupt an active Codex turn merely to reload configuration; report it as pending instead.
+The `agent-scripts` skill checkout is normally exposed by `~/.codex/skills/agent-scripts`. After pushing this skill, fast-forward only eligible `~/Metisary/Enviroment/config` checkouts. Never reset, stash, overwrite an active or dirty checkout, or interrupt an active Codex turn merely to reload configuration; report it as pending instead.
 
 ## Verification
 

@@ -6,6 +6,11 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Relocated every self-reference after the repo moved to `~/Metisary/Enviroment/config`, replacing 18
+  `~/Projects/agent-scripts` and `/Users/steipete/Projects/agent-scripts` paths across the README, docs, and
+  skills; each relocated path was checked to resolve. Recorded that the global symlinks are not installed:
+  `~/.claude/CLAUDE.md` still resolves to `~/Development/Workspace/Codex/AGENTS.md`, a different file.
+  Left `skill-cleaner`'s TypeScript path matching and `release-mac-app`'s in-progress edits alone.
 - Adapted `github-author-context` to Ryan's GitHub use: skip himself and bot authors, drop the private
   OpenClaw maintainer tooling and contributor-note helper, and route durable findings to `ryan-knowledge`.
   Corrected two inherited command bugs found by running them — `gh search prs` has no `--state merged`

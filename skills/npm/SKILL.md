@@ -32,7 +32,7 @@ Use for npm registry/account tasks: `npm whoami`, package availability, package 
 From the package root, inside the same auth tmux window:
 
 ```bash
-/Users/steipete/Projects/agent-scripts/skills/npm/scripts/publish-package.sh
+~/Metisary/Enviroment/config/skills/npm/scripts/publish-package.sh
 ```
 
 The helper verifies identity, refuses an existing package version, publishes with a fresh OTP, retries one expired OTP, verifies registry visibility, and cleans auth files.
@@ -42,7 +42,7 @@ The helper verifies identity, refuses an existing package version, publishes wit
 Use `scripts/reserve-packages.sh` from inside the same tmux window:
 
 ```bash
-/Users/steipete/Projects/agent-scripts/skills/npm/scripts/reserve-packages.sh package-one package-two
+~/Metisary/Enviroment/config/skills/npm/scripts/reserve-packages.sh package-one package-two
 ```
 
 What it does:

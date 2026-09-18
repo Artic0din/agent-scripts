@@ -8,7 +8,7 @@ read_when:
 
 Reusable checklist distilled from recent VibeTunnel, Trimmy, and CodexBar releases. Adapt the script names and paths to the target repo before running anything.
 
-> Must read: this master file lives at `~/Projects/agent-scripts/docs/RELEASING-MAC.md`. Open it alongside any repo-local release doc and reconcile differences before starting.
+> Must read: this master file lives at `~/Metisary/Enviroment/config/docs/RELEASING-MAC.md`. Open it alongside any repo-local release doc and reconcile differences before starting.
 
 ## Scope & Assumptions
 - Swift/SwiftUI macOS app shipped outside the App Store, updated via Sparkle (stable + optional prerelease feed).
@@ -48,7 +48,7 @@ Reusable checklist distilled from recent VibeTunnel, Trimmy, and CodexBar releas
 git checkout main && git pull --rebase
 git status
 ```
-2) Open the repo’s release doc (if any) and this master file (`~/Projects/agent-scripts/docs/RELEASING-MAC.md`); resolve any conflicts in favor of the current project owner’s direction.
+2) Open the repo’s release doc (if any) and this master file (`~/Metisary/Enviroment/config/docs/RELEASING-MAC.md`); resolve any conflicts in favor of the current project owner’s direction.
 3) Update version + changelog (changelog is the release-notes source).
 4) Run the project’s lint/typecheck/tests (e.g., `swiftformat .`, `swiftlint --strict`, `swift test`).
 5) Ensure Sparkle key file exists and do a quick test sign:
@@ -75,9 +75,9 @@ for v in /Volumes/*; do [[ $v == */<App>* ]] && hdiutil detach "$v" -force; done
 - The shared release helpers now always download the enclosure, verify the ed25519 signature, and run `codesign --verify` plus the system distribution policy check on the extracted app before publishing—no opt-in flag needed. They prefer `syspolicy_check distribution` and fall back to `spctl` on older macOS versions.
 
 ### Shared release skill
-- Canonical entry point: `~/Projects/agent-scripts/skills/release-mac-app/scripts/mac-release`.
+- Canonical entry point: `~/Metisary/Enviroment/config/skills/release-mac-app/scripts/mac-release`.
 - Each app repo owns a `.mac-release.env` manifest with app metadata, artifact names, feed URLs, key public-key expectation, and repo-local package/precheck commands.
-- Repo scripts should call a checked-in `Scripts/mac-release` resolver, which uses `MAC_RELEASE_TOOL`, a sibling `../agent-scripts` checkout, or `~/Projects/agent-scripts`.
+- Repo scripts should call a checked-in `Scripts/mac-release` resolver, which uses `MAC_RELEASE_TOOL`, a sibling `../agent-scripts` checkout, or `~/Metisary/Enviroment/config`.
 - Release scripts should be thin wrappers around `Scripts/mac-release` commands (`release`, `make-appcast`, `verify-appcast`, `check-assets`, `changelog-html`, `notes`).
 - `release/sparkle_lib.sh` is a compatibility shim only; do not build new app integrations on it.
 - `mac-release release` checks a clean tree, finalized changelog, monotonic appcast version/build, Sparkle key/public-key match, precheck command, package command, appcast generation/verification, GitHub release assets, and optional live update smoke.
@@ -141,7 +141,7 @@ sign_update -f "$SPARKLE_PRIVATE_KEY_FILE" path/to/<App>-<ver>.dmg --account "${
   4) Create/repair the GitHub release and push appcast changes.
 
 ## One-Page Checklist
-- [ ] Opened repo-local release doc and this master guide (`~/Projects/agent-scripts/docs/RELEASING-MAC.md`); resolved any conflicts.
+- [ ] Opened repo-local release doc and this master guide (`~/Metisary/Enviroment/config/docs/RELEASING-MAC.md`); resolved any conflicts.
 - [ ] Version + build number updated in the single source of truth (and synced to any sibling surfaces).
 - [ ] Changelog entry authored for this version.
 - [ ] Lint/typecheck/tests green.

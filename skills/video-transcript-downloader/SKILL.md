@@ -16,7 +16,7 @@ Transcript behavior:
 ## Setup
 
 ```bash
-cd ~/Projects/agent-scripts/skills/video-transcript-downloader && npm ci
+cd ~/Metisary/Enviroment/config/skills/video-transcript-downloader && npm ci
 ```
 
 CLI syntax:

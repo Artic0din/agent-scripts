@@ -28,9 +28,9 @@ Rules:
 - Quote `description` in front matter.
 
 The upstream `scripts/sync-skills` helper still assumes the workspace layout below and needs separate adaptation before global installation:
-- Codex scans nested dirs, so it gets whole-root links: `~/.codex/skills/agent-scripts -> ~/Projects/agent-scripts/skills`, `~/.codex/skills/manager -> ~/Projects/manager/skills`.
-- Claude Code loads only `~/.claude/skills/<name>/SKILL.md` (exactly one level deep; per-entry symlinks are followed, category subfolders are not scanned — verified on 2.1.197). It gets a flat per-skill link mirror covering both repos plus machine-local `~/.codex/skills/<name>` extras.
-- Name collisions resolve agent-scripts > manager > codex-local; the script prints skipped duplicates and prunes broken/stale managed links.
+- Codex scans nested dirs, so it gets a whole-root link: `~/.codex/skills/agent-scripts -> ~/Metisary/Enviroment/config/skills`.
+- Claude Code loads only `~/.claude/skills/<name>/SKILL.md` (exactly one level deep; per-entry symlinks are followed, category subfolders are not scanned — verified on 2.1.197). It gets a flat per-skill link mirror covering this repo plus machine-local `~/.codex/skills/<name>` extras.
+- Name collisions resolve agent-scripts > codex-local; the script prints skipped duplicates and prunes broken/stale managed links.
 - Real destination files and directories are preserved. A real Claude skill directory with a Codex backlink to that same directory satisfies local ownership; other real destination conflicts are reported and make sync fail.
 
 For the specific legacy topology `~/.claude/skills/NAME/NAME -> ~/.codex/skills/NAME -> ~/.claude/skills/NAME`, invoke the sync owner directly with an explicit allowlist:
@@ -59,14 +59,18 @@ Run `skills/autoreview/scripts/test-review-harness --engine codex --fixture mali
 Shared hard rules live in `AGENTS.MD`.
 
 Global setup (also maintained by `scripts/sync-skills`; Claude Code reads `CLAUDE.md` only, so it links to the shared `AGENTS.MD`):
-- `~/.codex/AGENTS.md -> ~/Projects/agent-scripts/AGENTS.MD`
-- `~/.claude/CLAUDE.md -> ~/Projects/agent-scripts/AGENTS.MD`
-- `~/.claude/AGENTS.md -> ~/Projects/agent-scripts/AGENTS.MD`
+- `~/.codex/AGENTS.md -> ~/Metisary/Enviroment/config/AGENTS.MD`
+- `~/.claude/CLAUDE.md -> ~/Metisary/Enviroment/config/AGENTS.MD`
+- `~/.claude/AGENTS.md -> ~/Metisary/Enviroment/config/AGENTS.MD`
+
+None of these links are installed yet. `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` still resolve to
+`~/Development/Workspace/Codex/AGENTS.md`, which is a different file from this repo's `AGENTS.MD`, and
+`~/.codex/skills/agent-scripts` does not exist. Nothing here reaches Codex or Claude until the sync runs.
 
 Downstream repos should use a pointer-style `AGENTS.MD`:
 
 ```text
-READ ~/Projects/agent-scripts/AGENTS.MD BEFORE ANYTHING (skip if missing).
+READ ~/Metisary/Enviroment/config/AGENTS.MD BEFORE ANYTHING (skip if missing).
 ```
 
 Repo-specific rules go below that pointer. Do not copy the shared blocks into downstream repos.
