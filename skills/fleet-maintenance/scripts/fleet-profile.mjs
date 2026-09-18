@@ -188,24 +188,21 @@ function collectNpm() {
 
 function collectTools() {
   const names = [
-    "birdclaw",
-    "camsnap",
+    "bun",
     "claude",
     "codex",
-    "discrawl",
     "gh",
     "git",
-    "gitcrawl",
-    "graincrawl",
+    "gitleaks",
+    "jq",
+    "mcporter",
     "node",
-    "notcrawl",
-    "openclaw",
-    "op",
+    "npm",
     "pnpm",
-    "slacrawl",
-    "telecrawl",
-    "tmux",
-    "wacrawl",
+    "repobar",
+    "rg",
+    "xcodes",
+    "yt-dlp",
   ];
   return names.map((name) => {
     const executable = findExecutable([

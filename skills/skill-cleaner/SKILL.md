@@ -1,6 +1,6 @@
 ---
 name: skill-cleaner
-description: "Codex/OpenClaw skill audit: live budget, usage, duplicates, compact descriptions."
+description: "Codex/Claude skill audit: live budget, usage, duplicates, compact descriptions."
 ---
 
 # Skill Cleaner
@@ -22,7 +22,7 @@ node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --
 node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --no-live --no-logs
 node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --months 6 --max-log-mb 800 --deep-logs
 node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --context-tokens 272000 --budget-percent 2 --no-logs
-node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --root ~/Dropbox/boxd/skills --no-logs
+node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --root ~/.claude/skills --no-logs
 node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --root ~/.agents/skills --root-only --no-logs
 ```
 
@@ -30,13 +30,13 @@ node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --
 - `Skill Budget`: live Codex inventory, 2% budget, budgeted usage, and full-description pressure.
 - `Description candidates`: long descriptions where relaxed grammar saves prompt budget.
 - `Duplicates`: same skill name or near-identical description/body across Codex, plugin cache, repo siblings, and personal skill roots.
-- `Unused candidates`: no recent user mention or actual `SKILL.md` read in recent Codex/OpenClaw logs.
+- `Unused candidates`: no recent user mention or actual `SKILL.md` read in recent Codex or Claude logs.
 - `Root summary`: where skills came from and whether config marks them disabled.
 
 3. Before deleting or editing:
 - Verify the kept copy exists and is loaded.
 - Prefer deleting repo-local or `agent-scripts` duplicates when Codex built-ins cover them.
-- Keep repo-local OpenClaw maintainer skills when they encode repo policy or live operations.
+- Keep repo-local skills when they encode repo policy or live operations.
 - Preserve trigger nouns in descriptions: product, tool, action, object.
 
 ## Analyzer Notes
@@ -51,7 +51,7 @@ node --experimental-strip-types skills/skill-cleaner/scripts/skill-cleaner.ts --
 - `--root-only` requires at least one `--root <path>`, skips the live Codex inventory, and scans only those supplied roots.
 - It realpath-dedupes roots, so symlinked roots such as `~/.codex/skills/agent-scripts -> ~/Metisary/Enviroment/config/skills` do not create false duplicates.
 - For duplicate names, it reports description/body similarity and suggests deletion candidates only when bodies are near copies. Keep priority defaults to direct Codex system skills, then direct Codex skills, then plugin skills, then personal/repo copies.
-- It scans `~/.codex/history.jsonl` and recent `~/.codex/sessions/**/*.jsonl` by default. Add `--deep-logs` for archived sessions and common OpenClaw/Clawd log folders.
+- It scans `~/.codex/history.jsonl` and recent `~/.codex/sessions/**/*.jsonl` by default. Add `--deep-logs` for archived sessions.
 - Usage evidence is heuristic: user `$skill`/`use skill` mentions and paths observed in tool-call arguments.
 
 ## Output Policy

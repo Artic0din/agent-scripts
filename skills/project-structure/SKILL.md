@@ -44,7 +44,7 @@ Zero-dependency line scanner (lexical masking of comments/strings + brace-depth 
 
 ## Sizing
 
-TS (reference: openclaw, ~7M LOC, ~14k source files; o200k tokens; byte/4 estimate runs ~5–15% high — verify with a real tokenizer when near a budget):
+TS (reference: a ~7M LOC monorepo, ~14k source files; o200k tokens; byte/4 estimate runs ~5–15% high — verify with a real tokenizer when near a budget):
 
 - exports, whole repo: ~2.5M tokens — never fits; scope typed maps to one subsystem.
 - exports, one subsystem (e.g. src/channels, 257 files): ~79k.
@@ -64,6 +64,6 @@ Swift (reference: a 1,122-file codebase after test exclusion; byte/4 estimates):
 
 - Two-tier: dense whole-repo map for reconnaissance and candidate enumeration; then `--mode exports --include <subsystem>` (TS) or `--members --include <subsystem>` (Swift) for the actual refactor decision. Names alone cannot distinguish duplicates from overloads, facades, or `.runtime.ts` lazy seams — verify every dense-tier finding against typed signatures or source before acting.
 - Feeding codex CLI: turn input hard-caps at 1,048,576 chars (~260k tokens); pipe the map via stdin. Bigger maps need trimming, or a model with a larger window; there is no direct Responses API route configured here.
-- Do not bother with dictionary/abbreviation compression: measured on openclaw, total possible savings were 292 tokens (0.15%) — BPE already compresses repeated identifiers.
+- Do not bother with dictionary/abbreviation compression: measured on a ~7M LOC monorepo, total possible savings were 292 tokens (0.15%) — BPE already compresses repeated identifiers.
 - Map findings are leads, not verdicts: spot-verify file paths and claims with grep before acting on any model analysis of a map.
 - `node selftest.mjs` (in this skill dir) diffs the mapper against checked-in fixtures for both languages — run it after editing `map.ts`.

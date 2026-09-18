@@ -6,6 +6,16 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Reconciled `skills.sh.json` with the skills that exist: dropped four catalogue entries for removed
+  skills and added five that were never listed. All 31 skills are now grouped, and every grouped name
+  resolves to a real `SKILL.md`.
+- Cleared the remaining upstream identity from every skill. `wrangler` carried two Cloudflare account IDs
+  belonging to the fork author and now defers to `$domain-dns-ops` for the canonical account; `skill-cleaner`
+  dropped its OpenClaw log roots, Dropbox skill root, and a `~/.openclaw` probe; the fleet collector now
+  looks for Ryan's fifteen installed CLIs rather than the fork's crawlers; `xurl` lost its upstream plugin
+  metadata; `project-structure` and `things-todo` lost their last named references.
+- Removed `speaking`. It was the fork author's conference workflow end to end, including a live Google Sheet
+  identifier and his own travel decisions, and the `gog` CLI every command depends on is not installed.
 - Removed `maintainer-orchestrator`, its 214-line openclaw authorship reference, the 53-line policy test,
   and its CI step. The skill coordinated a multi-repository OSS maintainer queue, and its reference file was
   a dated commit-count audit of 24 `openclaw/*` repositories used to decide what fell outside the fork
