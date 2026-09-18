@@ -417,6 +417,7 @@ base_fixture
 make_skill "$agent/mirrored"
 mkdir -p "$fixture_home/Metisary/Enviroment/config/scripts"
 cp "$sync" "$fixture_home/Metisary/Enviroment/config/scripts/sync-skills"
+cp "$script_dir/canonical-paths.sh" "$fixture_home/Metisary/Enviroment/config/scripts/canonical-paths.sh"
 chmod 755 "$fixture_home/Metisary/Enviroment/config/scripts/sync-skills"
 run_audit --repair >"$output"
 [ "$(readlink "$claude/mirrored")" = "$agent/mirrored" ] || fail 'broad repair did not use canonical fixture owner'

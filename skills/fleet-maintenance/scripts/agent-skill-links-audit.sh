@@ -1,11 +1,13 @@
 #!/bin/bash
 set -u -o pipefail
 
-agent_skills="$HOME/Metisary/Enviroment/config/skills"
-manager_skills="$HOME/Metisary/Enviroment/manager/skills"
-codex_root="$HOME/.codex/skills"
-claude_root="$HOME/.claude/skills"
-agents_md="$HOME/Metisary/Enviroment/config/AGENTS.MD"
+# shellcheck source=../../../scripts/canonical-paths.sh
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../scripts" && pwd -P)/canonical-paths.sh"
+agent_skills="$CANONICAL_AGENT_SKILLS"
+manager_skills="$CANONICAL_MANAGER_SKILLS"
+codex_root="$CANONICAL_CODEX_ROOT"
+claude_root="$CANONICAL_CLAUDE_ROOT"
+agents_md="$CANONICAL_AGENTS_MD"
 repair=${1:-}
 failures=0
 
@@ -15,7 +17,7 @@ if [ "$#" -gt 1 ] || { [ "$#" -eq 1 ] && [ "$repair" != "--repair" ]; }; then
 fi
 
 if [ "$repair" = "--repair" ]; then
-  sync="$HOME/Metisary/Enviroment/config/scripts/sync-skills"
+  sync="$CANONICAL_SYNC_SKILLS"
   for required_root in "$agent_skills" "$manager_skills"; do
     if [ ! -d "$required_root" ]; then
       printf 'skill-links\tstatus=error\treason=canonical-root-missing\tpath=%s\n' "$required_root" >&2
