@@ -422,5 +422,16 @@ chmod 755 "$fixture_home/Metisary/Enviroment/config/scripts/sync-skills"
 run_audit --repair >"$output"
 [ "$(readlink "$claude/mirrored")" = "$agent/mirrored" ] || fail 'broad repair did not use canonical fixture owner'
 contains 'status=current'
+new_case missing-canonical-paths
+base_fixture
+detached="$case_root/detached"
+mkdir -p "$detached"
+cp "$sync" "$detached/sync-skills"
+code=0
+HOME="$fixture_home" /bin/bash "$detached/sync-skills" >"$output" 2>&1 || code=$?
+[ "$code" -eq 1 ] || fail "sync without canonical-paths.sh should exit 1, got $code"
+contains 'missing'
+printf 'missing canonical-paths guard: PASS\n'
+
 printf 'canonical broad audit repair routing: PASS\n'
 printf 'sync-skills tests: ok (Bash %s)\n' "$BASH_VERSION"

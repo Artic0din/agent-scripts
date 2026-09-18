@@ -1,8 +1,13 @@
 #!/bin/bash
 set -u -o pipefail
 
+canonical_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../scripts" 2>/dev/null && pwd -P) || canonical_dir=""
+if [ -z "$canonical_dir" ] || [ ! -f "$canonical_dir/canonical-paths.sh" ]; then
+  printf 'skill-links\tstatus=error\treason=missing-canonical-paths\n' >&2
+  exit 2
+fi
 # shellcheck source=../../../scripts/canonical-paths.sh
-. "$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../scripts" && pwd -P)/canonical-paths.sh"
+. "$canonical_dir/canonical-paths.sh"
 agent_skills="$CANONICAL_AGENT_SKILLS"
 manager_skills="$CANONICAL_MANAGER_SKILLS"
 codex_root="$CANONICAL_CODEX_ROOT"

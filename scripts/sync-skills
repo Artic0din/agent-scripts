@@ -40,8 +40,13 @@ if [ "$#" -gt 0 ]; then
   esac
 fi
 
+canonical_paths="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/canonical-paths.sh"
+if [ ! -f "$canonical_paths" ]; then
+  printf 'sync-skills: missing %s; copy it alongside this script\n' "$canonical_paths" >&2
+  exit 1
+fi
 # shellcheck source=canonical-paths.sh
-. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)/canonical-paths.sh"
+. "$canonical_paths"
 AGENT_SKILLS="$CANONICAL_AGENT_SKILLS"
 MANAGER_SKILLS="$CANONICAL_MANAGER_SKILLS"
 CODEX_ROOT="$CANONICAL_CODEX_ROOT"
