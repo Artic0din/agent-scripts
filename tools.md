@@ -83,4 +83,4 @@ Claude; `$sonos` documents the workflow.
 Screenshot, screen inspection, and click automation.
 
 Use the available browser or computer-use tools and their applicable skills, following the
-routing in `AGENTS.MD`.
+routing in `docs/agent-operations.md`.
