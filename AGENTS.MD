@@ -89,7 +89,7 @@ Full standard: [engineering-constitution.md](/Users/ryanfoyle/Metisary/Enviromen
 - Repos: read their PR template + contributing doc from the repo at PR time (never from memory); follow their AI-disclosure/trailer policy — strip AI co-author trailers where banned.
 - Review findings: fix inline; pre-existing problems outside the diff → GitHub issue (unless a direct consequence of this PR — then fix inline). Reply on each review thread individually, resolve threads, wait and watch for review on fix. Never push fixes silently.
 - Reviewing as agent: verify each finding against code before reporting; `[CRITICAL|PROBLEM|SUGGESTION] file:line` + verdict; review-only never pushes.
-- AI reviewers are optional and risk-triggered; no review provider is a required workflow dependency.
+- Autoreview is required before every commit and landing; no single provider is required (Claude stands in when Codex is unavailable). Verify findings before accepting them; record rejections. If no provider is reachable, commit with the gap stated and review before landing.
 - Use a normal GitHub pull request for isolated changes. Use Graphite tooling only when Ryan explicitly requests it.
 - Full playbook: [pr-standards.md](/Users/ryanfoyle/Metisary/Enviroment/config/docs/pr-standards.md) — pipeline order, dep-bump protocol, squash rules, release notes.
 

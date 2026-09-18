@@ -6,6 +6,9 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Reconciled the split rules: autoreview is stated as required before every commit and landing with no single
+  provider required, the ops doc's push rule names `AGENTS.MD` instead of "a rule above", and four bullets it
+  duplicated from the global rules are removed so each rule lives once.
 - Activated the environment on the MacBook Air on 2026-09-18: rules pointers for Claude, Codex and
   Antigravity, the Codex whole-root skills link, per-skill mirrors for Claude and Antigravity, agent links,
   and additive hook and permission merges. Pre-activation copies of every touched file are under

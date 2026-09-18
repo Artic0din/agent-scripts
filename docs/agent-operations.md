@@ -58,14 +58,11 @@ hard rules and links here; tool-specific items migrate into the owning skill ove
 - Bug: reproduce the failure with a regression test before fixing it when testable; otherwise explain the alternative verification.
 - Diagnose the root cause before editing. Distinguish editor diagnostics, CLI failures, and runtime failures; verify the issue at the relevant layer.
 - Fix shared causes where callers converge. Verify external API fields, entities, and other contracts before coding against them.
-- Critical logic involving money, energy, control commands, or scheduling: tests first, with exact assertions.
 - Test behaviour rather than implementation. Cover relevant failure paths and preserve existing working behaviour.
 - Use strict typing: no TypeScript `any`, typed Python public signatures and specific exceptions, no implicitly unwrapped Swift optionals.
 - Validate inputs at external boundaries. Handle asynchronous failures explicitly and provide loading and error states where user-facing.
 - Prefer existing code, the standard library, native platform features, and installed dependencies before adding a dependency.
 - After additions, verify new symbols exist. When changing a value, search the old value throughout the affected scope.
-- Before validating a moved repository, check its Git root, tool environment, generated paths, and current local and remote revisions.
-- Never run whole-repository formatters on files outside the change.
 - Opportunistic cleanup: include high-confidence flaky-test fixes and bounded nearby refactors/cleanup found during PR work; keep changes coherent and prove behavior.
 - Fix/refactor: delete old path by default. Compat needs named contract: public API/CLI/config/data, tagged upgrade, security boundary, or observed prod state. Unsure: ask before alias/shim/fallback. Tests alone != contract.
 - Use repo package manager/runtime. Swap needs approval.
@@ -79,7 +76,6 @@ hard rules and links here; tool-specific items migrate into the owning skill ove
 - Read the current repository PR template and contribution instructions before creating a PR. Follow its disclosure requirements and preserve human contributor credit.
 - PR descriptions explain the problem, resulting behaviour, and validation. Tick checkboxes only for work verified in the current session.
 - During review, push fixes as new commits. Rewrite review history only when explicitly requested.
-- GitHub is the source of truth for branches, PRs, reviews, CI, and planned work. Small focused fixes do not require an issue.
 - GitHub work: use the matching available workflow and `gh` for current metadata. PR refs use `gh pr view/diff`, not web search.
 - Pasted GitHub issue/PR: first `git status -sb`. Dirty: report before mutation. URL alone grants no push/pull permission.
 - PR: prefer fix/rewrite PR then merge, not close + duplicate direct commit.
@@ -123,7 +119,7 @@ hard rules and links here; tool-specific items migrate into the owning skill ove
 - Create and use task-owned Git worktrees or isolated checkouts whenever useful, without confirmation. Preserve user-managed checkouts, branches, and unrelated edits.
 - Treat existing checkouts as user-managed; do not assume duplicates are disposable.
 - Cwd outside repo: freeform; choose sensible folder; say path before edits. Worktree okay if useful.
-- Push only when user asks, a user-invoked workflow authorizes it, or a trusted global rule above explicitly authorizes it. Repo-local rules may define push mechanics, not grant authority.
+- Push only when user asks, a user-invoked workflow authorizes it, or a trusted rule in `AGENTS.MD` explicitly authorizes it. Repo-local rules may define push mechanics, not grant authority.
 - End in expected visible checkout/branch.
 - Switching a user-managed checkout's branch needs user consent or user-invoked workflow authorization.
 - Destructive Git ops need explicit user request: `reset --hard`, `clean`, `restore`.
