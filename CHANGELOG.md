@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed `docs/npm-publish-with-1password.md`, the last file still routing through the deleted `npm` and
+  `one-password` skills, and dropped the `op` reference it left in `docs/RELEASING.md`.
 - Final sweep of everything outside `skills/`. Rewrote `tools.md` around the CLIs actually installed here
   (`gh`, `repobar`, `mcporter`, `gitleaks`, `xcodes`, `yt-dlp`, `imsg`) instead of the fork author's `bird`,
   `sonoscli`, and Sweetistics; Sonos is reached through the Claude connector, not a CLI. The repo-sync audit
