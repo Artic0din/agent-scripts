@@ -6,9 +6,9 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
-- Recorded the first activation: on the MacBook Air the rules pointers, skills mirrors, agent links, and
-  additive hook and permission merges are in place, with pre-activation backups kept outside the repo.
-  The README now describes what `sync-skills` covers and what `install.sh` still needs to automate.
+- Documented the activated state: what an installed machine's pointers and mirrors look like, the audit
+  that reports whether a given machine matches, the hand steps `install.sh` should automate, and where to
+  keep pre-activation backups.
 - Adopted Ryan's global rules file as `AGENTS.MD`, verbatim apart from its own canonical-path header and one
   link line, so the rules every tool reads are now versioned here. The fork's operational rules moved to
   `docs/agent-operations.md`, linked from `AGENTS.MD` and from `tools.md`.
