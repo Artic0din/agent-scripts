@@ -7,9 +7,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 ## Unreleased
 
 - Recorded the Xcode prerequisite on the three Apple skills that need it — `instruments-profiling`,
-  `native-app-performance`, and `swiftui-performance-audit`. Only Command Line Tools are installed, so
-  `xctrace`, `simctl`, and Instruments are absent while the Swift 6.4 toolchain is present. None of the six
-  Apple skills carried upstream contamination, and the three that need no Xcode are unchanged.
+  `native-app-performance`, and `swiftui-performance-audit`. The note states the requirement and gives a
+  check to run rather than asserting what is currently installed, so it cannot go stale once Xcode is
+  added. None of the six Apple skills carried upstream contamination, and the three needing no Xcode are
+  unchanged.
 - Extracted the canonical environment paths into `scripts/canonical-paths.sh`, sourced by both
   `sync-skills` and the skill-link audit, so the two can no longer disagree about where the repo lives.
 - CI now runs on every branch push, not only `main` and pull requests, so a broken suite is caught at the
