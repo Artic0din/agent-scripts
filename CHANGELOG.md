@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Remapped the manager and Codex paths Ryan confirmed: the fleet inventory and manager skills now live
+  under `~/Metisary/Enviroment/manager/`, conference strategy under the same root, and the Codex catalogue,
+  auth command, and keychain point at his own home. The two `config.toml` values stay absolute because TOML
+  does not expand `~`; the keychain path inside the zsh auth script does expand and is left as `~`.
 - Restored four `fleet-maintenance` scripts removed earlier on a bad availability check:
   `agent-cli-audit.sh` (Codex 0.155.0 and Claude 2.1.276 are installed in `~/.local/bin`, not Homebrew),
   `fleet-profile.mjs` (its `collect` needs no inventory), `agent-skill-links-audit.sh` (124 Claude and

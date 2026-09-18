@@ -9,7 +9,7 @@ read_when:
 
 This document is a routing guide, not a standalone auth or publishing recipe.
 Load `one-password` first (`$one-password`, owned by
-`~/Projects/manager/skills/one-password/SKILL.md`), then
+`~/Metisary/Enviroment/manager/skills/one-password/SKILL.md`), then
 [npm](../skills/npm/SKILL.md) (`$npm`). Those skills own the current commands,
 credential selection, consent rules, retries, verification, and cleanup. If a
 skill is unavailable, stop rather than reconstructing its workflow here.

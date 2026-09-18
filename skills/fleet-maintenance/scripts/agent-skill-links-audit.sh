@@ -2,7 +2,7 @@
 set -u -o pipefail
 
 agent_skills="$HOME/Metisary/Enviroment/config/skills"
-manager_skills="$HOME/Projects/manager/skills"
+manager_skills="$HOME/Metisary/Enviroment/manager/skills"
 codex_root="$HOME/.codex/skills"
 claude_root="$HOME/.claude/skills"
 agents_md="$HOME/Metisary/Enviroment/config/AGENTS.MD"

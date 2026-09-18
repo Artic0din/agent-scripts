@@ -67,7 +67,7 @@ model_provider = "openai_api_direct"
 model_context_window = 922000
 model_auto_compact_token_limit = 700000
 model_auto_compact_token_limit_scope = "total"
-model_catalog_json = "/Users/steipete/.codex/models-api-1m.json"
+model_catalog_json = "/Users/ryanfoyle/.codex/models-api-1m.json"
 
 [model_providers.openai_api_direct]
 name = "OpenAI API direct"
@@ -76,7 +76,7 @@ wire_api = "responses"
 requires_openai_auth = false
 
 [model_providers.openai_api_direct.auth]
-command = "/Users/steipete/.codex/bin/fetch-openai-inference-key.zsh"
+command = "/Users/ryanfoyle/.codex/bin/fetch-openai-inference-key.zsh"
 timeout_ms = 5000
 refresh_interval_ms = 300000
 ```
@@ -95,7 +95,7 @@ set -euo pipefail
 exec /usr/bin/security find-generic-password \
   -a Codex \
   -s "Codex OpenAI inference API" \
-  -w /Users/steipete/Library/Keychains/login.keychain-db
+  -w ~/Library/Keychains/login.keychain-db
 ```
 
 Resolve and verify the host's actual Keychain path at installation time; the example is host-specific. Keep that absolute, non-secret path inside the external executable, not `$HOME`/`~`, a provider override, or non-empty `auth.args`. Managed autoreview replaces the client's HOME/USERPROFILE and XDG config/data/state/cache directories. Implicit Keychain selection can then return exit 44 (`SecKeychainSearchCopyNext` item not found) even though parent-session delivery succeeds. Repair the wrapper's Keychain selection—not the reviewer's HOME, filesystem grants, or credential access. Inspect an existing helper before changing it; it may already use explicit selection.

@@ -7,7 +7,7 @@ usage() {
 }
 
 repair=false
-fleet="$HOME/Projects/manager/fleet/inventory.json"
+fleet="$HOME/Metisary/Enviroment/manager/fleet/inventory.json"
 host_id=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
