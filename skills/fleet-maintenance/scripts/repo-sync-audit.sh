@@ -1,7 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-root=${1:-"$HOME/Projects"}
+root=${1:-}
+if [[ -z "$root" ]]; then
+  printf 'usage: %s ROOT [DAYS]\n' "$0" >&2
+  printf 'ROOT is required; there is no default scan location\n' >&2
+  exit 2
+fi
 days=${2:-3}
 format=${3:-tsv}
 

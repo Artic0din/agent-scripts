@@ -38,9 +38,9 @@ ssh -o BatchMode=yes -o RequestTTY=no mbp \
 
 ## Repository roots
 
-Pass roots explicitly; the audit scripts default to `~/Projects`, which does not hold
-Ryan's repos. Discover what exists on each host before scanning, and never assume a
-root is populated:
+The audit and update scripts take the root as a required first argument and refuse to
+run without one, so a scan can never silently target an empty default. Discover what
+exists on each host before scanning, and never assume a root is populated:
 
 - Air: `~/Developer` and `~/Development/projects`. The audit recurses, so `~/Developer`
   already covers `~/Developer/projects` and `~/Developer/copilot-worktrees`.

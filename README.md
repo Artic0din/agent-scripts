@@ -36,11 +36,11 @@ The upstream `scripts/sync-skills` helper still assumes the workspace layout bel
 For the specific legacy topology `~/.claude/skills/NAME/NAME -> ~/.codex/skills/NAME -> ~/.claude/skills/NAME`, invoke the sync owner directly with an explicit allowlist:
 
 ```bash
-/absolute/path/to/agent-scripts/scripts/sync-skills --repair-nested-self-links --dry-run -- boxd-cli boxd-setup-deploy
+/absolute/path/to/agent-scripts/scripts/sync-skills --repair-nested-self-links --dry-run -- skill-one skill-two
 ```
 
 ```bash
-/absolute/path/to/agent-scripts/scripts/sync-skills --repair-nested-self-links -- boxd-cli boxd-setup-deploy
+/absolute/path/to/agent-scripts/scripts/sync-skills --repair-nested-self-links -- skill-one skill-two
 ```
 
 This mode validates every candidate before unlinking only the extra nested leaves. It preserves the real skill directories, assets, and valid Codex backlinks, and exits before creating roots, building mirrors, pruning, or touching instruction pointers. Names must start with an ASCII letter or digit and contain only letters, digits, `.`, `_`, or `-`; duplicates, missing names, and unknown arguments are rejected. A missing nested leaf is a no-op only with the expected surrounding topology. Redirected/inaccessible roots, unexpected objects or literal targets, and changed directory/link identities cause refusal. Rechecks before each unlink are not atomic concurrency protection; a later error stops the batch and reports removals already completed, without rollback.

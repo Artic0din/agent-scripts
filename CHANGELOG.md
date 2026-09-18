@@ -6,6 +6,12 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Final sweep of everything outside `skills/`. Rewrote `tools.md` around the CLIs actually installed here
+  (`gh`, `repobar`, `mcporter`, `gitleaks`, `xcodes`, `yt-dlp`, `imsg`) instead of the fork author's `bird`,
+  `sonoscli`, and Sweetistics; Sonos is reached through the Claude connector, not a CLI. The repo-sync audit
+  and update scripts now require an explicit root rather than defaulting to `~/Projects`, which is empty
+  here, and `fleet-maintenance` says so. Made the README's sync examples and the sectriage `package`
+  line generic. Removed three empty, untracked skill directories left behind by earlier deletions.
 - Reconciled `skills.sh.json` with the skills that exist: dropped four catalogue entries for removed
   skills and added five that were never listed. All 31 skills are now grouped, and every grouped name
   resolves to a real `SKILL.md`.
