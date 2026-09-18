@@ -12,7 +12,7 @@ Goal: record Time Profiler via `xctrace`, extract samples, symbolicate, and prop
 > not for recording. Check first, rather than assuming:
 >
 > ```bash
-> xcrun --find xctrace || xcodes install --latest
+> xcrun --find xctrace || echo "not installed; run: xcodes install --latest"
 > ```
 
 ## Quick start (CLI)

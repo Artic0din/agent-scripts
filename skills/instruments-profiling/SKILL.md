@@ -15,7 +15,7 @@ Focus: Time Profiler, `xctrace` CLI, and picking the correct binary/app instance
 > not for recording. Check first, rather than assuming:
 >
 > ```bash
-> xcrun --find xctrace || xcodes install --latest
+> xcrun --find xctrace || echo "not installed; run: xcodes install --latest"
 > ```
 
 ## Quick Start (CLI)

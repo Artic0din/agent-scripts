@@ -16,7 +16,7 @@ Audit SwiftUI view performance end-to-end, from instrumentation and baselining t
 > not for recording. Check first, rather than assuming:
 >
 > ```bash
-> xcrun --find xctrace || xcodes install --latest
+> xcrun --find xctrace || echo "not installed; run: xcodes install --latest"
 > ```
 
 ## Workflow Decision Tree
