@@ -1,0 +1,13 @@
+# Copy to ~/.codex/config.toml. The real file stays machine-local: it may hold credentials.
+approval_policy = "on-request"
+
+[features]
+hooks = true
+
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+# Codex passes `env` values literally; "${VAR}" is not expanded (verified on 0.155.0). Inherit the
+# token by exact name from the launching shell instead: export GITHUB_PERSONAL_ACCESS_TOKEN there,
+# sourced from the Keychain via $keychain, so no credential ever sits in this file.
+env_vars = ["GITHUB_PERSONAL_ACCESS_TOKEN"]

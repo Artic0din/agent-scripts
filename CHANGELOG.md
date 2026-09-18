@@ -6,6 +6,15 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Adopted the rebuilt environment layout: `agents/` definitions for Claude, Codex, and Antigravity;
+  per-tool hook, settings, and MCP files under `config/`; the engineering constitution and PR standards
+  under `docs/`; a baseline `checks.yml` workflow; and `skills.lock.json` for install-managed externals.
+  Added 36 skills — 28 Firecrawl, four writing skills, `i-have-adhd`, and `nas-portainer-runtime` — and
+  grouped them in the catalogue. Moved the Copilot instruction files to `.github/instructions/`, where
+  Copilot reads them. Merged the two READMEs into one that describes the target layout and the sync
+  mechanism that exists today. The LICENSE keeps the original copyright notice alongside Ryan's.
+  Removed `docs/windows.md`. Pinned the lockfile's one external skill to a commit, and allowlisted two
+  fake keys used as bad examples in the security instructions so the secret scan stays strict elsewhere.
 - Removed the last 1Password routes outside the `keychain` skill. `ssh-doctor` lost its "OP Profile Block",
   which copied a service-account token into `~/.profile` across hosts — the pattern `keychain` forbids and
   nothing here can use. `fleet-profile.mjs` no longer validates an `onepassword_item_id` field for an
