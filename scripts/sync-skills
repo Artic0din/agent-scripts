@@ -40,11 +40,11 @@ if [ "$#" -gt 0 ]; then
   esac
 fi
 
-AGENT_SKILLS="$HOME/Projects/agent-scripts/skills"
-MANAGER_SKILLS="$HOME/Projects/manager/skills"
+AGENT_SKILLS="$HOME/Metisary/Enviroment/config/skills"
+MANAGER_SKILLS="$HOME/Metisary/Enviroment/manager/skills"
 CODEX_ROOT="$HOME/.codex/skills"
 CLAUDE_ROOT="$HOME/.claude/skills"
-AGENTS_MD="$HOME/Projects/agent-scripts/AGENTS.MD"
+AGENTS_MD="$HOME/Metisary/Enviroment/config/AGENTS.MD"
 
 # This mode exits before any ordinary mirror or instruction-pointer work.
 if [ "$repair" -eq 1 ]; then
