@@ -201,7 +201,6 @@ function collectTools() {
     "notcrawl",
     "openclaw",
     "op",
-    "peekaboo",
     "pnpm",
     "slacrawl",
     "telecrawl",

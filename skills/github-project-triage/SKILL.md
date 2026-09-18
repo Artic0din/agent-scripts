@@ -158,10 +158,10 @@ Never work multiple tickets at once. For each item:
    - Prefer a clean bounded refactor when it is the better fix. Do not default to a small patch that
      leaves worse design.
 3. Implement it the best maintainable way, on a feature branch, never on the default branch.
-4. Verify locally and end to end where possible. For UI behaviour use the repo's expected live proof
-   path: `peekaboo` is installed for macOS UI capture and interaction, plus screenshots or VM proof.
-   For API or provider behaviour, use a real usable key or account through the expected secret
-   workflow. If the needed access is missing, stop and say so rather than reporting the item done.
+4. Verify locally and end to end where possible. For UI behaviour use the repo's own expected proof
+   path, such as its test suite or screenshots. For API or provider behaviour, use a real usable key
+   or account through the expected secret workflow. If the needed access is missing, stop and say so
+   rather than reporting the item done.
 5. Run `$autoreview` before landing unless the change is trivial or docs-only, and address its
    accepted findings.
 6. Ensure CI is green and the PR body and changelog are right. Land, close, or comment with evidence,

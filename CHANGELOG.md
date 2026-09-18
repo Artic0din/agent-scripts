@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed Peekaboo everywhere at Ryan's request: dropped the `vm-lab` skill, whose purpose was Peekaboo
+  validation inside Parallels and whose Parallels, Ghostty, and Peekaboo-checkout dependencies are all
+  absent; removed it from `fleet-profile.mjs`'s detected-CLI list, from `github-project-triage`'s UI proof
+  path, and as the Swift size example in `project-structure`. The Homebrew formula was uninstalled too.
 - Restored `preflight.rb` and its test into `codex-config/scripts/` after removing them without naming
   them first, and restored the CI step at the new path. The skill now records what the preflight covers
   and that it fails by design against the current ChatGPT-auth setup, which has no direct provider.

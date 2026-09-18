@@ -34,8 +34,7 @@
         "swift-concurrency-expert",
         "swiftui-liquid-glass",
         "swiftui-performance-audit",
-        "swiftui-view-refactor",
-        "vm-lab"
+        "swiftui-view-refactor"
       ]
     },
     {

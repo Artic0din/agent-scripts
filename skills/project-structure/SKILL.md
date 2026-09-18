@@ -53,7 +53,7 @@ TS (reference: openclaw, ~7M LOC, ~14k source files; o200k tokens; byte/4 estima
 - dense, `src`+`packages` + extensions boundary, `--re-counts --max-per-kind 12`: ~218k real.
 - dense, `src` only + boundaries, `--re-counts --max-per-kind 10`: ~197k real (fits a 200k window).
 
-Swift (reference: Peekaboo, 1,122 source files after test exclusion; byte/4 estimates):
+Swift (reference: a 1,122-file codebase after test exclusion; byte/4 estimates):
 
 - dense top-level: ~34k tokens (3,962 symbols).
 - dense `--members`: ~197k (20,909 symbols) — ~6× top-level.
