@@ -6,6 +6,13 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed the `release-mac-app` skill and its Sparkle release machinery: 2,968 lines across six files,
+  plus `docs/RELEASING-MAC.md`, `docs/mac-app.md`, the `release/sparkle_lib.sh` compatibility shim, and the
+  CI step covering its three credential-boundary suites. No repository of Ryan's uses Sparkle, nothing
+  sourced the shim, and the skill carried most of the remaining 1Password coupling.
+- Removed the tracked `tmp/` scratch files left by the fork's pr474 chunking commits.
+- Fixed `sync-skills` and its test fixture, which were left on the old `~/Projects/agent-scripts` layout
+  when the skill-link audit moved to `~/Metisary/Enviroment/config`, breaking `test-sync-skills`.
 - Updated `AGENTS.MD` for the renamed skills: `$codex-huge-context` is now `$codex-config`,
   `$one-password` is now `$keychain`, and the `op` service-account and `op-work` tmux rule is replaced by
   the `security` rule, which requires scoped reads and a non-empty value because a locked keychain or
