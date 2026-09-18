@@ -16,6 +16,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
+assert_validate_shape() {
+  node -e '
+    const keys = Object.keys(JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))).sort();
+    if (keys.join(",") !== "errors,valid") { console.error("validate output contract drifted:", keys); process.exit(1); }
+  ' "$1"
+}
+
 cat >"$scratch/valid.json" <<'JSON'
 {
   "profiles": {
@@ -44,6 +51,7 @@ JSON
 
 node "$profile" validate --fleet "$scratch/valid.json" >"$scratch/output.json"
 grep -q '"valid": true' "$scratch/output.json"
+assert_validate_shape "$scratch/output.json"
 
 node -e '
   const fs = require("node:fs");
@@ -57,6 +65,7 @@ if node "$profile" validate --fleet "$scratch/invalid.json" >"$scratch/output.js
   printf 'expected invalid GitHub cache requirements to fail validation\n' >&2
   exit 1
 fi
+assert_validate_shape "$scratch/output.json"
 grep -q 'full: github_cache must be octopool' "$scratch/output.json"
 grep -q 'worker: github_cache must be octopool' "$scratch/output.json"
 
