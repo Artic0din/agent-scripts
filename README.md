@@ -43,7 +43,7 @@ The sync does not cover the rest of an install, which is currently done by hand 
 `install.sh` should automate: merging the `config/` hook and permission entries into each tool's live
 settings (additive only), linking `agents/` into `~/.claude/agents` and `~/.codex/agents`, and the
 Antigravity rules link and skills mirror. Before activating a machine, copy every file those steps
-touch to `~/Metisary/Enviroment/backups/activation-YYYY-MM-DD/`; existing snapshots are listed by
+touch to `~/Metisary/Enviroment/backups/activation-YYYY-MM-DD-<host>/`; existing snapshots are listed by
 `ls ~/Metisary/Enviroment/backups/`, and the activation entries in `CHANGELOG.md` name each one. Done once by hand, not linkable: `claude mcp add`,
 `codex mcp add`, the two UI pastes in `config/ui-paste.md`, and exporting
 `GITHUB_PERSONAL_ACCESS_TOKEN` in the shell that launches Codex. The Codex MCP template inherits that

@@ -9,7 +9,7 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 - Activated the environment on the MacBook Air on 2026-09-18: rules pointers for Claude, Codex and
   Antigravity, the Codex whole-root skills link, per-skill mirrors for Claude and Antigravity, agent links,
   and additive hook and permission merges. Pre-activation copies of every touched file are under
-  `~/Metisary/Enviroment/backups/activation-2026-09-18/`.
+  `~/Metisary/Enviroment/backups/activation-2026-09-18-macbook-air/`.
 - Documented the activated state: what an installed machine's pointers and mirrors look like, the audit
   that reports whether a given machine matches (rules pointers and skill mirrors only), the hand steps
   `install.sh` should automate, and the backup convention.
