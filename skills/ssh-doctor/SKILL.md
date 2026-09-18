@@ -105,37 +105,6 @@ ifconfig | awk '/^[a-z0-9]+:/{iface=$1; sub(":","",iface)} iface ~ /^en[0-9]+$/ 
 sudo lsof -nP -iTCP:22 -sTCP:LISTEN
 ```
 
-## OP Profile Block
-
-If asked to ensure `~/.profile` has a Codex-managed `OP_SERVICE_ACCOUNT_TOKEN` copied from another host:
-
-- verify exact variable/markers without printing value
-- copy only the matching line/block
-- redirect through a `chmod 600` temp file
-- never echo the token
-
-Presence check:
-
-```bash
-awk 'BEGIN{b=0;e=0;x=0} /BEGIN Codex-managed OP_SERVICE_ACCOUNT_TOKEN/ {b=1} /END Codex-managed OP_SERVICE_ACCOUNT_TOKEN/ {e=1} /^[[:space:]]*(export[[:space:]]+)?OP_SERVICE_ACCOUNT_TOKEN=/ {x=1} END{print "marker_begin", b; print "marker_end", e; print "exact_var", x}' ~/.profile
-```
-
-Append from remote host:
-
-```bash
-tmpfile=$(mktemp /tmp/codex-op-token.XXXXXX)
-chmod 600 "$tmpfile"
-ssh -o RequestTTY=no -o RemoteCommand=none HOST 'awk '\''/^[[:space:]]*(export[[:space:]]+)?OP_SERVICE_ACCOUNT_TOKEN=/ {print; exit}'\'' ~/.profile' > "$tmpfile"
-if [ -s "$tmpfile" ]; then
-  {
-    printf '\n# BEGIN Codex-managed OP_SERVICE_ACCOUNT_TOKEN\n'
-    sed -n '1p' "$tmpfile"
-    printf '# END Codex-managed OP_SERVICE_ACCOUNT_TOKEN\n'
-  } >> ~/.profile
-fi
-rm -f "$tmpfile"
-```
-
 ## Closeout
 
 Report:

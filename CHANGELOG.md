@@ -6,6 +6,11 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed the last 1Password routes outside the `keychain` skill. `ssh-doctor` lost its "OP Profile Block",
+  which copied a service-account token into `~/.profile` across hosts — the pattern `keychain` forbids and
+  nothing here can use. `fleet-profile.mjs` no longer validates an `onepassword_item_id` field for an
+  inventory that does not exist. `things-todo` now routes its auth token toward `$keychain` without
+  inventing an item name.
 - Removed `docs/npm-publish-with-1password.md`, the last file still routing through the deleted `npm` and
   `one-password` skills, and dropped the `op` reference it left in `docs/RELEASING.md`.
 - Final sweep of everything outside `skills/`. Rewrote `tools.md` around the CLIs actually installed here
