@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
+  directories that no longer exist and which had to be edited each time a checkout moved, and a knowledge rule
+  citing `workspace-index.yaml`, which exists nowhere on disk. Locating repositories rather than assuming a fixed
+  path is already stated once in `docs/agent-operations.md`, so nothing replaces the table.
 - Reconciled the split rules: autoreview is stated as required before every commit and landing with no single
   provider required, the ops doc's push rule names `AGENTS.MD` instead of "a rule above", and four bullets it
   duplicated from the global rules are removed so each rule lives once.
