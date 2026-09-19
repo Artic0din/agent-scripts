@@ -144,18 +144,7 @@ Full standard: [engineering-constitution.md](/Users/ryanfoyle/Metisary/Enviromen
 - `.env.example` with variable names (no values) in every repo.
 - Schema changes consider: migrations, defaults, nullability, rollback.
 
-## Repos (active)
-
-| Project | Path |
-| ------- | ---- |
-| QRble | `~/Development/projects/QRble/` |
-| MetaBuild | `~/Development/projects/metabuild/` |
-| PowerBot | `~/Development/projects/powerbot/` |
-| PowerSync | `~/Development/projects/powersync/` |
-| PriceHawk | `~/Development/projects/PriceHawk/` |
-| Pulse | `~/Development/projects/pulse/` |
-| ThermIQ | `~/Development/projects/thermiq/` |
-| Synapse | `~/Development/private/synapse/` |
+## Repo rules
 
 Repo-specific rules (deployment gotchas, API limits, domain conventions) live in each repo's `AGENTS.md` — not here.
 Operational agent rules (routing, PR and CI mechanics, GitHub posting, disclosure and identity guardrails, runtime safety) live in [agent-operations.md](/Users/ryanfoyle/Metisary/Enviroment/config/docs/agent-operations.md) — also not here.
@@ -169,7 +158,7 @@ When asked to modify this file or an overlay: propose the diff, wait for explici
 - Search the `ryan-knowledge` Basic Memory project before creating durable workspace or project knowledge.
 - Add or update a note only when the result is reusable and verified against code, tests, repo documentation, or another primary source.
 - Store project context and decisions in the `AI Memory/` folder of that project — on disk `/Users/ryanfoyle/Development/Knowledge/Ryan-Knowledge/AI Memory/`; never store secrets, credentials, work-restricted material, or unsupported assumptions.
-- Knowledge notes complement primary sources and never override code, tests, repo instructions, or `/Users/ryanfoyle/Development/Workspace/workspace-index.yaml`.
+- Knowledge notes complement primary sources and never override code, tests, or repo instructions.
 
 # Codex overlay
 
