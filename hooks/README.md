@@ -5,7 +5,7 @@ They require Bash, Git and Gitleaks, write no files and make no network requests
 Keep the entire `hooks` directory together; the host entrypoints require the shared script in their parent directory.
 
 Run them from the repository being checked, or use `hooks/check-staged-secrets.sh` directly.
-Outside a repository they do nothing.
+Outside a repository they do nothing; missing Git, unreadable metadata and damaged `.git` directories block the check.
 Inside a repository, a scanner finding, scanner error or missing Gitleaks returns exit code 2 with a generic message.
 Successful scans return 0 with no output.
 They do not print staged lines, even when a secret is detected.

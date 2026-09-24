@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 set -euo pipefail
-exec bash "$(cd -- "$(dirname -- "$0")/.." && pwd -P)/check-staged-secrets.sh"
+exec bash "$(cd -P -- "$(dirname -- "$0")/.." && pwd -P)/check-staged-secrets.sh"

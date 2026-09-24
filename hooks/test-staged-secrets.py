@@ -34,6 +34,12 @@ def main() -> None:
             assert result.returncode == 2, result
             assert secret.encode() not in result.stdout + result.stderr
             assert b"Staged-secret check failed" in result.stderr
+            linked_hooks = root / f"{host}-hooks"
+            linked_hooks.symlink_to(hooks / host, target_is_directory=True)
+            linked_command = ["/bin/bash", str(linked_hooks / "pre-commit-secrets.sh")]
+            linked_result = subprocess.run(linked_command, cwd=repository, capture_output=True)
+            assert linked_result.returncode == 2, linked_result
+            assert b"Staged-secret check failed" in linked_result.stderr
             assert subprocess.run(command, cwd=nested, capture_output=True).returncode == 2
             assert subprocess.run(command, cwd=root, capture_output=True).returncode == 0
 
@@ -51,6 +57,20 @@ def main() -> None:
             result = subprocess.run(command, cwd=repository, env=environment, capture_output=True)
             assert result.returncode == 2, result
             assert b"install gitleaks" in result.stderr
+            (binaries / "git").unlink()
+            result = subprocess.run(command, cwd=repository, env=environment, capture_output=True)
+            assert result.returncode == 2, result
+            (binaries / "git").symlink_to(shutil.which("git"))
+        damaged = root / "damaged"
+        damaged.mkdir()
+        (damaged / ".git").mkdir()
+        assert subprocess.run(command, cwd=damaged, capture_output=True).returncode == 2
+        (binaries / "git").unlink()
+        (binaries / "git").write_text(
+            '#!/bin/sh\necho "fatal: not a git repository (or any parent up to mount point /)" >&2\nexit 128\n'
+        )
+        (binaries / "git").chmod(0o755)
+        assert subprocess.run(command, cwd=root, env=environment, capture_output=True).returncode == 0
     print("PASS: both hosts, staged versus working content, safe names, no disclosure, missing scanner")
 
 

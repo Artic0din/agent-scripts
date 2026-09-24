@@ -2,8 +2,20 @@
 set -euo pipefail
 
 # Scan the index in the caller's working directory; never echo staged contents.
-if ! repository_root=$(git rev-parse --show-toplevel 2>/dev/null); then
-  exit 0
+if ! command -v git >/dev/null 2>&1; then
+  echo 'Staged-secret check unavailable: Git is required.' >&2
+  exit 2
+fi
+if ! repository_root=$(LC_ALL=C git rev-parse --show-toplevel 2>&1); then
+  if [[ "$repository_root" == 'fatal: not a git repository ('* ]]; then
+    directory=$PWD
+    while [[ ! -e "$directory/.git" && ! -L "$directory/.git" ]]; do
+      [[ "$directory" == / ]] && exit 0
+      directory=$(dirname -- "$directory")
+    done
+  fi
+  echo 'Staged-secret check unavailable: Git could not read repository metadata.' >&2
+  exit 2
 fi
 cd "$repository_root"
 if ! command -v gitleaks >/dev/null 2>&1; then
