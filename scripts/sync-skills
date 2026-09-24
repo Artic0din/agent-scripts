@@ -164,7 +164,12 @@ mkdir -p "$CLAUDE_ROOT" "$CODEX_ROOT"
 
 # --- Codex: whole-root links.
 [ -d "$AGENT_SKILLS" ] && link "$AGENT_SKILLS" "$CODEX_ROOT/agent-scripts"
-[ -d "$MANAGER_SKILLS" ] && link "$MANAGER_SKILLS" "$CODEX_ROOT/manager"
+if [ -d "$MANAGER_SKILLS" ]; then
+  link "$MANAGER_SKILLS" "$CODEX_ROOT/manager"
+elif [ -L "$CODEX_ROOT/manager" ] && [ "$(readlink "$CODEX_ROOT/manager")" = "$MANAGER_SKILLS" ]; then
+  rm "$CODEX_ROOT/manager"
+  note "pruned retired manager registration $CODEX_ROOT/manager"
+fi
 
 # --- Claude: collect desired name -> target (bash 3.2: parallel arrays).
 names=()

@@ -155,7 +155,8 @@ snapshot "$fixture_home" >"$case_root/before"
 run_sync >"$output" 2>&1
 unchanged
 rm -r "$manager"
-unlink "$codex/manager"
+run_sync >"$output" 2>&1
+[ ! -L "$codex/manager" ] || fail 'retired manager registration remained'
 run_audit >"$output"
 contains 'status=current'
 # A deleted skill must still be pruned, including a former preserved alias.
