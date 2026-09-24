@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Made the retrospective writing-guide step portable and preserved standards until reviewers load their destination.
+
 - Updated Matt Pocock's session retrospective to favour automated checks for mechanical mistakes.
 - Separated the manually invoked Gstack weekly retrospective from Matt's session retrospective with a distinct `gstack-retro` command.
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
