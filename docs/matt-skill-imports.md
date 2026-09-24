@@ -1,7 +1,9 @@
 # Matt Pocock skill imports
 
 These 31 previously local skill directories are preserved from [mattpocock/skills at c55ee46073ed923f86ce59a5eb3b6d895095d1b7](https://github.com/mattpocock/skills/tree/c55ee46073ed923f86ce59a5eb3b6d895095d1b7).
-The 86 source files match the pinned upstream blobs; this import does not change their invocation settings or adapt their host-specific workflows.
+The 86 source files were checked against the pinned upstream blobs.
+Two local safety adaptations include uncommitted work in `code-review` and preserve unrelated files during conflict resolution.
+Invocation settings and other host-specific workflows are preserved.
 The [upstream MIT licence](licenses/matt-pocock-MIT.txt) applies to these files.
 
 | Area | Imported directories |
