@@ -66,6 +66,10 @@ READ ~/Metisary/Enviroment/config/AGENTS.MD BEFORE ANYTHING (skip if missing).
 
 ## Skills
 
+`skills/retro` contains [Matt Pocock's session retrospective](https://github.com/mattpocock/skills/blob/c55ee46073ed923f86ce59a5eb3b6d895095d1b7/skills/in-progress/retro/SKILL.md).
+It is invoked explicitly to review a coding session and suggest improvements to the agent environment.
+For Claude, the selected `~/.claude/skills/retro` link points to this folder; existing Gstack aliases can remain separate.
+
 Each `skills/<name>/SKILL.md` has YAML front matter with a quoted `description`:
 
 ```yaml
