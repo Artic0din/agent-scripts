@@ -9,7 +9,7 @@ The audit script named under Install reports whether a machine's rules pointers 
 
 | Path | Purpose |
 | --- | --- |
-| `AGENTS.MD` | Global hard rules. The installer links it into Claude, Codex and Antigravity; it is pasted into Cursor and Copilot. |
+| `AGENTS.MD` | Global hard rules, linked into Claude, Codex, Copilot CLI and Antigravity; Cursor reads it through `config/cursor.rules.mdc`. |
 | `skills/` | Skills, one folder each with `SKILL.md`. Personal and vendored skills are committed here. |
 | `skills.sh.json` | Catalogue of every folder in `skills/`, grouped for routing. |
 | `skills.lock.json` | Third-party skills that `install.sh` will fetch into `skills/.external/` (gitignored). |
@@ -35,6 +35,11 @@ On an activated machine, `~/.codex/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.claude
 `skills/`, and every skill here is mirrored into `~/.claude/skills` and `~/.gemini/skills`. Check a
 machine rather than assuming; the audit exits non-zero and lists each drifted link:
 
+The existing Metisary activation also links `~/.agents/skills` to this repository's `skills/`, `~/.copilot/copilot-instructions.md` to `AGENTS.MD`, and `~/.cursor/rules/metisary.mdc` to `config/cursor.rules.mdc`.
+Antigravity uses `config/antigravity.skills.json` and the named `metisary` hook group.
+The nested synced-skill path in that manifest is a local import; it is not provided by a fresh checkout.
+The audit below covers its documented Claude/Codex pointers, not all application integrations.
+
 ```bash
 bash ~/Metisary/Enviroment/config/skills/fleet-maintenance/scripts/agent-skill-links-audit.sh
 ```
@@ -45,7 +50,7 @@ settings (additive only), linking `agents/` into `~/.claude/agents` and `~/.code
 Antigravity rules link and skills mirror. Before activating a machine, copy every file those steps
 touch to `~/Metisary/Enviroment/backups/activation-YYYY-MM-DD-<host>/`; existing snapshots are listed by
 `ls ~/Metisary/Enviroment/backups/`, and the activation entries in `CHANGELOG.md` name each one. Done once by hand, not linkable: `claude mcp add`,
-`codex mcp add`, the two UI pastes in `config/ui-paste.md`, and exporting
+`codex mcp add`, the optional web UI paste in `config/ui-paste.md`, and exporting
 `GITHUB_PERSONAL_ACCESS_TOKEN` in the shell that launches Codex. The Codex MCP template inherits that
 variable by exact name (`env_vars`) because Codex does not expand `${VAR}` in `env`; source the value
 from the Keychain via `$keychain`, and if it is unset the GitHub server starts with no token.
