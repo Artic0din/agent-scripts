@@ -66,6 +66,8 @@ READ ~/Metisary/Enviroment/config/AGENTS.MD BEFORE ANYTHING (skip if missing).
 
 ## Skills
 
+The [curated Pstack skills](docs/curated-pstack.md) provide automatic plain-language writing and explicitly requested project verification workflows.
+
 Each `skills/<name>/SKILL.md` has YAML front matter with a quoted `description`:
 
 ```yaml
