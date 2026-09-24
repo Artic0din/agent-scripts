@@ -11,7 +11,7 @@ The audit script named under Install reports whether a machine's rules pointers 
 | --- | --- |
 | `AGENTS.MD` | Global hard rules, linked into Claude, Codex, Copilot CLI and Antigravity; Cursor reads it through `config/cursor.rules.mdc`. |
 | `skills/` | Skills, one folder each with `SKILL.md`. Personal and vendored skills are committed here. |
-| `skills.sh.json` | Catalogue of every folder in `skills/`, grouped for routing. |
+| `skills.sh.json` | Curated routing catalogue; additional imported skill directories may be present. |
 | `skills.lock.json` | Third-party skills that `install.sh` will fetch into `skills/.external/` (gitignored). |
 | `.github/instructions/` | GitHub Copilot custom instructions, scoped by `applyTo`. |
 | `hooks/` | Repository hook scripts. The tool configs under `config/` currently reference `~/.claude/hooks/`. |
@@ -39,6 +39,7 @@ The existing Metisary activation also links `~/.agents/skills` to this repositor
 Antigravity uses `config/antigravity.skills.json` and the named `metisary` hook group.
 The nested synced-skill path in that manifest is a local import; it is not provided by a fresh checkout.
 The audit below covers its documented Claude/Codex pointers, not all application integrations.
+These activation files target Ryan's existing canonical checkout; adjust their paths before activating a different machine layout.
 
 ```bash
 bash ~/Metisary/Enviroment/config/skills/fleet-maintenance/scripts/agent-skill-links-audit.sh
@@ -83,7 +84,7 @@ description: "Short generic trigger phrase."
 - Keep descriptions short and generic; optimize for routing, not documentation.
 - Keep skill bodies terse and operational; put repeatable commands in `skills/<name>/scripts/`.
 - Validate after edits with `scripts/validate-skills`. To run it as a pre-commit hook, opt in once with `git config core.hooksPath hooks`.
-- `skills.sh.json` is the catalogue; every folder in `skills/` is listed there.
+- `skills.sh.json` is the curated catalogue; review imported skills before adding routing entries.
 - `skill-cleaner` audits prompt budget and duplicates; run it after adding a batch of skills.
 
 `autoreview` is maintained in `skills/autoreview` with its review helper and acceptance harness.
