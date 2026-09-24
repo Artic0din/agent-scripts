@@ -7,6 +7,7 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 ## Unreleased
 
 - Updated Matt Pocock's session retrospective to favour automated checks for mechanical mistakes.
+- Separated the manually invoked Gstack weekly retrospective from Matt's session retrospective with a distinct `gstack-retro` command.
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
   directories that no longer exist and which had to be edited each time a checkout moved, and a knowledge rule
   citing `workspace-index.yaml`, which exists nowhere on disk. Locating repositories rather than assuming a fixed
