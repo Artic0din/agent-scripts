@@ -6,7 +6,7 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
-- Published the Codex post-tool output filter with redacted blocking feedback and checks for both output channels.
+- Published the Codex post-tool output filter with redacted blocking feedback and automatic checks for both output channels, GitHub token families and mixed-case hexadecimal values.
 
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
   directories that no longer exist and which had to be edited each time a checkout moved, and a knowledge rule
