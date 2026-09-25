@@ -57,6 +57,8 @@ Never edit product code during a run: a behavior the map describes that the app 
 
 1. **Index hygiene.** Read the feature map README and glob its sibling files.
    Fix missing, extra, duplicate, or dead entries.
+   Establish that the baseline covers the full current product surface: inventory user-facing routes, commands, and entry points from source whenever prior complete coverage for this source baseline is unavailable.
+   Reconcile every discovered surface with the map before assigning readers; unexplained omissions block a clean result even when they predate recent changes.
    Lightweight; no generated inventory.
 
 2. **Source wave.** One read-only subagent per feature file, launched concurrently.

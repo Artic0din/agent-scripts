@@ -38,9 +38,15 @@ Preconditions:
 - **Cancel draft.** Open a new note, enter `Discard me`, and choose `Cancel`.
   Run `control-notes browser click --role button --name "New note"`, `control-notes browser fill --role textbox --name "Title" --value "Discard me"`, and `control-notes browser click --role button --name "Cancel"`.
   The note list returns and has no `Discard me` link.
+- **Keyboard entry.** From the note list, focus the non-editable `All notes` heading, then press `n`.
+  Run `control-notes browser focus --role heading --name "All notes"` and `control-notes browser press --key n`.
+  The blank `Note editor` form appears with focus in `Title`; run `control-notes browser click --role button --name "Cancel"` to return to the list without saving.
 - **CLI entry.** Create a second note.
   Run `control-notes cli -- notes create --title "CLI note" --body "Created from terminal" --format json`.
   Exit code `0` and stdout contain the new note ID and title.
+- **Confirm CLI persistence.** Refresh the browser list and open the CLI-created note.
+  Run `control-notes browser reload` and `control-notes browser click --role link --name "CLI note"`.
+  The editor shows title `CLI note` and body `Created from terminal`; assert both stored values.
 - **Proof.** Return to the note list with `control-notes browser click --role link --name "All notes"`.
   Run `control-notes browser snapshot --aria --path "$NOTES_EVIDENCE_DIR/create-note/list.aria.txt"` and `control-notes browser screenshot --path "$NOTES_EVIDENCE_DIR/create-note/list.png"`.
   The artifacts show `Release checklist` and `CLI note`.
