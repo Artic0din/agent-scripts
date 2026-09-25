@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Bounded abandoned iOS session renewal and serialized tunnel recovery in the preserved Gstack patch.
+
 - Preserved the local Gstack iOS daemon reconnect changes as a reproducible patch against a pinned upstream revision.
 
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
