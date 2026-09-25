@@ -20,7 +20,8 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 2. (optional) Use an **exploration subagent** to conduct any exploration required by the tickets - relevant codebase files or external documentation. Ensure the exploration subagent can save files - it should save its markdown notes in a directory outside the repo, accessible by all future subagents. This lets **implementer subagents** focus on implementation rather than exploration.
 
-3. Create a branch, and a draft PR. The PR should be marked as 'closing' the spec issue and tickets.
+3. Create a feature branch before implementation.
+   Once it contains reviewable, validated work, open a normal PR linking the spec issue and tickets it closes.
 
 4. Use **implementer subagents** to implement each ticket. Each implementer subagent should work in its own worktree, on its own branch.
 
@@ -30,6 +31,6 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 7. Once all tickets are complete, run /code-review on the PR branch. Fix all issues raised by the code review in a single **implementer subagent**.
 
-8. Mark the PR as ready for review.
+8. Confirm the normal PR contains the completed work and passing required checks.
 
 9. Clean up all **implementer subagent** worktrees.

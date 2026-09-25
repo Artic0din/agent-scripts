@@ -9,7 +9,7 @@ disable-model-invocation: true
 Scaffold the per-repo configuration that the engineering skills assume:
 
 - **Issue tracker**: where issues live (GitHub by default; local markdown is also supported out of the box)
-- **Triage labels**: the strings used for the five canonical triage roles
+- **Triage labels**: the strings used for the two category roles and five state roles
 - **Domain docs**: where `CONTEXT.md` and ADRs live, and the consumer rules for reading them
 
 This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
@@ -21,7 +21,7 @@ This is a prompt-driven skill, not a deterministic script. Explore, present what
 Look at the current repo to understand its starting state. Read whatever exists; don't assume:
 
 - `git remote -v` and `.git/config`: is this a GitHub repo? Which one?
-- `AGENTS.md` and `CLAUDE.md` at the repo root: does either exist? Is there already an `## Agent skills` section in either?
+- Existing root instructions, preserving actual casing (`AGENTS.md`, `AGENTS.MD`, or `CLAUDE.md`) and resolving symlinks to the canonical file: is there already an `## Agent skills` section?
 - `CONTEXT.md` and `CONTEXT-MAP.md` at the repo root
 - `docs/adr/` and any `src/*/docs/adr/` directories
 - `docs/agents/`: does this skill's prior output already exist?
@@ -54,7 +54,10 @@ If it is installed, ask exactly one question:
 
 > Do you want to keep the default triage labels? (recommended: **yes**)
 
-The defaults are the five canonical roles, each label string equal to its name: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. On **yes**, write them as-is. Only if the user says no, usually because their tracker already uses other names (e.g. `bug:triage` for `needs-triage`), collect the overrides so `triage` applies existing labels instead of creating duplicates.
+The defaults are two category roles (`bug`, `enhancement`) and five state roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`), each mapped to a label of the same name.
+Inspect the tracker's existing labels and propose mappings to those before creating duplicates.
+Include any missing labels in the setup proposal; obtain approval to create them or map their roles to existing labels.
+For a local tracker, record category and state separately in each issue.
 
 **Section C: Domain docs.** Default to **single-context** (one `CONTEXT.md` + `docs/adr/` at the repo root). This fits almost every repo; write it without asking.
 
@@ -64,7 +67,7 @@ Offer **multi-context** (a root `CONTEXT-MAP.md` pointing to per-context `CONTEX
 
 Show the user a draft of:
 
-- The `## Agent skills` block to add to whichever of `CLAUDE.md` / `AGENTS.md` is being edited (see step 4 for selection rules)
+- The `## Agent skills` block to add to the existing canonical instructions file (see step 4 for selection rules)
 - The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, and `docs/agents/triage-labels.md` (the last only when `triage` is installed)
 
 Let them edit before writing.
@@ -73,11 +76,9 @@ Let them edit before writing.
 
 **Pick the file to edit:**
 
-- If `CLAUDE.md` exists, edit it.
-- Else if `AGENTS.md` exists, edit it.
-- If neither exists, ask the user which one to create; don't pick for them.
-
-Never create `AGENTS.md` when `CLAUDE.md` already exists (or vice versa); always edit the one that's already there.
+- Reuse the existing instructions file with its actual casing (`CLAUDE.md`, `AGENTS.md`, or `AGENTS.MD`) and resolve symlinks before editing.
+- When several exist, follow their pointers to the canonical file instead of duplicating configuration.
+- If none exists, ask the user which one to create; don't pick for them.
 
 If an `## Agent skills` block already exists in the chosen file, update its contents in-place rather than appending a duplicate. Don't overwrite user edits to the surrounding sections.
 
@@ -112,5 +113,10 @@ Then write the docs files using the seed templates in this skill folder as a sta
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.
 
 ### 5. Done
+
+For a remote tracker, verify every mapped category and state label exists.
+Create only the missing labels approved in the setup proposal using the tracker's label-creation command (for GitHub, `gh label create`), then re-read the labels to confirm success.
+If a label cannot be created or mapped, report setup as incomplete and identify that role.
+For local Markdown, verify the template records both `Category:` and `Status:` using the mapping.
 
 Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later; re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.

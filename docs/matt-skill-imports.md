@@ -4,6 +4,8 @@ These 30 previously local skill directories are preserved from [mattpocock/skill
 The 83 source files were checked against the pinned upstream blobs.
 Local safety adaptations include uncommitted work in `code-review`, preserve unrelated files during conflict resolution, use the supported GitHub API for author association, and scan application and type-only imports when enforcing TypeScript package boundaries.
 Pre-commit setup preserves existing preparation scripts, hooks and staged-file checks.
+Review fixes also register all 30 imports in the catalogue, remove the withheld wizard route, preserve canonical instruction-file casing, require feature branches and normal PRs, verify delegated findings, keep research writes with the parent, and complete tracker category/state mappings.
+Setup commands honor the repository package manager, install the test-only Shoehorn helper as a development dependency, and enforce package boundaries without introducing a global cycle ban.
 Invocation settings and other host-specific workflows are preserved.
 The [upstream MIT licence](licenses/matt-pocock-MIT.txt) applies to these files.
 

@@ -12,4 +12,5 @@ Run typechecking regularly, single test files regularly, and the full test suite
 
 Once done, use /code-review to review the work.
 
-Commit your work to the current branch.
+Before editing, verify that the current branch is a feature branch, not the repository's default branch; create a feature branch when needed.
+After validation and review, stage only the task's files and commit on that feature branch.

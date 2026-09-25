@@ -65,13 +65,6 @@ module.exports = {
       from: { pathNot: `^${R}/[^/]+/tests/` }, // importer is not itself a test
       to: { path: `^${R}/[^/]+/tests/` },
     },
-    {
-      name: "no-circular",
-      comment: "No dependency cycles. Scope to `^${R}/` if you want to allow cycles outside packages.",
-      severity: "error",
-      from: {},
-      to: { circular: true },
-    },
 
     // --- Layering (optional, off by default) ----------------------------------
     // Interface-hiding controls HOW you import (through the entry points).

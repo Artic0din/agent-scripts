@@ -76,7 +76,10 @@ If the spec is missing, skip the Spec sub-agent and note this in the final repor
 
 ### 5. Aggregate
 
-Present the two reports under `## Standards` and `## Spec` headings, verbatim or lightly cleaned. Do **not** merge or rerank findings, because the two axes are deliberately separate (see _Why two axes_).
+Verify every candidate finding against the actual code and its cited standard or spec before publishing it.
+Discard unsupported claims and record why they were rejected.
+Present only verified findings under `## Standards` and `## Spec` headings.
+Do **not** merge or rerank findings across axes, because the two axes are deliberately separate (see _Why two axes_).
 
 End with a one-line summary: total findings per axis, and the worst issue _within each axis_ (if any). Don't pick a single winner across axes: that's the reranking the separation exists to prevent.
 

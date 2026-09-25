@@ -23,12 +23,14 @@ src/packages/
 
 The public surface is the package's **root files**, not one designated `index.ts`. By convention implementation lives in `lib/` and tests in `tests/`, giving every package the same two-folder shape. The rule itself is general, though: *anything* in *any* subfolder is private, so you never extend the config to add a folder.
 
-Four rules, all `error`:
+Four boundary rules, all `error`:
 
-1. **Entry-point boundary**: code outside a package (app code or another package) may import only that package's entry points (its root files), never anything in its subfolders.
-2. **Intra-package freedom**: a package's own files import each other freely.
+1. **Application entry-point boundary**: application code may import only a package's entry points (its root files), never anything in its subfolders.
+2. **Cross-package entry-point boundary**: package code may import another package only through its root files; a package's own implementation files import each other freely.
 3. **Tests through the entry points**: files under `<pkg>/tests/` may import any package's entry points and their own `tests/` fixtures, but never any package's subfolder internals (not even their own). Integration tests across packages are fine; deep imports are not.
-4. **No cycles**: no dependency cycles.
+4. **Private test fixtures**: implementation and application code cannot import a package's test fixtures.
+
+Cycle policy is separate from these boundaries; preserve any existing cycle checks without adding a new repository-wide ban.
 
 **Entry points, not a barrel.** Because the public surface is *every* root file, a package can expose several small entry points (`index.ts`, `client.ts`, `server.ts`) instead of funnelling everything through one giant `index.ts`. Barrel files that re-export a whole subtree are discouraged; keep entry points small and hide implementation in subfolders.
 
@@ -38,7 +40,7 @@ Layering (which packages may depend on which) is a *different* concern and is le
 
 ### 1. Detect the environment
 
-- **Package manager**: `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, `bun.lockb` → bun, else npm. Use it for every command below (`pnpm`/`yarn`/`npm run`/`bunx`).
+- **Package manager**: read `packageManager` and the lockfile (`pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, or `bun.lock` / legacy `bun.lockb`). Resolve conflicts; default to npm only when no metadata exists. Use the selected manager for every command below.
 - **Packages root**: if `src/` exists use `src/packages`, else `packages`. Confirm the choice with the user if the repo already has a different obvious convention.
 - **Scan roots**: identify every application and package source root, including application importers outside the packages root.
 - **Existing config**: check for a `.dependency-cruiser.*` file. If one exists, do **not** overwrite it: merge the four rules and the options in, and tell the user what you added.
@@ -95,9 +97,11 @@ If either violation passes, repair the scan roots or rules before finishing.
 
 Write a `README.md` **in the packages folder** (`<packages-root>/README.md`, next to the packages it governs) covering: the `src/packages/<name>/` layout (entry points at the root, `lib/` for implementation, `tests/` for tests), "import only through a package's entry points (its root files)", and how to run `lint:boundaries`. **Discourage barrel files** explicitly: expose several small entry points instead of re-exporting a whole subtree through one index. Keep it to the copy-me snippet plus the four rules in one paragraph each.
 
-Then add a **context pointer** to it from the repo's agent-instructions file (`CLAUDE.md` if present, else `AGENTS.md`, creating `AGENTS.md` if neither exists). One line is enough, e.g. `Packages are deep modules: see [src/packages/README.md](./src/packages/README.md) before adding or importing one.` This is what makes an agent discover the boundary rule instead of tripping over it.
+Then add a **context pointer** from the repo's existing agent-instructions file, preserving its actual casing (`CLAUDE.md`, `AGENTS.md`, or `AGENTS.MD`) and following any symlink to the canonical source.
+If multiple files exist, use the canonical file identified by their instructions; create `AGENTS.md` only when none exists.
+One line is enough, e.g. `Packages are deep modules: see [src/packages/README.md](./src/packages/README.md) before adding or importing one.`
 
-**Done when:** `<packages-root>/README.md` exists and discourages barrels, and the repo's `CLAUDE.md`/`AGENTS.md` links to it.
+**Done when:** `<packages-root>/README.md` exists and discourages barrels, and the existing canonical agent-instructions file links to it.
 
 ## Notes
 

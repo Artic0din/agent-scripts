@@ -6,6 +6,8 @@ description: Create exercise directory structures with sections, problems, solut
 # Scaffold Exercises
 
 Create exercise directory structures that pass `pnpm ai-hero-cli internal lint`, then commit with `git commit`.
+Before writing, verify that the current branch is a feature branch, not the repository's default branch; create one when needed.
+Stage only the exercise changes after validation and review.
 
 ## Directory naming
 
@@ -31,13 +33,9 @@ Each subfolder (`problem/`, `solution/`, `explainer/`) needs a `readme.md` that:
 - Is **not empty** (must have real content, even a single title line works)
 - Has no broken links
 
-When stubbing, create a minimal readme with a title and a description:
-
-```md
-# Exercise Title
-
-Description here
-```
+Use the actual exercise title from the plan.
+Add a real one-line description from that plan when available; otherwise keep only the title.
+Never commit literal placeholder titles or descriptions.
 
 If the subfolder has code, it also needs a `main.ts` (>1 line). But for stubs, a readme-only exercise is fine.
 

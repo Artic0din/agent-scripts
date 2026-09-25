@@ -19,9 +19,8 @@ Problems with `as` in tests:
 
 ## Install
 
-```bash
-npm i @total-typescript/shoehorn
-```
+Use the repository's package manager and install `@total-typescript/shoehorn` as a development dependency: `npm install --save-dev`, `pnpm add --save-dev`, `yarn add --dev`, or `bun add --dev` followed by the package name.
+Detect the manager from `packageManager` and the lockfile (including `bun.lock` or legacy `bun.lockb`); resolve conflicts before installing.
 
 ## Migration patterns
 
@@ -110,7 +109,7 @@ getUser(fromAny({ body: { id: 123 } }));
    - Do they need to pass intentionally wrong data for error testing?
 
 2. **Install and migrate**:
-   - [ ] Install: `npm i @total-typescript/shoehorn`
+   - [ ] Install `@total-typescript/shoehorn` as a development dependency using the detected manager
    - [ ] Find test files with `as` assertions: `grep -r " as [A-Z]" --include="*.test.ts" --include="*.spec.ts"`
    - [ ] Replace `as Type` with `fromPartial()`
    - [ ] Replace `as unknown as Type` with `fromAny()`

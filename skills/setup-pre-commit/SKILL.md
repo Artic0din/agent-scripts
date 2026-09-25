@@ -14,9 +14,13 @@ description: Set up Husky pre-commit hooks with lint-staged (Prettier), type che
 
 ## Steps
 
+Before writing, verify that the current branch is a feature branch, not the repository's default branch; create one when needed.
+
 ### 1. Detect package manager
 
-Check for `package-lock.json` (npm), `pnpm-lock.yaml` (pnpm), `yarn.lock` (yarn), `bun.lockb` (bun). Use whichever is present. Default to npm if unclear.
+Read the repository's `packageManager` metadata and lockfile: `package-lock.json` (npm), `pnpm-lock.yaml` (pnpm), `yarn.lock` (Yarn), or `bun.lock` / legacy `bun.lockb` (Bun).
+Resolve conflicting metadata before installing; default to npm only when none is present.
+For installed tool commands below, use `npm exec -- <tool>`, `pnpm exec <tool>`, `yarn exec <tool>`, or `bun run <tool>` consistently with the selected manager.
 
 ### 2. Install dependencies
 
@@ -33,10 +37,11 @@ Preserve their commands and ordering, including secret checks.
 Use the following initializer only when there is no existing prepare script or commit-hook setup:
 
 ```bash
-npx husky init
+npm exec -- husky init
 ```
 
 This creates `.husky/` dir and adds `prepare: "husky"` to package.json.
+The example uses npm; substitute the selected installed-tool command for another manager.
 For an existing setup, merge the Husky invocation into `prepare` and retain the existing hook commands instead of running the destructive initializer.
 If another hook manager owns `core.hooksPath`, integrate with it or obtain approval for migration rather than replacing it.
 
@@ -45,12 +50,13 @@ If another hook manager owns `core.hooksPath`, integrate with it or obtain appro
 Add missing checks to the existing hook, or create it when absent (no shebang needed for Husky v9+):
 
 ```
-npx lint-staged
+npm exec -- lint-staged
 npm run typecheck
 npm run test
 ```
 
-**Adapt**: Replace `npm` with detected package manager. If repo has no `typecheck` or `test` script in package.json, omit those lines and tell the user.
+**Adapt**: Use the selected manager's installed-tool command for lint-staged and its script runner for typecheck and test (`npm run`, `pnpm run`, `yarn run`, or `bun run`).
+If the repo has no `typecheck` or `test` script in package.json, omit those lines and tell the user.
 
 ### 5. Create `.lintstagedrc`
 
@@ -85,7 +91,7 @@ Only create if no Prettier config exists. Use these defaults:
 - [ ] `prepare` includes the Husky invocation and retains any previous preparation steps
 - [ ] Existing hook checks still run and their failure prevents a commit
 - [ ] `prettier` config exists
-- [ ] Run `npx lint-staged` to verify it works
+- [ ] Run lint-staged with the selected manager's installed-tool command to verify it works
 
 ### 8. Commit
 
