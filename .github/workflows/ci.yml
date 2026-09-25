@@ -44,6 +44,14 @@ jobs:
       - name: Test autoreview CLI options (offline, synthetic)
         run: python3 skills/autoreview/scripts/test-autoreview.py
 
+      - name: Test isolated Playwright runtime
+        run: |
+          cd skills/playwright/scripts/runtime
+          npm ci --ignore-scripts --no-audit --no-fund
+          node node_modules/playwright/cli.js install --with-deps chromium
+          cd -
+          python3 skills/playwright/scripts/test_playwright_cli.py
+
       - name: Test Codex preflight (offline, synthetic)
         run: |
           test_home="$(mktemp -d)"

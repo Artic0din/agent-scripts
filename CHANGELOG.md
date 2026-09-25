@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Enforced supported browser prerequisites and trusted launch configuration, preserved session selection after argument separators, and added browser isolation checks to CI.
+
 - Corrected imported skill discovery, canonical installation paths, and browser artifact handling, and isolated the pinned Playwright CLI from project-local executables.
 
 - Preserved the installed Playwright and skill-discovery source skills with their original license notices.
