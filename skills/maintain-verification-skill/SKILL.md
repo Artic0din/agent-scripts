@@ -30,6 +30,9 @@ Cover every mapped user path and behavior from source and live checks; a single 
 Classify the request before the pass: an audit or review is report-only unless the user has already authorized remediation.
 In report-only mode, every instruction below to fix, edit, retry a corrected harness, commit, or open a PR means report the proposed correction instead; do not modify repository files or Git state.
 Live checks may use disposable scratch state when permitted, but must not alter the user's existing data or shared instances.
+Before any externally visible mutation, verify that existing authorization covers the specific action and target, and that the downstream target is isolated for testing or explicitly allowlisted for that action.
+A disposable local instance does not isolate downstream effects; this gate applies even when an existing verification skill omits it.
+If either authorization or a safe target is unavailable, mark the path blocked rather than sending, charging, publishing, or issuing a real control command for proof.
 If a safe live check requires a repository edit, report that coverage as blocked.
 With remediation already authorized, continue within the edit scope without asking again.
 
