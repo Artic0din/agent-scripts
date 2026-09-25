@@ -154,6 +154,10 @@ contains 'status=current'
 snapshot "$fixture_home" >"$case_root/before"
 run_sync >"$output" 2>&1
 unchanged
+ln -sfn "$agent/gstack/.harness/claude/browse" "$claude/review"
+if run_audit >"$output"; then fail 'audit accepted a mismatched alias'; fi
+run_sync >"$output" 2>&1
+[ "$(readlink "$claude/review")" = "$agent/review" ] || fail 'sync preserved a mismatched alias'
 rm -r "$manager"
 run_sync >"$output" 2>&1
 [ ! -L "$codex/manager" ] || fail 'retired manager registration remained'
