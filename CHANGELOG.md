@@ -6,8 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
-- Preserved 53 existing Awesome Copilot skills, 19 agents, and four instructions in the repository with pinned provenance and upstream licenses.
+- Preserved 49 existing Awesome Copilot skills, 13 agents, three instructions, and local label-governance context in the repository with pinned provenance and upstream licenses.
 - Fixed imported skill indexing for folded YAML descriptions and linked directories, and made the bundled web testing helper load correctly in this repository.
+- Preserved staged and unstaged edits when obtaining a missing before-state screenshot from an older revision.
+- Made generated migration instructions discoverable and exposed the required Chrome DevTools tools; excluded unsafe React 19 migration and Swift MCP lifecycle guidance.
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
   directories that no longer exist and which had to be edited each time a checkout moved, and a knowledge rule
   citing `workspace-index.yaml`, which exists nowhere on disk. Locating repositories rather than assuming a fixed
