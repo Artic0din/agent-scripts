@@ -10,7 +10,7 @@
       },
       {
         "type": "command",
-        "bash": "bash $HOME/.claude/hooks/pre-commit-secrets.sh",
+        "bash": "bash $HOME/.claude/hooks/pre-commit-secrets.sh --copilot",
         "cwd": ".",
         "timeoutSec": 60
       }

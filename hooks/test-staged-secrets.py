@@ -42,6 +42,15 @@ def main() -> None:
             assert linked_result.returncode == 0, linked_result
             assert "Staged-secret" in json.loads(linked_result.stdout)["systemMessage"]
             assert secret.encode() not in linked_result.stdout + linked_result.stderr
+            if host == "claude":
+                copilot = subprocess.run(linked_command + ["--copilot"], cwd=repository, capture_output=True)
+                assert copilot.returncode == 0, copilot
+                assert set(json.loads(copilot.stdout)) == {"additionalContext"}
+                assert "Staged-secret" in json.loads(copilot.stdout)["additionalContext"]
+                assert secret.encode() not in copilot.stdout + copilot.stderr
+                configuration = json.loads((hooks.parent / "config/copilot.hooks.json").read_text())
+                assert any(entry.get("bash", "").endswith("pre-commit-secrets.sh --copilot")
+                           for entry in configuration["hooks"]["preToolUse"])
             assert subprocess.run(command, cwd=nested, capture_output=True).returncode == 2
             assert subprocess.run(command, cwd=root, capture_output=True).returncode == 0
 

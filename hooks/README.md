@@ -8,6 +8,7 @@ Run them from the repository being checked, or use `hooks/check-staged-secrets.s
 Outside a repository they do nothing; missing Git, unreadable metadata and damaged `.git` directories block the check.
 The shared scanner returns exit code 2 with a generic message on a finding, scanner error or missing Gitleaks.
 Host entrypoints turn that result into a nonblocking system message, so diagnostics and unstaging remain possible.
+The Copilot registration uses the Claude entrypoint's `--copilot` mode to emit its supported `additionalContext` field.
 Successful scans return 0 with no output.
 They do not print staged lines, even when a secret is detected.
 

@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Made Copilot staged-secret warnings visible through its supported advisory output.
+
 - Published shared Claude and Codex staged-secret checks that use Gitleaks without printing matching secret values or blocking ordinary product names.
 
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
