@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Preserved 30 previously local Matt Pocock workflow skills with source attribution and their upstream licence.
+- Corrected the imported workflows' routing, tracker setup, branch safety, delegated review, and package-manager handling.
+- Completed tracker transitions and discovery, isolated external PR verification, and corrected offline reports and package-root boundary checks.
+
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
   directories that no longer exist and which had to be edited each time a checkout moved, and a knowledge rule
   citing `workspace-index.yaml`, which exists nowhere on disk. Locating repositories rather than assuming a fixed

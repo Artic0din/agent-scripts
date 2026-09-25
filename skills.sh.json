@@ -3,6 +3,30 @@
   "notGrouped": "bottom",
   "groupings": [
     {
+      "title": "Matt Planning and Questions",
+      "description": "Planning, research, triage, and domain vocabulary.",
+      "skills": [
+        "ask-matt", "domain-modeling", "grill-me", "grill-with-docs", "grilling", "research",
+        "to-questionnaire", "to-spec", "to-tickets", "triage", "wait-what", "wayfinder"
+      ]
+    },
+    {
+      "title": "Matt Implementation and Review",
+      "description": "Implementation, tests, architecture, and review.",
+      "skills": [
+        "code-review", "codebase-design", "diagnosing-bugs", "implement", "implement-spec",
+        "improve-codebase-architecture", "prototype", "resolving-merge-conflicts", "tdd", "teach"
+      ]
+    },
+    {
+      "title": "Matt Workflow Setup",
+      "description": "Handoffs, repository setup, and exercise workflows.",
+      "skills": [
+        "claude-handoff", "handoff", "loop-me", "migrate-to-shoehorn", "scaffold-exercises",
+        "setup-matt-pocock-skills", "setup-pre-commit", "setup-ts-deep-modules"
+      ]
+    },
+    {
       "title": "Agent Workflows",
       "description": "Skills for agent instructions, skill hygiene, and reusable workflow design.",
       "skills": [

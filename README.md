@@ -66,6 +66,8 @@ READ ~/Metisary/Enviroment/config/AGENTS.MD BEFORE ANYTHING (skip if missing).
 
 ## Skills
 
+The [Matt Pocock imports](docs/matt-skill-imports.md) preserve the existing local workflow library with pinned source attribution and its MIT licence.
+
 Each `skills/<name>/SKILL.md` has YAML front matter with a quoted `description`:
 
 ```yaml
