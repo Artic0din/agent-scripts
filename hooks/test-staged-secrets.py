@@ -1,6 +1,7 @@
 """Exercise the published entrypoints against real staged content."""
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -20,7 +21,7 @@ def main() -> None:
         subprocess.run(["git", "init", "-q", str(repository)], check=True)
         document = repository / "notes with spaces.md"
         for host in ("claude", "codex"):
-            command = ["/bin/bash", str(hooks / host / "pre-commit-secrets.sh")]
+            command = ["/bin/bash", str(hooks / "check-staged-secrets.sh")]
             document.write_text("Document powerwall, teslemetry and API_KEY names.\n")
             subprocess.run(["git", "add", "."], cwd=repository, check=True)
             result = subprocess.run(command, cwd=repository, capture_output=True)
@@ -38,8 +39,9 @@ def main() -> None:
             linked_hooks.symlink_to(hooks / host, target_is_directory=True)
             linked_command = ["/bin/bash", str(linked_hooks / "pre-commit-secrets.sh")]
             linked_result = subprocess.run(linked_command, cwd=repository, capture_output=True)
-            assert linked_result.returncode == 2, linked_result
-            assert b"Staged-secret check failed" in linked_result.stderr
+            assert linked_result.returncode == 0, linked_result
+            assert "Staged-secret" in json.loads(linked_result.stdout)["systemMessage"]
+            assert secret.encode() not in linked_result.stdout + linked_result.stderr
             assert subprocess.run(command, cwd=nested, capture_output=True).returncode == 2
             assert subprocess.run(command, cwd=root, capture_output=True).returncode == 0
 
@@ -71,6 +73,23 @@ def main() -> None:
         )
         (binaries / "git").chmod(0o755)
         assert subprocess.run(command, cwd=root, env=environment, capture_output=True).returncode == 0
+
+        scripts = repository / "scripts"
+        scripts.mkdir()
+        validator = scripts / "validate-skills"
+        validator.write_text("#!/bin/sh\nexit 0\n")
+        validator.chmod(0o755)
+        document.write_text("safe baseline\n")
+        subprocess.run(["git", "add", "."], cwd=repository, check=True)
+        commit = ["git", "-c", f"core.hooksPath={hooks}", "-c", "user.name=Hook Test",
+                  "-c", "user.email=hook-test@example.invalid", "commit", "-qm", "test"]
+        subprocess.run(commit, cwd=repository, capture_output=True, check=True)
+        document.write_text(secret + "\n")
+        # The index is clean before git commit -a performs its own staging.
+        result = subprocess.run(commit + ["-a"], cwd=repository, capture_output=True)
+        assert result.returncode != 0, result
+        assert b"Staged-secret check failed" in result.stderr
+        assert secret.encode() not in result.stdout + result.stderr
     print("PASS: both hosts, staged versus working content, safe names, no disclosure, missing scanner")
 
 
