@@ -66,6 +66,9 @@ READ ~/Metisary/Enviroment/config/AGENTS.MD BEFORE ANYTHING (skip if missing).
 
 ## Skills
 
+`github-workflow`, `build-kickoff`, and `session-triage` provide the local issue, build-brief, and session-preview workflows.
+They use repository GitHub Issues and current project discovery, with the canonical publication and approval safeguards.
+
 Each `skills/<name>/SKILL.md` has YAML front matter with a quoted `description`:
 
 ```yaml
