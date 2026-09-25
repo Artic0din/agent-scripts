@@ -50,7 +50,7 @@ Derive `<app>` from the display name as a short lowercase slug containing only l
 Validate that the complete `verify-<app>` name matches `^[a-z0-9]+(?:-[a-z0-9]+)*$` and is at most 64 characters, including the `verify-` prefix.
 Use that exact name for the directory and YAML `name`; do not substitute an unnormalized display name or overwrite an existing skill.
 
-Write `<project-skill-root>/verify-<app>/SKILL.md` with YAML frontmatter (`name: verify-<app>` and a `description` that names the app, the surface, and when to reach for it — without frontmatter the skill never registers) and these sections, each grounded in what the interview actually found (no placeholders left):
+Write `<project-skill-root>/verify-<app>/SKILL.md` with YAML frontmatter (`name: verify-<app>` and a `description` that names the app, the surface, and when to reach for it) and these sections, each grounded in what the interview actually found (no placeholders left):
 
 - **Launch:** the exact command that starts the app for verification, and how to tell it's ready (a log line, a port answering, a prompt).
   Include teardown.
@@ -64,6 +64,9 @@ Write `<project-skill-root>/verify-<app>/SKILL.md` with YAML frontmatter (`name:
   Keep raw screenshots, response bodies, logs, and transcripts out of commits; inspect and redact evidence before any authorized sharing, including visual inspection of images.
   Before committing skill changes, inspect the staged file list for evidence and run the repository's secret scan.
   State the proof standards: exercise the real user path, not internal setters or test-only endpoints; capture the action and the resulting state, not just the final screen; verify side effects (files written, rows inserted, messages sent) alongside what's visible; mocks only where a production boundary already isolates the external system.
+  Before any externally visible mutation, confirm that the current authorization covers that specific action and target.
+  Use isolated external test accounts, recipients, payment environments, or resources; a disposable local instance alone does not isolate its downstream effects.
+  If a safe authorized target is unavailable, mark the path blocked rather than sending, charging, publishing, or issuing a real control command to obtain proof.
   When the safe path is a dry-run or test mode, verify what it actually skips by observing (files, network, git refs) rather than trusting its name: some dry-runs still touch the network or open a browser.
 - **Cleanup:** how to tear down instances the run created.
   Never kill by process name; kill what you started.
@@ -82,7 +85,10 @@ The map is the repo's maintained verification source; a proof that drives one co
 
 ## 4. Prove the generated skill before handing it over
 
-Run its own instructions end to end once: launch, doctor, drive ONE mapped feature (one is enough; the map exists so later runs can cover the rest), capture evidence, clean up.
+Run its own instructions end to end: launch, doctor, exercise every mapped user path and behavior, capture evidence, clean up.
+Record each recipe's verification status; explicitly label any unexercised recipe as unverified with its blocker, and never describe a partly tested map as fully proven.
+Check the project's required manifest, catalogue, or host links, update the relevant registration for the generated skill, and verify that the intended host discovers it before claiming activation.
+If host discovery cannot be checked in the current session, distinguish written source from unverified activation in the handoff.
 After cleanup, confirm the evidence still exists at the named location — a cleanup that eats the proof fails this step.
 Fix what fails, and run the generated cleanup after every failed iteration too, so broken attempts don't strand processes and ports.
 A generated skill that was never executed is a draft, not a deliverable.

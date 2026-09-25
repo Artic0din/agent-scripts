@@ -61,7 +61,8 @@ Never edit product code during a run: a behavior the map describes that the app 
    Reconcile every discovered surface with the map before assigning readers; unexplained omissions block a clean result even when they predate recent changes.
    Lightweight; no generated inventory.
 
-2. **Source wave.** One read-only subagent per feature file, launched concurrently.
+2. **Source wave.** One read-only reader result per feature file, using bounded waves within the host's available subagent slots or sequential reads when none are available.
+   Wait for a slot before launching another reader; capacity limits alone are not feature blockers.
    Track a scratch roster with one expected result per feature file, including when source reading is sequential.
    Each explains "how does this user-facing feature work?" from source, flags likely doc drift with citations, and returns one concise live-verification recipe.
    Children never drive the app and never edit files.
