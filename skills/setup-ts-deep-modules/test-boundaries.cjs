@@ -11,7 +11,6 @@ assert.equal(require('./dependency-cruiser.config.cjs').forbidden.length, 4);
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'deep-modules-'));
 try {
   fs.mkdirSync(path.join(root, 'src/packages/example/lib'), { recursive: true });
-  fs.writeFileSync(path.join(root, 'tsconfig.json'), '{}');
   fs.copyFileSync(path.join(__dirname, 'dependency-cruiser.config.cjs'), path.join(root, '.dependency-cruiser.cjs'));
   fs.writeFileSync(path.join(root, 'src/packages/example/lib/types.ts'), 'export type Example = string;\n');
   fs.writeFileSync(path.join(root, 'src/packages/example/lib/declarations.d.ts'), 'export type Example = string;\n');
@@ -22,6 +21,17 @@ try {
     assert.equal(result.status, expected, result.error?.message || result.stdout + result.stderr);
     if (expected) assert.match(result.stdout + result.stderr, /entrypoint-boundary-from-app/);
   }
+  fs.writeFileSync(path.join(root, 'src/packages/root.ts'), "export type { Example } from './example/lib/types';\n");
+  const rootImport = spawnSync(command, ['--config', '.dependency-cruiser.cjs', 'src'], { cwd: root, encoding: 'utf8' });
+  assert.equal(rootImport.status, 1, rootImport.error?.message || rootImport.stdout + rootImport.stderr);
+  assert.match(rootImport.stdout + rootImport.stderr, /entrypoint-boundary-from-app/);
+  fs.unlinkSync(path.join(root, 'src/packages/root.ts'));
+  fs.writeFileSync(path.join(root, 'tsconfig.boundaries.json'), JSON.stringify({ compilerOptions: { paths: { '@example/*': ['./src/packages/example/*'] } } }));
+  fs.writeFileSync(path.join(root, 'src/alias.ts'), "export type { Example } from '@example/lib/types';\n");
+  const aliased = spawnSync(command, ['--config', '.dependency-cruiser.cjs', '--ts-config', 'tsconfig.boundaries.json', 'src'], { cwd: root, encoding: 'utf8' });
+  assert.equal(aliased.status, 1, aliased.error?.message || aliased.stdout + aliased.stderr);
+  assert.match(aliased.stdout + aliased.stderr, /entrypoint-boundary-from-app/);
+  fs.unlinkSync(path.join(root, 'src/alias.ts'));
   fs.mkdirSync(path.join(root, 'src/packages/example/tests'), { recursive: true });
   fs.mkdirSync(path.join(root, 'src/packages/other/tests'), { recursive: true });
   fs.writeFileSync(path.join(root, 'src/packages/example/tests/fixture.ts'), 'export const fixture = 1;\n');

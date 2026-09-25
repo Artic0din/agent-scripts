@@ -43,9 +43,11 @@ Layering (which packages may depend on which) is a *different* concern and is le
 - **Package manager**: read `packageManager` and the lockfile (`pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, or `bun.lock` / legacy `bun.lockb`). Resolve conflicts; default to npm only when no metadata exists. Use the selected manager for every command below.
 - **Packages root**: if `src/` exists use `src/packages`, else `packages`. Confirm the choice with the user if the repo already has a different obvious convention.
 - **Scan roots**: identify every application and package source root, including application importers outside the packages root.
+- **TypeScript configuration**: identify the existing config governing each scan root, including `extends` and path aliases; do not assume root `tsconfig.json` exists or covers every package.
+  If distinct package configs resolve aliases differently, use separate boundary-check invocations with the applicable config for each source root.
 - **Existing config**: check for a `.dependency-cruiser.*` file. If one exists, do **not** overwrite it: merge the four rules and the options in, and tell the user what you added.
 
-**Done when:** package manager, packages root, and existing-config status are all known.
+**Done when:** package manager, packages root, scan roots, applicable TypeScript configs, and existing-config status are all known.
 
 ### 2. Install dependency-cruiser
 
@@ -55,7 +57,10 @@ Install `dependency-cruiser` as a devDependency with the detected package manage
 
 ### 3. Write the config
 
-Copy [`dependency-cruiser.config.cjs`](./dependency-cruiser.config.cjs) to the repo root as `.dependency-cruiser.cjs`. Set `PACKAGES_ROOT` to the root detected in step 1. The rules are path-depth based and extension-agnostic, so nothing else needs adapting.
+Copy [`dependency-cruiser.config.cjs`](./dependency-cruiser.config.cjs) to the repo root as `.dependency-cruiser.cjs`.
+Set `PACKAGES_ROOT` to the detected packages root and `TS_CONFIG` to the applicable existing config path, or leave it `null` only when no config is needed for resolution.
+For multiple config scopes, use the CLI's `--ts-config <path>` override for each invocation.
+Confirm aliased imports resolve to real source files before relying on the rules; do not change the project's TypeScript configuration to fit the template.
 
 **Done when:** `.dependency-cruiser.cjs` exists with the correct `PACKAGES_ROOT`, and the four forbidden rules are present.
 
@@ -89,6 +94,7 @@ This is the completion criterion for the whole skill: a config that doesn't fail
 4. Temporarily add an application file outside the packages root that imports `example/lib/impl`.
    The same command must fail with `entrypoint-boundary-from-app`; remove the temporary file and confirm it passes again.
 5. Repeat the application and test violations with `import type`; type-only access must also fail before restoring the clean example.
+6. If the project uses path aliases, repeat a private import through a real alias and confirm it fails; an unresolved import is not proof of enforcement.
 
 **Done when:** the clean example passes, both test-to-private and application-to-private imports fail, and removing each temporary violation restores a pass.
 If either violation passes, repair the scan roots or rules before finishing.

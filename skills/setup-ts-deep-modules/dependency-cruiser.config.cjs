@@ -9,10 +9,12 @@
 // points (index.ts, client.ts, server.ts, …); prefer that over one giant
 // barrel index.
 //
-// The only thing you should ever need to edit here is PACKAGES_ROOT.
+// Set PACKAGES_ROOT and, when needed for module resolution, TS_CONFIG.
 
 /** Where packages live. One immediate child dir per package (flat, no nesting). */
 const PACKAGES_ROOT = "src/packages";
+/** Applicable existing TypeScript config; null when none is needed for resolution. */
+const TS_CONFIG = null;
 
 // --- derived patterns (no need to edit) -------------------------------------
 const R = PACKAGES_ROOT;
@@ -31,7 +33,7 @@ module.exports = {
       comment:
         "App/root code may import a package's entry points (its root files), but nothing inside its subfolders.",
       severity: "error",
-      from: { pathNot: `^${R}/` }, // importer is NOT inside any package
+      from: { pathNot: `^${R}/[^/]+/` }, // includes files directly under the packages root
       to: { path: PACKAGE_INTERNALS },
     },
     {
@@ -81,6 +83,6 @@ module.exports = {
   options: {
     tsPreCompilationDeps: true,
     doNotFollow: { path: "node_modules" },
-    tsConfig: { fileName: "tsconfig.json" },
+    ...(TS_CONFIG ? { tsConfig: { fileName: TS_CONFIG } } : {}),
   },
 };

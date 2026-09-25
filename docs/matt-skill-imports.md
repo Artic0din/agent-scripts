@@ -6,6 +6,8 @@ Local safety adaptations include uncommitted work in `code-review`, preserve unr
 Pre-commit setup preserves existing preparation scripts, hooks and staged-file checks.
 Review fixes also register all 30 imports in the catalogue, remove the withheld wizard route, preserve canonical instruction-file casing, require feature branches and normal PRs, verify delegated findings, keep research writes with the parent, and complete tracker category/state mappings.
 Setup commands honor the repository package manager, install the test-only Shoehorn helper as a development dependency, and enforce package boundaries without introducing a global cycle ban.
+Tracker recipes paginate issue/comment discovery, provision Wayfinder labels, apply category/state transitions, and retain repository access controls.
+External PR execution requires credential-free isolation; architecture reports embed their assets for offline use, and package-boundary setup detects the relevant TypeScript configuration.
 Invocation settings and other host-specific workflows are preserved.
 The [upstream MIT licence](licenses/matt-pocock-MIT.txt) applies to these files.
 

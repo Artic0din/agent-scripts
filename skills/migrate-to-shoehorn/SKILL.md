@@ -110,7 +110,7 @@ getUser(fromAny({ body: { id: 123 } }));
 
 2. **Install and migrate**:
    - [ ] Install `@total-typescript/shoehorn` as a development dependency using the detected manager
-   - [ ] Find test files with `as` assertions: `grep -r " as [A-Z]" --include="*.test.ts" --include="*.spec.ts"`
+   - [ ] Find test files with `as` assertions: `rg ' as [A-Z]' -g '*.test.ts' -g '*.spec.ts'`
    - [ ] Replace `as Type` with `fromPartial()`
    - [ ] Replace `as unknown as Type` with `fromAny()`
    - [ ] Add imports from `@total-typescript/shoehorn`

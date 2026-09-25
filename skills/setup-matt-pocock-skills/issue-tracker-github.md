@@ -7,7 +7,9 @@ Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all o
 - **Create an issue**: `gh issue create --title "..." --body "..."`. Use a heredoc for multi-line bodies.
 - **Read an issue**: `gh issue view <number> --json number,title,body,author,createdAt,updatedAt,comments,labels`.
   Add `--jq` only for a specific projection; retain comment authors and timestamps for triage's reporter-activity checks.
-- **List issues**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'` with appropriate `--label` and `--state` filters.
+- **List the complete issue queue**: `gh api --paginate 'repos/<owner>/<repo>/issues?state=open&per_page=100' --jq '.[] | select(.pull_request == null)'`.
+  Substitute the confirmed repository; retain full issue objects, including `user`, labels, and timestamps, and filter the complete queue for the requested triage states.
+  REST issue objects contain a comment count, not comment bodies: for each `needs-info` candidate, fetch all comments with `gh api --paginate 'repos/<owner>/<repo>/issues/<number>/comments?per_page=100'` and retain `user`, `created_at`, and `body` when comparing reporter activity with the latest triage note.
 - **Comment on an issue**: `gh issue comment <number> --body "..."`
 - **Apply / remove labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - **Close**: `gh issue close <number> --comment "..."`
@@ -43,6 +45,11 @@ Used by `/wayfinder`. The **map** is a single issue with **child** issues as tic
 - **Map**: a single issue labelled `wayfinder:map`, holding the Notes / Decisions-so-far / Fog body. `gh issue create --label wayfinder:map`.
 - **Child ticket**: an issue linked to the map as a GitHub sub-issue (`gh api` on the sub-issues endpoint). Where sub-issues aren't enabled, add the child to a task list in the map body and put `Part of #<map>` at the top of the child body. Labels: `wayfinder:<type>` (`research`/`prototype`/`grilling`/`task`). Once claimed, the ticket is assigned to the driving dev.
 - **Blocking**: GitHub's **native issue dependencies**, the canonical, UI-visible representation. Add an edge with `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`, where `<blocker-db-id>` is the blocker's numeric **database id** (`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, _not_ the `#number` or `node_id`). GitHub reports `issue_dependencies_summary.blocked_by` (open blockers only, the live gate). Where dependencies aren't available, fall back to a `Blocked by: #<n>, #<n>` line at the top of the child body. A ticket is unblocked when every blocker is closed.
-- **Frontier query**: list the map's open children (`gh issue list --state open`, scoped to the map's sub-issues / task list), drop any with an open blocker (`issue_dependencies_summary.blocked_by > 0`, or an open issue in the `Blocked by` line) or an assignee; first in map order wins.
+- **Frontier query**: enumerate all map children from the paginated sub-issues endpoint or the complete map task list.
+  Fetch each candidate with `gh api repos/<owner>/<repo>/issues/<child>`; keep only open issues with no assignees and `issue_dependencies_summary.blocked_by == 0`.
+  This field is REST output, not a `gh issue list --json` field.
+  If the summary is unavailable, inspect the complete paginated `issues/<child>/dependencies/blocked_by` response for open blockers, or use the configured `Blocked by` fallback; never treat a missing field as zero.
+  First eligible child in map order wins.
 - **Claim**: `gh issue edit <n> --add-assignee @me`, the session's first write.
-- **Resolve**: `gh issue comment <n> --body "<answer>"`, then `gh issue close <n>`, then append a context pointer (gist + link) to the map's Decisions-so-far.
+- **Resolve**: `gh issue comment <n> --body "<answer>"`, then `gh issue close <n>`, then append a one-line summary and link to that issue's resolution comment in the map's Decisions-so-far.
+  Keep supporting context within the repository's access controls; do not create a GitHub gist.
