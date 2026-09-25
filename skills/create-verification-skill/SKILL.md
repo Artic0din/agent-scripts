@@ -46,6 +46,10 @@ When an irrelevant missing asset blocks startup (a static dir the API never serv
 
 ## 2. Generate the skill
 
+Derive `<app>` from the display name as a short lowercase slug containing only letters, digits, and single hyphens between words.
+Validate that the complete `verify-<app>` name matches `^[a-z0-9]+(?:-[a-z0-9]+)*$` and is at most 64 characters, including the `verify-` prefix.
+Use that exact name for the directory and YAML `name`; do not substitute an unnormalized display name or overwrite an existing skill.
+
 Write `<project-skill-root>/verify-<app>/SKILL.md` with YAML frontmatter (`name: verify-<app>` and a `description` that names the app, the surface, and when to reach for it — without frontmatter the skill never registers) and these sections, each grounded in what the interview actually found (no placeholders left):
 
 - **Launch:** the exact command that starts the app for verification, and how to tell it's ready (a log line, a port answering, a prompt).

@@ -44,7 +44,8 @@ Pick one, and say which:
 
 ## Edit scope
 
-Only edit the verification skill's own directory (its SKILL.md, features/, and any harness scripts it owns).
+For authorized remediation, edit the verification skill's own directory (its SKILL.md, features/, and any harness scripts it owns), plus only the ancillary files required by the repository to ship those corrections, such as its changelog or skill catalog.
+Keep ancillary edits limited to documenting or registering the same correction; this exception never authorizes product-code changes or report-only edits.
 Never edit product code during a run: a behavior the map describes that the app no longer does is either doc drift (fix the map) or a product regression (report it, don't paper over it in docs).
 
 ## Pass
@@ -57,11 +58,14 @@ Never edit product code during a run: a behavior the map describes that the app 
    Lightweight; no generated inventory.
 
 2. **Source wave.** One read-only subagent per feature file, launched concurrently.
+   Track a scratch roster with one expected result per feature file, including when source reading is sequential.
    Each explains "how does this user-facing feature work?" from source, flags likely doc drift with citations, and returns one concise live-verification recipe.
    Children never drive the app and never edit files.
-   Return shape: feature summary / source entry points / likely drift or none / one recipe.
+   Return shape: feature summary / source entry points / explicit findings, no findings, or a precise blocker / one recipe when available.
+   Retry a failed, missing, or malformed reader response once; if it still cannot supply a valid result, record a precise blocker for that feature.
 
-3. **Reconcile.** Every feature file has a returned summary.
+3. **Reconcile.** Require a valid finding, no-finding, or blocker result for every roster entry before synthesizing coverage.
+   Any unresolved source blocker makes the final outcome blocked, never clean; report useful completed coverage without treating the gap as verified.
    Merge overlapping recipes into as few app states as practical.
    Spot-check cited drift; don't re-prove clean claims.
    Sweep recent churn for user-facing surfaces missing from the map — require a concrete source path before calling one missing.

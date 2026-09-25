@@ -8,6 +8,7 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 - Updated plain-language writing guidance and added portable, manually invoked project verification skills from Pstack.
 - Kept verification audits read-only unless remediation is authorized, preserved literal evidence in writing, and corrected verification examples and host invocation guidance.
+- Clarified complete reader coverage, valid generated skill names, Cursor activation, and repository-required files in verification maintenance.
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
   directories that no longer exist and which had to be edited each time a checkout moved, and a knowledge rule
   citing `workspace-index.yaml`, which exists nowhere on disk. Locating repositories rather than assuming a fixed
