@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Delivered Cursor-compatible staged-secret warnings and restricted Copilot scans to shell calls.
+
 - Clarified that staged-secret host warnings require successful explicit scans and do not imply universal Git-hook installation.
 
 - Made Copilot staged-secret warnings visible through its supported advisory output.

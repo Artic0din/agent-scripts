@@ -51,6 +51,18 @@ def main() -> None:
                 configuration = json.loads((hooks.parent / "config/copilot.hooks.json").read_text())
                 assert any(entry.get("bash", "").endswith("pre-commit-secrets.sh --copilot")
                            for entry in configuration["hooks"]["preToolUse"])
+                scanner = next(entry for entry in configuration["hooks"]["preToolUse"]
+                               if "pre-commit-secrets.sh" in entry.get("bash", ""))
+                assert scanner.get("matcher") == "bash"
+                cursor = subprocess.run(linked_command + ["--cursor"], cwd=repository, capture_output=True)
+                assert cursor.returncode == 0, cursor
+                assert set(json.loads(cursor.stdout)) == {"agent_message", "permission"}
+                assert json.loads(cursor.stdout)["permission"] == "allow"
+                assert "Staged-secret" in json.loads(cursor.stdout)["agent_message"]
+                assert secret.encode() not in cursor.stdout + cursor.stderr
+                configuration = json.loads((hooks.parent / "config/cursor.hooks.json").read_text())
+                assert any(entry.get("command", "").endswith("pre-commit-secrets.sh --cursor")
+                           for entry in configuration["hooks"]["beforeShellExecution"])
             assert subprocess.run(command, cwd=nested, capture_output=True).returncode == 2
             assert subprocess.run(command, cwd=root, capture_output=True).returncode == 0
 

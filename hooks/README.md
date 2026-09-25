@@ -9,6 +9,8 @@ Outside a repository they do nothing; missing Git, unreadable metadata and damag
 The shared scanner returns exit code 2 with a generic message on a finding, scanner error or missing Gitleaks.
 Host entrypoints turn that result into a nonblocking system message, so diagnostics and unstaging remain possible.
 The Copilot registration uses the Claude entrypoint's `--copilot` mode to emit its supported `additionalContext` field.
+Its `bash` matcher avoids scanning on unrelated reads and edits.
+Cursor selects `--cursor` to emit `agent_message` with advisory `permission: "allow"`.
 Successful scans return 0 with no output.
 They do not print staged lines, even when a secret is detected.
 
