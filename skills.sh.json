@@ -25,7 +25,8 @@
         "codex-debugging",
         "github-author-context",
         "github-deep-review",
-        "github-project-triage"
+        "github-project-triage",
+        "pr-walkthrough"
       ]
     },
     {
