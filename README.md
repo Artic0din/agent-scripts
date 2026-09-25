@@ -3,6 +3,8 @@
 Global agent environment for Claude Code, Codex, Cursor, GitHub Copilot and Antigravity.
 One source of rules, skills, agents, hooks and MCP config, linked into each tool.
 
+The [Awesome Copilot import](docs/awesome-copilot-import.md) records the pinned source, licenses, and scope of the existing local library now tracked here.
+
 ## Layout
 
 The audit script named under Install reports whether a machine's rules pointers and its Claude and Codex skill mirrors are in place; the hook merges, agent links and Antigravity steps are not audited yet.
