@@ -44,6 +44,12 @@ jobs:
       - name: Test autoreview CLI options (offline, synthetic)
         run: python3 skills/autoreview/scripts/test-autoreview.py
 
+      - name: Test PR walkthrough with synthetic data
+        run: |
+          python3 -m pip install pytest playwright
+          python3 -m playwright install --with-deps chromium
+          python3 -m pytest skills/pr-walkthrough/tests -q
+
       - name: Test Codex preflight (offline, synthetic)
         run: |
           test_home="$(mktemp -d)"
