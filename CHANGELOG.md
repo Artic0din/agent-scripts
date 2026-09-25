@@ -6,6 +6,8 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Clarified that staged-secret host warnings require successful explicit scans and do not imply universal Git-hook installation.
+
 - Made Copilot staged-secret warnings visible through its supported advisory output.
 
 - Published shared Claude and Codex staged-secret checks that use Gitleaks without printing matching secret values or blocking ordinary product names.

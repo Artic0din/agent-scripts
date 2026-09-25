@@ -15,8 +15,12 @@ They do not print staged lines, even when a secret is detected.
 The existing host settings invoke the secret check for each Bash call.
 This remains a check of the hook process's current repository, not a shell parser: commands that change directory or use `git -C` need an explicit scan of their target repository.
 The repository's `hooks/pre-commit` runs the scanner after Git has staged all commit content, including `git commit -a`, before its existing skill validation.
+This enforcement covers `git commit` in opted-in checkouts, not every command that can create commits.
+In particular, cherry-pick does not invoke `pre-commit`, and merge can use `pre-merge-commit` instead.
 Opt in as documented in the main README with `git config core.hooksPath hooks`.
 Publishing these source files does not change host settings or opt a checkout into Git hooks.
+The host warning is advisory in all checkouts, including those without this Git hook installed.
+It never authorizes committing a finding: the mandatory explicit staged scan before commits and exact outgoing-commit-range scan before pushes still apply.
 Git's explicit hook bypasses remain possible; this is not a server-side enforcement boundary.
 
 The old local keyword checks treated ordinary product names as credentials and printed matching lines.
