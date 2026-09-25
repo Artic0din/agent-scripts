@@ -6,6 +6,10 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Rejected incomplete host and project metadata in session previews and reported invalid text encoding without a traceback.
+- Prevented session previews from targeting the wrong repository or creating tasks and knowledge from unreadable sessions, and rechecked issue markers before creation.
+- Registered the build and session workflows and clarified issue approval, review status, and direct-fix pull request guidance.
+
 - Preserved local build and session-triage workflows while removing retired workspace and project references and aligning publication safeguards.
 
 - Removed stale filesystem references from `AGENTS.MD`: the active-repos table, whose eight paths all pointed at
