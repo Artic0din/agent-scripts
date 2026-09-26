@@ -272,6 +272,14 @@ class ApplyTests(unittest.TestCase):
                 self.assertEqual(run_apply(gh, 1, raw), 1)
                 self.assertEqual(gh.labels_of(1), ["needs-triage"])
 
+    def test_interrupted_transition_with_human_decision_is_left_alone(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, ["needs-triage", "ready-for-agent", "ready-for-human"])
+        gh.add_comment(1, "<!-- agent-triage status=done outcome=ready-for-agent -->", BOT)
+        self.assertFalse(triage.gate(gh, 1, LABELS)[0])
+        self.assertEqual(run_apply(gh, 1, result()), 0)
+        self.assertEqual(gh.writes, [])
+
     def test_human_decision_during_run_is_not_overwritten(self) -> None:
         gh = FakeGitHub()
         gh.add_issue(1, ["needs-triage", "ready-for-human"])

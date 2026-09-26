@@ -72,7 +72,8 @@ class GitHub:
         cmd = ["gh", "api", "-X", method, path]
         if payload is not None:
             cmd += ["--input", "-"]
-        out = subprocess.run(
+        # Argument list without a shell; values are an int issue number and the Actions repository name.
+        out = subprocess.run(  # nosemgrep: python.lang.security.audit.dangerous-subprocess-use-audit
             cmd, input=None if payload is None else json.dumps(payload),
             capture_output=True, text=True, check=True,
         ).stdout
@@ -147,7 +148,7 @@ def finish_interrupted(gh: GitHub, number: int, labels: Dict[str, str], have: Se
     if status != "done" or labels["pending"] not in have:
         return False
     outcome = MARKER_RE.match(comment["body"]).group(2)  # type: ignore[index, union-attr]
-    if outcome not in OUTCOMES or labels[outcome] not in have:
+    if outcome not in OUTCOMES or have & outcome_labels(labels) != {labels[outcome]}:
         return False
     gh.remove_label(number, labels["pending"])
     return True
