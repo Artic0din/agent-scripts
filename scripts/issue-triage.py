@@ -25,6 +25,7 @@ ROLES = ("pending",) + OUTCOMES
 TYPES = ("bug", "feature", "maintenance", "other")
 RECENT_ISSUE_LIMIT = 300
 MAX_RECENT_PAGES = 10
+MAX_COMMENT_PAGES = 30
 MAX_BODY_CHARS = 20000
 MAX_CANDIDATE_BODY_CHARS = 400
 # Newest comments are kept first; older ones beyond this total are omitted and counted.
@@ -64,7 +65,7 @@ REDACTIONS: Sequence[Tuple[str, str]] = (
      r"\1[REDACTED]"),
     (r"(?i)((?<![a-z0-9+.-])[a-z][a-z0-9+.-]*://)[^/\s:@]+:[^/\s@]+@", r"\1[REDACTED]@"),
     # Leading lookbehinds start a match only at the beginning of a run, keeping long pasted text linear.
-    (r"""(?i)((?<![\w-])["']?[\w-]*(?:password|passwd|passphrase|secret|token|api[_-]?key|access[_-]?key|private[_-]?key|credentials?)["']?\s*[:=]\s*)("[^"]*"|'[^']*'|[^\s,}]+)""",
+    (r"""(?i)((?<![\w-])["']?[\w-]*(?:password|passwd|passphrase|secret|token|api[_-]?key|access[_-]?key|private[_-]?key|credentials?)["']?\s*[:=]\s*)("[^"]*"|'[^']*'|[^\r\n]+)""",
      r"\1[REDACTED]"),
     (r"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", "[REDACTED_EMAIL]"),
     (r"/(?:Users|home)/[^/\s]+", "~"),
@@ -74,6 +75,10 @@ REDACTIONS: Sequence[Tuple[str, str]] = (
 
 class LabelNotApplied(RuntimeError):
     """GitHub silently drops a label the repository does not have."""
+
+
+class TooManyComments(RuntimeError):
+    """The comment history is too long to read, so marker absence cannot be established."""
 
 
 class GitHub:
@@ -97,14 +102,14 @@ class GitHub:
         return self._api("GET", f"repos/{self.repo}/issues/{number}")
 
     def comments(self, number: int) -> List[Dict[str, Any]]:
+        # The whole history is read so marker lookup stays reliable; past the cap, a person triages.
+        total = int(self.issue(number).get("comments") or 0)
+        if total > MAX_COMMENT_PAGES * 100:
+            raise TooManyComments(f"#{number} has {total} comments, more than automated triage reads; triage it by hand")
         found: List[Dict[str, Any]] = []
-        page = 1
-        while True:
-            batch = self._api("GET", f"repos/{self.repo}/issues/{number}/comments?per_page=100&page={page}")
-            found += batch
-            if len(batch) < 100:
-                return found
-            page += 1
+        for page in range(1, max(1, -(-total // 100)) + 1):
+            found += self._api("GET", f"repos/{self.repo}/issues/{number}/comments?per_page=100&page={page}")
+        return found
 
     def recent_issues(self, limit: int) -> List[Dict[str, Any]]:
         found: List[Dict[str, Any]] = []
@@ -395,6 +400,11 @@ def apply(gh: GitHub, number: int, labels: Dict[str, str], raw_result: str,
             gh.add_labels(number, [labels["pending"]])
         print(f"::error::Triage of #{number} failed: {error}")
         return 1
+    # Validation made more requests; a person may have decided meanwhile, and their decision wins.
+    decided = label_names(gh.issue(number)) & outcome_labels(labels)
+    if decided:
+        print(f"#{number} gained a triage decision during this run ({', '.join(sorted(decided))}); leaving it alone.")
+        return 0
     upsert_marker(gh, number, existing, render_done(result, labels, playbook))
     # Outcome before removing pending: a partial failure leaves a decision the gate respects.
     try:
@@ -444,7 +454,7 @@ def main(argv: Sequence[str]) -> int:
     if args.command == "gate":
         try:
             run, reason = gate(gh, args.issue, labels, os.environ.get("TRIAGE_RUN_URL", ""))
-        except LabelNotApplied as error:
+        except (LabelNotApplied, TooManyComments) as error:
             print(f"::error::{error}")
             return 1
         print(reason)

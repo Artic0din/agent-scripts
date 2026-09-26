@@ -356,6 +356,22 @@ class ApplyTests(unittest.TestCase):
         self.assertIn("status=failed", gh.comments(1)[0]["body"])
         self.assertTrue(triage.gate(gh, 1, LABELS)[0])
 
+    def test_human_decision_during_validation_is_not_overwritten(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, ["needs-triage"])
+        gh.add_issue(2, [])
+        real_issue = gh.issue
+
+        def decide_while_validating(number: int) -> Dict[str, Any]:
+            if number == 2:
+                gh.issues[1]["labels"].append({"name": "ready-for-human"})
+            return real_issue(number)
+
+        gh.issue = decide_while_validating  # type: ignore[method-assign]
+        self.assertEqual(run_apply(gh, 1, result("duplicate", duplicate_of=2)), 0)
+        self.assertEqual(gh.labels_of(1), ["needs-triage", "ready-for-human"])
+        self.assertEqual(gh.comments(1), [])
+
     def test_human_decision_during_run_is_not_overwritten(self) -> None:
         gh = FakeGitHub()
         gh.add_issue(1, ["needs-triage", "ready-for-human"])
@@ -448,6 +464,12 @@ class SanitiseTests(unittest.TestCase):
         for leaked in ("SSSS", "PRIVVALUE", "alice", "bob", "Jane", "Doe"):
             self.assertNotIn(leaked, text)
 
+    def test_unquoted_multi_word_password_is_fully_redacted(self) -> None:
+        text = triage.redact("password: correct horse battery staple\nnext line stays")
+        for leaked in ("correct", "horse", "battery", "staple"):
+            self.assertNotIn(leaked, text)
+        self.assertIn("next line stays", text)
+
     def test_long_text_is_truncated(self) -> None:
         self.assertEqual(len(triage.sanitise("x" * 50, 10)), 10)
 
@@ -464,11 +486,39 @@ class PagedApi(triage.GitHub):
         return [{"number": n, "pull_request": {}} for n in range(100)]
 
 
+class CommentHistoryApi(triage.GitHub):
+    """An issue whose comment count the API reports up front."""
+
+    def __init__(self, total: int) -> None:
+        super().__init__("o/r")
+        self.total = total
+        self.pages: List[int] = []
+
+    def _api(self, method: str, path: str, payload: Optional[Any] = None) -> Any:
+        if "/comments" not in path:
+            return {"number": 1, "comments": self.total, "labels": []}
+        page = int(path.rsplit("page=", 1)[1])
+        self.pages.append(page)
+        size = max(0, min(100, self.total - (page - 1) * 100))
+        return [{"id": page * 1000 + i, "body": f"p{page}", "user": {"login": "u"}} for i in range(size)]
+
+
 class PaginationTests(unittest.TestCase):
     def test_recent_issue_scan_is_bounded(self) -> None:
         api = PagedApi()
         self.assertEqual(api.recent_issues(triage.RECENT_ISSUE_LIMIT), [])
         self.assertEqual(api.calls, triage.MAX_RECENT_PAGES)
+
+    def test_full_comment_history_is_read_up_to_the_cap(self) -> None:
+        api = CommentHistoryApi(250)
+        self.assertEqual(len(api.comments(1)), 250)
+        self.assertEqual(api.pages, [1, 2, 3])
+
+    def test_oversized_comment_history_fails_without_paging(self) -> None:
+        api = CommentHistoryApi(triage.MAX_COMMENT_PAGES * 100 + 1)
+        with self.assertRaises(triage.TooManyComments):
+            api.comments(1)
+        self.assertEqual(api.pages, [])
 
 
 class TemplateTests(unittest.TestCase):

@@ -85,6 +85,7 @@ It returns a structured result, and [`scripts/issue-triage.py`](../scripts/issue
 - **No side effects:** triage never closes issues, opens issues or PRs, or edits code.
 
 Duplicate detection compares the 300 most recent issues; older duplicates need a person.
+An issue with more than 3,000 comments fails the gate with a message asking for manual triage.
 
 ## Adopting in a repository
 
