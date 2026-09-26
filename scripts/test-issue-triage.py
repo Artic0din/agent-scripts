@@ -280,6 +280,17 @@ class ApplyTests(unittest.TestCase):
         self.assertEqual(run_apply(gh, 1, result()), 0)
         self.assertEqual(gh.writes, [])
 
+    def test_invalid_related_references_are_dropped(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, ["needs-triage"])
+        gh.add_issue(2, [])
+        gh.add_issue(3, [], pull_request=True)
+        self.assertEqual(run_apply(gh, 1, result(related=[2, 3, 99])), 0)
+        body = gh.comments(1)[0]["body"]
+        self.assertIn("**Related:** #2", body)
+        self.assertNotIn("#3", body)
+        self.assertNotIn("#99", body)
+
     def test_human_decision_during_run_is_not_overwritten(self) -> None:
         gh = FakeGitHub()
         gh.add_issue(1, ["needs-triage", "ready-for-human"])
@@ -334,6 +345,16 @@ class SanitiseTests(unittest.TestCase):
             with self.subTest(raw=raw):
                 self.assertNotIn("![", triage.sanitise(raw, 1000))
 
+    def test_comparisons_are_not_mistaken_for_tags(self) -> None:
+        self.assertEqual(triage.sanitise("count < minimum or count > maximum", 1000),
+                         "count &lt; minimum or count > maximum")
+
+    def test_nested_tags_cannot_reassemble_html(self) -> None:
+        for raw in ('<im<b>g src="https://e/pixel">', "<<!-- x -->img src=x>", "<im<i<b>>g src=x>",
+                    '<img src="https://e/p" alt="<">', "<img src='https://e/p' alt='<'>"):
+            with self.subTest(raw=raw):
+                self.assertNotIn("<", triage.sanitise(raw, 1000))
+
     def test_long_text_is_truncated(self) -> None:
         self.assertEqual(len(triage.sanitise("x" * 50, 10)), 10)
 
@@ -351,6 +372,13 @@ class ContextTests(unittest.TestCase):
         self.assertEqual(len(context["recent_issues"][0]["body_start"]), triage.MAX_CANDIDATE_BODY_CHARS)
         self.assertEqual([c["body"] for c in context["issue"]["comments"]], ["more detail"])
         self.assertIn("Untrusted", context["note"])
+
+    def test_user_comment_resembling_marker_is_kept(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, [])
+        gh.add_comment(1, "<!-- agent-triage status=done --> repro: run twice", "reporter")
+        bodies = [c["body"] for c in triage.build_context(gh, 1)["issue"]["comments"]]
+        self.assertEqual(len(bodies), 1)
 
 
 if __name__ == "__main__":

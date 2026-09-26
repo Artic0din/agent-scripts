@@ -163,8 +163,14 @@ def redact(text: str) -> str:
 def sanitise(text: str, limit: int) -> str:
     """Make agent-written text inert: no secrets, markup, images, forged markers, or pings."""
     # Markup goes first: removing it later could rejoin an image or a secret the checks below already passed.
-    text = re.sub(r"<!--[\s\S]*?(?:-->|$)", "", text)
-    text = re.sub(r"<[^>]*>", "", text)
+    # Repeat until stable: removing an inner tag or comment can join the text around it into a new one.
+    previous = None
+    while previous != text:
+        previous = text
+        text = re.sub(r"<!--[\s\S]*?(?:-->|$)", "", text)
+        text = re.sub(r"</?[A-Za-z][^<>]*>", "", text)
+    # Tag stripping is best effort; escaping every "<" left is what guarantees no raw HTML is published.
+    text = text.replace("<", "&lt;")
     text = redact(text)
     text = re.sub(r"!\[[^\]]*\]\([^)]*\)", "[image removed]", text)
     # Last structural step, so nothing above can reintroduce it: with no "!" before "[", every image
@@ -198,7 +204,9 @@ def gate(gh: GitHub, number: int, labels: Dict[str, str]) -> Tuple[bool, str]:
 
 def build_context(gh: GitHub, number: int) -> Dict[str, Any]:
     issue = gh.issue(number)
-    comments = [c for c in gh.comments(number) if not MARKER_RE.match(c.get("body") or "")]
+    all_comments = gh.comments(number)
+    triage_comment, _ = find_marker(all_comments)
+    comments = [c for c in all_comments if c is not triage_comment]
     candidates = [
         {
             "number": item["number"],
@@ -270,13 +278,20 @@ def validate_result(raw: str, gh: GitHub, number: int) -> Dict[str, Any]:
         "summary": sanitise(result["summary"], MAX_TEXT["summary"]),
         "rationale": sanitise(result["rationale"], MAX_TEXT["rationale"]),
         "questions": [sanitise(q, MAX_TEXT["question"]) for q in questions[:MAX_QUESTIONS]],
-        "related": list(dict.fromkeys(related))[:MAX_RELATED],
+        "related": [n for n in list(dict.fromkeys(related))[:MAX_RELATED] if is_issue(gh, n)],
         "duplicate_of": duplicate,
     }
     # Sanitising can empty text that passed the checks above, so the published form is checked again.
     if not clean["summary"] or not clean["rationale"] or not all(clean["questions"]):
         raise ValueError("the triage result has text that is empty once sanitised")
     return clean
+
+
+def is_issue(gh: GitHub, number: int) -> bool:
+    try:
+        return "pull_request" not in gh.issue(number)
+    except subprocess.CalledProcessError:
+        return False
 
 
 def render_done(result: Dict[str, Any], labels: Dict[str, str], playbook: str) -> str:
