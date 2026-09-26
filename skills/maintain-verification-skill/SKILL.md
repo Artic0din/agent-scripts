@@ -79,7 +79,7 @@ Never edit product code during a run: a behavior the map describes that the app 
 3. **Reconcile.** Require a valid finding, no-finding, or blocker result for every roster entry before synthesizing coverage.
    Any unresolved source blocker makes the final outcome blocked, never clean; report useful completed coverage without treating the gap as verified.
    Merge overlapping recipes into as few app states as practical.
-   Spot-check cited drift; don't re-prove clean claims.
+   Verify every cited drift claim against source before reporting or shipping it; don't re-prove explicit no-finding results.
    Sweep recent churn for user-facing surfaces missing from the map — require a concrete source path before calling one missing.
 
 4. **Live pass.** Required even when source looks clean.
