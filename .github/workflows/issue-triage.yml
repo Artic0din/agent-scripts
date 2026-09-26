@@ -42,6 +42,7 @@ permissions: {}
 
 env:
   ISSUE_NUMBER: ${{ inputs.issue-number }}
+  TRIAGE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
   TRIAGE_LABEL_PENDING: ${{ inputs.pending-label }}
   TRIAGE_LABEL_NEEDS_INFO: ${{ inputs.needs-info-label }}
   TRIAGE_LABEL_READY_FOR_AGENT: ${{ inputs.ready-for-agent-label }}
@@ -172,5 +173,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TRIAGE_JOB: ${{ needs.triage.result }}
           TRIAGE_RESULT: ${{ needs.triage.outputs.result }}
-          TRIAGE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: python3 .agent-scripts/scripts/issue-triage.py apply --issue "$ISSUE_NUMBER"

@@ -68,8 +68,12 @@ REDACTIONS: Sequence[Tuple[str, str]] = (
      r"\1[REDACTED]"),
     (r"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", "[REDACTED_EMAIL]"),
     (r"/(?:Users|home)/[^/\s]+", "~"),
-    (r"(?i)\b[a-z]:(?:\\{1,2})(?:Users|Documents and Settings)(?:\\{1,2})[^\\\s\"']+", "~"),
+    (r"(?i)\b[a-z]:(?:\\{1,2})(?:Users|Documents and Settings)(?:\\{1,2})[^\\\r\n\"']+", "~"),
 )
+
+
+class LabelNotApplied(RuntimeError):
+    """GitHub silently drops a label the repository does not have."""
 
 
 class GitHub:
@@ -197,7 +201,7 @@ def sanitise(text: str, limit: int) -> str:
     return text if len(text) <= limit else text[: limit - 1] + "…"
 
 
-def gate(gh: GitHub, number: int, labels: Dict[str, str]) -> Tuple[bool, str]:
+def gate(gh: GitHub, number: int, labels: Dict[str, str], run_url: str = "") -> Tuple[bool, str]:
     issue = gh.issue(number)
     if "pull_request" in issue:
         return False, f"#{number} is a pull request; triage labels apply to issues only"
@@ -215,6 +219,10 @@ def gate(gh: GitHub, number: int, labels: Dict[str, str]) -> Tuple[bool, str]:
         return False, f"#{number} was triaged and its outcome label was removed by a person"
     if labels["pending"] not in have:
         gh.add_labels(number, [labels["pending"]])
+        if labels["pending"] not in label_names(gh.issue(number)):
+            reason = f"the `{labels['pending']}` label was not applied; create it in the repository (adoption step 4)"
+            record_failure(gh, number, labels, reason, run_url)
+            raise LabelNotApplied(reason)
     return True, f"#{number} is pending triage"
 
 
@@ -356,6 +364,11 @@ def upsert_marker(gh: GitHub, number: int, existing: Optional[Dict[str, Any]], b
         gh.create_comment(number, body)
 
 
+def record_failure(gh: GitHub, number: int, labels: Dict[str, str], reason: str, run_url: str) -> None:
+    marker, _ = find_marker(gh.comments(number))
+    upsert_marker(gh, number, marker, render_failed(reason, number, labels["pending"], run_url))
+
+
 def apply(gh: GitHub, number: int, labels: Dict[str, str], raw_result: str,
           triage_job: str, run_url: str, playbook: str) -> int:
     issue = gh.issue(number)
@@ -387,13 +400,13 @@ def apply(gh: GitHub, number: int, labels: Dict[str, str], raw_result: str,
     try:
         gh.add_labels(number, [labels[result["outcome"]]])
     except subprocess.CalledProcessError:
-        # The write may have landed before the response was lost; only a confirmed miss is a failure.
-        if labels[result["outcome"]] not in label_names(gh.issue(number)):
-            reason = f"the `{labels[result['outcome']]}` label could not be applied"
-            marker, _ = find_marker(gh.comments(number))
-            upsert_marker(gh, number, marker, render_failed(reason, number, labels["pending"], run_url))
-            print(f"::error::Triage of #{number} failed: {reason}")
-            return 1
+        pass  # The write may have landed before the response was lost; the read below decides.
+    # GitHub also silently drops a label the repository lacks, so only a confirmed label counts.
+    if labels[result["outcome"]] not in label_names(gh.issue(number)):
+        reason = f"the `{labels[result['outcome']]}` label could not be applied; check that it exists"
+        record_failure(gh, number, labels, reason, run_url)
+        print(f"::error::Triage of #{number} failed: {reason}")
+        return 1
     if labels["pending"] in have:
         gh.remove_label(number, labels["pending"])
     print(f"#{number} triaged as {result['outcome']}.")
@@ -429,7 +442,11 @@ def main(argv: Sequence[str]) -> int:
         return 2
 
     if args.command == "gate":
-        run, reason = gate(gh, args.issue, labels)
+        try:
+            run, reason = gate(gh, args.issue, labels, os.environ.get("TRIAGE_RUN_URL", ""))
+        except LabelNotApplied as error:
+            print(f"::error::{error}")
+            return 1
         print(reason)
         write_output("run", "true" if run else "false")
         return 0

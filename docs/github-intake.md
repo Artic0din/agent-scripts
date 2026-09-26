@@ -78,7 +78,7 @@ It returns a structured result, and [`scripts/issue-triage.py`](../scripts/issue
   Runs for the same issue are serialised, and an issue that already has a decision label is skipped.
 - **Human decisions win:** if a person sets a decision label before or during a run, nothing is overwritten.
   To re-triage, remove the decision label, add `needs-triage`, and run the workflow manually.
-- **No false success:** a missing secret, agent failure, or invalid result leaves `needs-triage`, posts a failure comment with the run link, and fails the run.
+- **No false success:** a missing secret or label, agent failure, or invalid result leaves `needs-triage`, posts a failure comment with the run link, and fails the run.
   Retry by re-running the failed jobs or running the workflow manually with the issue number.
   If a GitHub write itself fails, the run fails; a retry finishes a half-applied label change without overriding a different human decision.
 - **Untrusted input:** issue text is redacted before it reaches the model and is passed as data, with older comments dropped past a size budget; agent text is redacted, stripped of HTML, images, and hidden markers, and has `@` mentions neutralised before posting.
@@ -95,6 +95,7 @@ Duplicate detection compares the 300 most recent issues; older duplicates need a
    Pin the `uses:` ref and `agent-scripts-ref` to the same reviewed commit SHA, and set label inputs if the approved names differ.
 3. Make `CLAUDE_CODE_OAUTH_TOKEN` available as a repository or organisation secret.
 4. Create the role labels before enabling the workflow, or run the #25 label sync.
+   GitHub silently ignores a label the repository lacks, so the workflow re-reads the issue and fails the run when a label did not apply.
 5. GitHub starts no workflow for an issue created with a workflow's own `GITHUB_TOKEN`.
    A workflow that creates issues that way must also run `gh workflow run issue-triage.yml -R "$GITHUB_REPOSITORY" -f issue-number=<n>`, which needs `actions: write`; dispatch events are exempt from that rule.
 6. Open a test issue and confirm the outcome label and single comment appear.

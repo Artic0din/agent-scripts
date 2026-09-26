@@ -27,6 +27,8 @@ class FakeGitHub:
         self.comment_store: Dict[int, List[Dict[str, Any]]] = {}
         self.writes: List[str] = []
         self.next_comment_id = 100
+        # When set, labels outside it are silently dropped, as GitHub does for labels the repository lacks.
+        self.repo_labels: Optional[set] = None
 
     def add_issue(self, number: int, labels: List[str], title: str = "t", body: str = "b",
                   pull_request: bool = False, state: str = "open") -> None:
@@ -59,6 +61,8 @@ class FakeGitHub:
     def add_labels(self, number: int, labels: List[str]) -> None:
         self.writes.append(f"add {number} {labels}")
         for name in labels:
+            if self.repo_labels is not None and name not in self.repo_labels:
+                continue
             if name not in self.labels_of(number):
                 self.issues[number]["labels"].append({"name": name})
 
@@ -109,6 +113,17 @@ class GateTests(unittest.TestCase):
         gh.add_issue(1, ["bug", "needs-triage"])
         self.assertTrue(triage.gate(gh, 1, LABELS)[0])
         self.assertEqual(gh.writes, [])
+
+    def test_missing_pending_label_fails_visibly(self) -> None:
+        gh = FakeGitHub()
+        gh.repo_labels = {"bug"}
+        gh.add_issue(1, [])
+        with self.assertRaises(triage.LabelNotApplied):
+            triage.gate(gh, 1, LABELS, RUN_URL)
+        comments = gh.comments(1)
+        self.assertEqual(len(comments), 1)
+        self.assertIn("status=failed", comments[0]["body"])
+        self.assertIn(RUN_URL, comments[0]["body"])
 
     def test_existing_decision_is_respected(self) -> None:
         gh = FakeGitHub()
@@ -332,6 +347,15 @@ class ApplyTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             triage.label_map({"TRIAGE_LABEL_PENDING": "ready-for-agent"})
 
+    def test_silently_dropped_outcome_label_is_a_failure(self) -> None:
+        gh = FakeGitHub()
+        gh.repo_labels = {"needs-triage"}
+        gh.add_issue(1, ["needs-triage"])
+        self.assertEqual(run_apply(gh, 1, result()), 1)
+        self.assertEqual(gh.labels_of(1), ["needs-triage"])
+        self.assertIn("status=failed", gh.comments(1)[0]["body"])
+        self.assertTrue(triage.gate(gh, 1, LABELS)[0])
+
     def test_human_decision_during_run_is_not_overwritten(self) -> None:
         gh = FakeGitHub()
         gh.add_issue(1, ["needs-triage", "ready-for-human"])
@@ -420,7 +444,8 @@ class SanitiseTests(unittest.TestCase):
     def test_cloud_keys_and_windows_homes_are_redacted(self) -> None:
         text = triage.redact("AWS_SECRET_ACCESS_KEY=" + "S" * 40 + " private_key: PRIVVALUE"
                              " C:\\Users\\alice\\log.txt C:\\\\Users\\\\bob\\\\x")
-        for leaked in ("SSSS", "PRIVVALUE", "alice", "bob"):
+        text += triage.redact(" C:\\Users\\Jane Doe\\project\\log.txt")
+        for leaked in ("SSSS", "PRIVVALUE", "alice", "bob", "Jane", "Doe"):
             self.assertNotIn(leaked, text)
 
     def test_long_text_is_truncated(self) -> None:
