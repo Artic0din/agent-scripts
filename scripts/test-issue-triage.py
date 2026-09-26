@@ -322,6 +322,16 @@ class ApplyTests(unittest.TestCase):
         self.assertEqual(gh.labels_of(1), ["ready-for-agent"])
         self.assertIn("status=done", gh.comments(1)[0]["body"])
 
+    def test_questions_only_publish_with_needs_info(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, ["needs-triage"])
+        self.assertEqual(run_apply(gh, 1, result("ready-for-agent", questions=["Which version?"])), 0)
+        self.assertNotIn("Questions for the reporter", gh.comments(1)[0]["body"])
+
+    def test_overlapping_label_mapping_is_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            triage.label_map({"TRIAGE_LABEL_PENDING": "ready-for-agent"})
+
     def test_human_decision_during_run_is_not_overwritten(self) -> None:
         gh = FakeGitHub()
         gh.add_issue(1, ["needs-triage", "ready-for-human"])
@@ -392,6 +402,20 @@ class SanitiseTests(unittest.TestCase):
                 started = time.monotonic()
                 triage.redact(sample)
                 self.assertLess(time.monotonic() - started, 1.0)
+
+    def test_signed_and_credential_urls_are_redacted(self) -> None:
+        text = triage.redact("https://acct.blob.core.windows.net/c/f?sv=1&sig=SIGVALUE&se=2"
+                             " https://s3.amazonaws.com/b/k?X-Amz-Signature=AMZVALUE"
+                             " https://api.example.com/cb?access_token=TOKVALUE"
+                             " https://user:PASSVALUE@git.example.com/repo")
+        for leaked in ("SIGVALUE", "AMZVALUE", "TOKVALUE", "PASSVALUE"):
+            self.assertNotIn(leaked, text)
+        self.assertIn("se=2", text)
+
+    def test_deeply_nested_tags_stay_fast(self) -> None:
+        started = time.monotonic()
+        triage.sanitise("<a" * 20000 + ">" * 20000, 3000)
+        self.assertLess(time.monotonic() - started, 1.0)
 
     def test_long_text_is_truncated(self) -> None:
         self.assertEqual(len(triage.sanitise("x" * 50, 10)), 10)

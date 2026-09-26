@@ -30,6 +30,7 @@ MAX_CANDIDATE_BODY_CHARS = 400
 MAX_COMMENT_CONTEXT_CHARS = 60000
 MAX_TEXT = {"summary": 500, "rationale": 3000, "question": 500}
 MAX_QUESTIONS = 10
+MAX_MARKUP_PASSES = 10
 MAX_RELATED = 10
 
 RESULT_SCHEMA: Dict[str, Any] = {
@@ -57,6 +58,10 @@ REDACTIONS: Sequence[Tuple[str, str]] = (
     (r"(?:xox[a-z]|xapp|xwfp)-[A-Za-z0-9-]{10,}", "[REDACTED_SLACK_TOKEN]"),
     (r"eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*", "[REDACTED_JWT]"),
     (r"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]{8,}", "Bearer [REDACTED]"),
+    (r"(?i)([?&](?:sig|signature|x-amz-signature|x-amz-credential|x-amz-security-token|x-goog-signature"
+     r"|x-goog-credential|token|access_token|refresh_token|id_token|api_key|apikey|key|secret|password|code)=)[^&\s#]+",
+     r"\1[REDACTED]"),
+    (r"(?i)((?<![a-z0-9+.-])[a-z][a-z0-9+.-]*://)[^/\s:@]+:[^/\s@]+@", r"\1[REDACTED]@"),
     # Leading lookbehinds start a match only at the beginning of a run, keeping long pasted text linear.
     (r"""(?i)((?<![\w-])["']?[\w-]*(?:password|passwd|secret|token|api[_-]?key)["']?\s*[:=]\s*)("[^"]*"|'[^']*'|[^\s,}]+)""",
      r"\1[REDACTED]"),
@@ -125,7 +130,10 @@ def label_map(env: Dict[str, str]) -> Dict[str, str]:
     """Role -> repository label, overridable per repository with TRIAGE_LABEL_<ROLE>."""
     defaults = {role: role for role in OUTCOMES}
     defaults["pending"] = "needs-triage"
-    return {role: env.get("TRIAGE_LABEL_" + role.upper().replace("-", "_")) or defaults[role] for role in ROLES}
+    labels = {role: env.get("TRIAGE_LABEL_" + role.upper().replace("-", "_")) or defaults[role] for role in ROLES}
+    if len(set(labels.values())) != len(labels):
+        raise ValueError(f"triage role labels must be distinct: {labels}")
+    return labels
 
 
 def outcome_labels(labels: Dict[str, str]) -> Set[str]:
@@ -167,11 +175,13 @@ def sanitise(text: str, limit: int) -> str:
     """Make agent-written text inert: no secrets, markup, images, forged markers, or pings."""
     # Markup goes first: removing it later could rejoin an image or a secret the checks below already passed.
     # Repeat until stable: removing an inner tag or comment can join the text around it into a new one.
-    previous = None
-    while previous != text:
+    # Bounded passes keep deeply nested input linear; the escape below covers anything left.
+    for _ in range(MAX_MARKUP_PASSES):
         previous = text
         text = re.sub(r"<!--[\s\S]*?(?:-->|$)", "", text)
         text = re.sub(r"</?[A-Za-z][^<>]*>", "", text)
+        if text == previous:
+            break
     # Tag stripping is best effort; escaping every "<" left is what guarantees no raw HTML is published.
     text = text.replace("<", "&lt;")
     text = redact(text)
@@ -287,7 +297,9 @@ def validate_result(raw: str, gh: GitHub, number: int) -> Dict[str, Any]:
         "type": result["type"],
         "summary": sanitise(result["summary"], MAX_TEXT["summary"]),
         "rationale": sanitise(result["rationale"], MAX_TEXT["rationale"]),
-        "questions": [sanitise(q, MAX_TEXT["question"]) for q in questions[:MAX_QUESTIONS]],
+        # Only a request for information publishes questions; other outcomes are complete decisions.
+        "questions": [sanitise(q, MAX_TEXT["question"]) for q in questions[:MAX_QUESTIONS]]
+        if result["outcome"] == "needs-info" else [],
         "related": [n for n in list(dict.fromkeys(related))[:MAX_RELATED] if is_issue(gh, n)],
         "duplicate_of": duplicate,
     }
@@ -407,7 +419,11 @@ def main(argv: Sequence[str]) -> int:
     if not args.repo or not args.issue:
         parser.error("--repo and --issue are required")
     gh = GitHub(args.repo)
-    labels = label_map(dict(os.environ))
+    try:
+        labels = label_map(dict(os.environ))
+    except ValueError as error:
+        print(f"::error::{error}")
+        return 2
 
     if args.command == "gate":
         run, reason = gate(gh, args.issue, labels)

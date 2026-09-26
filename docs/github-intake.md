@@ -95,7 +95,7 @@ Duplicate detection compares the 300 most recent issues; older duplicates need a
 3. Make `CLAUDE_CODE_OAUTH_TOKEN` available as a repository or organisation secret.
 4. Create the role labels before enabling the workflow, or run the #25 label sync.
 5. GitHub starts no workflow for an issue created with a workflow's own `GITHUB_TOKEN`.
-   A workflow that creates issues that way must also run `gh workflow run issue-triage.yml -f issue-number=<n>`, which needs `actions: write`; dispatch events are exempt from that rule.
+   A workflow that creates issues that way must also run `gh workflow run issue-triage.yml -R "$GITHUB_REPOSITORY" -f issue-number=<n>`, which needs `actions: write`; dispatch events are exempt from that rule.
 6. Open a test issue and confirm the outcome label and single comment appear.
 
 Global instructions only reach agents.
