@@ -23,28 +23,28 @@ Preconditions:
 - No note is titled `Release checklist`.
 - `control-notes doctor` reports the expected URL and disposable data directory.
 
-- **Open editor.** Choose `New note`.
+- **Open editor (`create-open/toolbar`).** Choose `New note`.
   Run `control-notes browser click --role button --name "New note"`.
   A form named `Note editor` appears with focus in the `Title` textbox.
-- **Enter content.** Type the title and body.
+- **Enter content (`create-save/toolbar`).** Type the title and body.
   Run `control-notes browser fill --role textbox --name "Title" --value "Release checklist"` and `control-notes browser fill --role textbox --name "Body" --value "Tag and publish"`.
   The `Save note` button becomes enabled.
-- **Save note.** Choose `Save note`.
+- **Save note (`create-save/toolbar`).** Choose `Save note`.
   Run `control-notes browser click --role button --name "Save note"`.
   A status named `Note saved` appears and the heading reads `Release checklist`.
-- **Confirm persistence.** Return to the note list and reopen the note.
+- **Confirm persistence (`create-save/toolbar`).** Return to the note list and reopen the note.
   Run `control-notes browser click --role link --name "All notes"` and `control-notes browser click --role link --name "Release checklist"`.
   The editor shows both saved values.
-- **Cancel draft.** Open a new note, enter `Discard me`, and choose `Cancel`.
+- **Cancel draft (`create-cancel/toolbar`).** Open a new note, enter `Discard me`, and choose `Cancel`.
   Run `control-notes browser click --role button --name "New note"`, `control-notes browser fill --role textbox --name "Title" --value "Discard me"`, and `control-notes browser click --role button --name "Cancel"`.
   The note list returns and has no `Discard me` link.
-- **Keyboard entry.** From the note list, focus the non-editable `All notes` heading, then press `n`.
+- **Keyboard entry (`create-open/keyboard`).** From the note list, focus the non-editable `All notes` heading, then press `n`.
   Run `control-notes browser focus --role heading --name "All notes"` and `control-notes browser press --key n`.
   The blank `Note editor` form appears with focus in `Title`; run `control-notes browser click --role button --name "Cancel"` to return to the list without saving.
-- **CLI entry.** Create a second note.
+- **CLI entry (`create-cli/cli`).** Create a second note.
   Run `control-notes cli -- notes create --title "CLI note" --body "Created from terminal" --format json`.
   Exit code `0` and stdout contain the new note ID and title.
-- **Confirm CLI persistence.** Refresh the browser list and open the CLI-created note.
+- **Confirm CLI persistence (`create-cli/cli`).** Refresh the browser list and open the CLI-created note.
   Run `control-notes browser reload` and `control-notes browser click --role link --name "CLI note"`.
   The editor shows title `CLI note` and body `Created from terminal`; assert both stored values.
 - **Proof.** Return to the note list with `control-notes browser click --role link --name "All notes"`.
