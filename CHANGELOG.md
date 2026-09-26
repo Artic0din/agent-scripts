@@ -6,6 +6,7 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Made MVP scope the default, added YAGNI/KISS/DRY guidance, and improved ADHD-friendly explanations across unfamiliar technical stacks.
 - Made the retrospective writing-guide step portable and preserved standards until reviewers load their destination.
 - Updated Matt Pocock's session retrospective to favour automated checks for mechanical mistakes.
 - Separated the manually invoked Gstack weekly retrospective from Matt's session retrospective with a distinct `gstack-retro` command.
