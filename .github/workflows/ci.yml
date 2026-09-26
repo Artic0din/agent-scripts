@@ -44,6 +44,9 @@ jobs:
       - name: Test autoreview CLI options (offline, synthetic)
         run: python3 skills/autoreview/scripts/test-autoreview.py
 
+      - name: Test issue triage (offline, synthetic)
+        run: python3 scripts/test-issue-triage.py
+
       - name: Test curated skill activation (offline, synthetic)
         run: python3 scripts/test-curated-pstack-links.py
 
