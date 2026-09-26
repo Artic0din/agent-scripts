@@ -49,7 +49,7 @@ Pick one, and say which:
 - **blocked** — coverage could not finish or a proven fix could not ship safely.
   Say exactly what blocked it.
 
-Product gaps found alongside drift or a blocker are reported with that outcome too.
+Product gaps found alongside drift or a blocker are reported with the `changed`, `drift-found`, or `blocked` outcome that applies, not as `regression-found`.
 
 ## Edit scope
 

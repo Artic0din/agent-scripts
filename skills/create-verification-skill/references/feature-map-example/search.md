@@ -52,7 +52,7 @@ Preconditions:
 - **CLI miss (`search-empty/cli`).** Search for an absent value.
   Run `control-notes cli -- notes search "volcano" --format json`.
   Exit code `0` and stdout are `[]`.
-- **Proof.** Restore the populated result state with `control-notes browser fill --role searchbox --name "Search notes" --value "quarterly"` and wait for the `Search results` list to show `Quarterly plan`.
+- **Proof (`proof`).** Restore the populated result state with `control-notes browser fill --role searchbox --name "Search notes" --value "quarterly"` and wait for the `Search results` list to show `Quarterly plan`.
   Run `control-notes browser snapshot --aria --path "$NOTES_EVIDENCE_DIR/search/results.aria.txt"` and `control-notes browser screenshot --path "$NOTES_EVIDENCE_DIR/search/results.png"`.
   Both artifacts identify Notes, the query, and `Quarterly plan`.
 

@@ -22,17 +22,17 @@ Read the index before driving the app, then use the matching feature file as the
   Keep quoted names and flags unchanged.
 - Run browser actions through `control-notes browser`.
 - Run terminal actions through `control-notes cli -- <command>`.
-- Every driving bullet except `Proof` carries a `<sub-feature ID>/<entry point>` tag in its label.
+- Every driving bullet carries a `<sub-feature ID>/<entry point>` tag in its label; `Proof` uses the tag `proof`.
   Before running the bullet, run `control-notes step "<tag>"` with that tag; the harness keeps it as the current step until the next `step` call.
 - `control-notes` appends every command it runs to `$NOTES_EVIDENCE_DIR/actions.log` with the current step, arguments, stdout, stderr, and exit code.
-- After each browser bullet's observable result, run `control-notes browser snapshot --aria` so the log records the resulting state for that step.
+- Right after each browser bullet's observable result, and before any later command in that bullet changes it, run `control-notes browser snapshot --aria` so the log records the resulting state for that step.
 - Restore seeded data after a mutation.
   Do not remove proof artifacts during cleanup.
 
 ## Proof and skip reporting
 
 - Capture the user action and the resulting state, not only the final screen.
-- UI proof includes an ARIA snapshot and a screenshot with the app identity visible.
+- Per-step UI proof is the logged ARIA snapshot; the `Proof` bullet adds a screenshot with the app identity visible.
 - CLI proof includes the command, stdout, stderr, and exit code.
 - Mutation proof includes a read-only second view of the stored value.
 - `actions.log` ties every action and its result to a sub-feature ID and entry point; each feature's `Proof` bullet adds the combined final state.
@@ -47,7 +47,7 @@ It then uses exactly four H2 sections in this order.
 
 1. `Sub-features` lists short IDs with one line for each behavior.
 2. `How to get to it (user POV)` lists every user entry point.
-3. `Driving it with <harness>` starts with `Preconditions:` and uses labeled bullets that pair each user action with an exact command and observable result; every bullet except `Proof` tags its label with `<sub-feature ID>/<entry point>`.
+3. `Driving it with <harness>` starts with `Preconditions:` and uses labeled bullets that pair each user action with an exact command and observable result; every bullet tags its label with `<sub-feature ID>/<entry point>`, and `Proof` uses `proof`.
 4. `Gotchas` lists traps that can waste or invalidate a verification run.
 
 Keep implementation details out of the map.

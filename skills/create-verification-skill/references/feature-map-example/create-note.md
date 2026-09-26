@@ -47,7 +47,7 @@ Preconditions:
 - **Confirm CLI persistence (`create-cli/cli`).** Refresh the browser list and open the CLI-created note.
   Run `control-notes browser reload` and `control-notes browser click --role link --name "CLI note"`.
   The editor shows title `CLI note` and body `Created from terminal`; assert both stored values.
-- **Proof.** Return to the note list with `control-notes browser click --role link --name "All notes"`.
+- **Proof (`proof`).** Return to the note list with `control-notes browser click --role link --name "All notes"`.
   Run `control-notes browser snapshot --aria --path "$NOTES_EVIDENCE_DIR/create-note/list.aria.txt"` and `control-notes browser screenshot --path "$NOTES_EVIDENCE_DIR/create-note/list.png"`.
   The artifacts show `Release checklist` and `CLI note`.
 
