@@ -40,12 +40,16 @@ With remediation already authorized, continue within the edit scope without aski
 
 Pick one, and say which:
 
-- **clean** — every mapped user path and behavior got source and live coverage, with no skipped or blocked checks; nothing worth shipping.
+- **clean** — every mapped user path and behavior got source and live coverage, with no skipped or blocked checks and no product gaps; nothing worth shipping.
   No branch, no PR.
 - **changed** — one PR ships proven doc, harness, or map corrections.
 - **drift-found** — a report-only pass found corrections; report them and the coverage without edits or a PR.
+- **regression-found** — coverage finished and the map and harness are accurate, but the live pass proved a product gap.
+  Report each gap with its evidence; no PR.
 - **blocked** — coverage could not finish or a proven fix could not ship safely.
   Say exactly what blocked it.
+
+Product gaps found alongside drift or a blocker are reported with that outcome too.
 
 ## Edit scope
 
@@ -93,7 +97,7 @@ Never edit product code during a run: a behavior the map describes that the app 
 
 6. **Ship or stop.** With remediation authorized, changed means one PR of proven corrections; re-read every changed file first.
    Before committing, keep raw proof artifacts out of the staged file list and run the repository's secret scan.
-   For clean, drift-found, or blocked: no PR, report the outcome and the coverage honestly.
+   For clean, drift-found, regression-found, or blocked: no PR, report the outcome and the coverage honestly.
 
 Keep concise run notes (features covered, unreachable prerequisites, confirmed drift, outcome) in a scratch location; don't commit them.
 Keep all captured evidence in a unique run directory outside the worktree or confirmed ignored by Git, and preserve it through cleanup.
