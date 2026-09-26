@@ -80,7 +80,7 @@ It returns a structured result, and [`scripts/issue-triage.py`](../scripts/issue
 - **No false success:** a missing secret, agent failure, or invalid result leaves `needs-triage`, posts a failure comment with the run link, and fails the run.
   Retry by re-running the failed jobs or running the workflow manually with the issue number.
   If a GitHub write itself fails, the run fails; a retry finishes a half-applied label change without overriding a different human decision.
-- **Untrusted input:** issue text is passed as data, and agent text is redacted, stripped of HTML, images, and hidden markers, and has `@` mentions neutralised before posting.
+- **Untrusted input:** issue text is redacted before it reaches the model and is passed as data, with older comments dropped past a size budget; agent text is redacted, stripped of HTML, images, and hidden markers, and has `@` mentions neutralised before posting.
 - **No side effects:** triage never closes issues, opens issues or PRs, or edits code.
 
 Duplicate detection compares the 300 most recent issues; older duplicates need a person.

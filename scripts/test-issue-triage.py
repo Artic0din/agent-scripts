@@ -6,6 +6,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import subprocess
+import time
 import unittest
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -291,6 +292,36 @@ class ApplyTests(unittest.TestCase):
         self.assertNotIn("#3", body)
         self.assertNotIn("#99", body)
 
+    def test_failed_outcome_label_replaces_done_marker(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, ["needs-triage"])
+
+        def fail_add(number: int, labels: List[str]) -> None:
+            raise subprocess.CalledProcessError(1, ["gh", "api"])
+
+        gh.add_labels = fail_add  # type: ignore[method-assign]
+        self.assertEqual(run_apply(gh, 1, result()), 1)
+        comments = gh.comments(1)
+        self.assertEqual(len(comments), 1)
+        self.assertIn("status=failed", comments[0]["body"])
+        self.assertIn(RUN_URL, comments[0]["body"])
+        self.assertEqual(gh.labels_of(1), ["needs-triage"])
+        self.assertTrue(triage.gate(gh, 1, LABELS)[0])
+
+    def test_label_error_after_label_applied_keeps_success(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, ["needs-triage"])
+        real_add = gh.add_labels
+
+        def add_then_fail(number: int, labels: List[str]) -> None:
+            real_add(number, labels)
+            raise subprocess.CalledProcessError(1, ["gh", "api"])
+
+        gh.add_labels = add_then_fail  # type: ignore[method-assign]
+        self.assertEqual(run_apply(gh, 1, result()), 0)
+        self.assertEqual(gh.labels_of(1), ["ready-for-agent"])
+        self.assertIn("status=done", gh.comments(1)[0]["body"])
+
     def test_human_decision_during_run_is_not_overwritten(self) -> None:
         gh = FakeGitHub()
         gh.add_issue(1, ["needs-triage", "ready-for-human"])
@@ -355,6 +386,13 @@ class SanitiseTests(unittest.TestCase):
             with self.subTest(raw=raw):
                 self.assertNotIn("<", triage.sanitise(raw, 1000))
 
+    def test_redaction_stays_linear_on_long_pasted_text(self) -> None:
+        for sample in ("x" * 60000, "a-" * 30000, "a." * 30000):
+            with self.subTest(sample=sample[:4]):
+                started = time.monotonic()
+                triage.redact(sample)
+                self.assertLess(time.monotonic() - started, 1.0)
+
     def test_long_text_is_truncated(self) -> None:
         self.assertEqual(len(triage.sanitise("x" * 50, 10)), 10)
 
@@ -372,6 +410,36 @@ class ContextTests(unittest.TestCase):
         self.assertEqual(len(context["recent_issues"][0]["body_start"]), triage.MAX_CANDIDATE_BODY_CHARS)
         self.assertEqual([c["body"] for c in context["issue"]["comments"]], ["more detail"])
         self.assertIn("Untrusted", context["note"])
+
+    def test_context_is_redacted_before_reaching_the_model(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, [], title="leak me@example.com", body="old ghp_" + "a" * 36)
+        gh.add_issue(2, [], body="password: hunter2 at /Users/ryan/app")
+        gh.add_comment(2, "token=sk-ant-" + "b" * 24, "reporter")
+        dumped = json.dumps(triage.build_context(gh, 2))
+        for leaked in ("me@example.com", "ghp_", "hunter2", "/Users/ryan", "sk-ant-"):
+            self.assertNotIn(leaked, dumped)
+
+    def test_secret_crossing_a_truncation_cutoff_is_redacted(self) -> None:
+        gh = FakeGitHub()
+        token = "ghp_" + "a" * 36
+        gh.add_issue(1, [], body="y" * (triage.MAX_CANDIDATE_BODY_CHARS - 30) + token)
+        gh.add_issue(2, [], body="z" * (triage.MAX_BODY_CHARS - 30) + token)
+        dumped = json.dumps(triage.build_context(gh, 2))
+        self.assertNotIn("ghp_", dumped)
+        self.assertNotIn("aaaaaaaaaa", dumped)
+
+    def test_comment_context_keeps_newest_within_budget(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, [])
+        for i in range(10):
+            gh.add_comment(1, f"c{i} " + "x" * (triage.MAX_COMMENT_CONTEXT_CHARS // 4), "reporter")
+        context = triage.build_context(gh, 1)
+        kept = [c["body"][:2] for c in context["issue"]["comments"]]
+        self.assertLessEqual(sum(len(c["body"]) for c in context["issue"]["comments"]), triage.MAX_COMMENT_CONTEXT_CHARS)
+        self.assertEqual(kept[-1], "c9")
+        self.assertEqual(kept, sorted(kept))
+        self.assertGreater(context["issue"]["omitted_older_comments"], 0)
 
     def test_user_comment_resembling_marker_is_kept(self) -> None:
         gh = FakeGitHub()
