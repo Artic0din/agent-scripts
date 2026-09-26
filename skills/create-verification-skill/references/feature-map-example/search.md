@@ -46,9 +46,12 @@ Preconditions:
 - **Clear query (`search-clear/toolbar`).** Choose `Clear search`.
   Run `control-notes browser click --role button --name "Clear search"`.
   The searchbox is empty and the `Recent notes` region replaces the result list.
-- **CLI match (`search-cli/cli`).** Search from the terminal.
+- **CLI title match (`search-cli/cli`).** Search titles from the terminal.
   Run `control-notes cli -- notes search "quarterly" --format json`.
   Exit code `0` and stdout contain one object whose title is `Quarterly plan`.
+- **CLI body match (`search-cli/cli`).** Search body text from the terminal.
+  Run `control-notes cli -- notes search "budget" --format json`.
+  Exit code `0` and stdout contain an object whose title is `Quarterly plan`.
 - **CLI miss (`search-empty/cli`).** Search for an absent value.
   Run `control-notes cli -- notes search "volcano" --format json`.
   Exit code `0` and stdout are `[]`.
