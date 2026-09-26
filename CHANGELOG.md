@@ -6,6 +6,7 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Updated plain-language writing guidance and added portable, manually invoked Pstack verification skills with complete behavior coverage, read-only audits unless corrections are authorized, and action-specific authorization with safe downstream targets during skill maintenance.
 - Made MVP scope the default, added YAGNI/KISS/DRY guidance, and improved ADHD-friendly explanations across unfamiliar technical stacks.
 - Made the retrospective writing-guide step portable and preserved standards until reviewers load their destination.
 - Updated Matt Pocock's session retrospective to favour automated checks for mechanical mistakes.
