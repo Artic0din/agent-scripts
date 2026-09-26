@@ -125,6 +125,19 @@ class GateTests(unittest.TestCase):
         self.assertIn("status=failed", comments[0]["body"])
         self.assertIn(RUN_URL, comments[0]["body"])
 
+    def test_decision_during_comment_fetch_is_respected(self) -> None:
+        gh = FakeGitHub()
+        gh.add_issue(1, [])
+        real_comments = gh.comments
+
+        def decide_while_fetching(number: int) -> List[Dict[str, Any]]:
+            gh.issues[1]["labels"].append({"name": "ready-for-human"})
+            return real_comments(number)
+
+        gh.comments = decide_while_fetching  # type: ignore[method-assign]
+        self.assertFalse(triage.gate(gh, 1, LABELS)[0])
+        self.assertEqual(gh.labels_of(1), ["ready-for-human"])
+
     def test_existing_decision_is_respected(self) -> None:
         gh = FakeGitHub()
         gh.add_issue(1, ["bug", "ready-for-human"])
@@ -470,20 +483,26 @@ class SanitiseTests(unittest.TestCase):
             self.assertNotIn(leaked, text)
         self.assertIn("next line stays", text)
 
+    def test_html_escaped_signed_url_is_redacted(self) -> None:
+        text = triage.redact("https://a.blob.core.windows.net/c?sv=1&amp;sig=SIGVALUE&amp;se=2")
+        self.assertNotIn("SIGVALUE", text)
+        self.assertIn("se=2", text)
+
     def test_long_text_is_truncated(self) -> None:
         self.assertEqual(len(triage.sanitise("x" * 50, 10)), 10)
 
 
-class PagedApi(triage.GitHub):
-    """Real pagination logic against a repository whose history is all pull requests."""
+class SearchApi(triage.GitHub):
+    """Issue search for a repository whose recent history is mostly pull requests."""
 
     def __init__(self) -> None:
         super().__init__("o/r")
-        self.calls = 0
+        self.paths: List[str] = []
 
     def _api(self, method: str, path: str, payload: Optional[Any] = None) -> Any:
-        self.calls += 1
-        return [{"number": n, "pull_request": {}} for n in range(100)]
+        self.paths.append(path)
+        page = int(path.rsplit("page=", 1)[1])
+        return {"items": [{"number": page * 1000 + n, "title": "t", "state": "open"} for n in range(100)]}
 
 
 class CommentHistoryApi(triage.GitHub):
@@ -504,10 +523,12 @@ class CommentHistoryApi(triage.GitHub):
 
 
 class PaginationTests(unittest.TestCase):
-    def test_recent_issue_scan_is_bounded(self) -> None:
-        api = PagedApi()
-        self.assertEqual(api.recent_issues(triage.RECENT_ISSUE_LIMIT), [])
-        self.assertEqual(api.calls, triage.MAX_RECENT_PAGES)
+    def test_recent_issues_come_from_an_issue_only_search(self) -> None:
+        api = SearchApi()
+        found = api.recent_issues(triage.RECENT_ISSUE_LIMIT)
+        self.assertEqual(len(found), triage.RECENT_ISSUE_LIMIT)
+        self.assertEqual(len(api.paths), 3)
+        self.assertTrue(all(p.startswith("search/issues?") and "is%3Aissue" in p for p in api.paths))
 
     def test_full_comment_history_is_read_up_to_the_cap(self) -> None:
         api = CommentHistoryApi(250)

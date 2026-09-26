@@ -24,7 +24,6 @@ OUTCOMES = ("needs-info", "ready-for-agent", "ready-for-human", "duplicate", "wo
 ROLES = ("pending",) + OUTCOMES
 TYPES = ("bug", "feature", "maintenance", "other")
 RECENT_ISSUE_LIMIT = 300
-MAX_RECENT_PAGES = 10
 MAX_COMMENT_PAGES = 30
 MAX_BODY_CHARS = 20000
 MAX_CANDIDATE_BODY_CHARS = 400
@@ -60,7 +59,7 @@ REDACTIONS: Sequence[Tuple[str, str]] = (
     (r"(?:xox[a-z]|xapp|xwfp)-[A-Za-z0-9-]{10,}", "[REDACTED_SLACK_TOKEN]"),
     (r"eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*", "[REDACTED_JWT]"),
     (r"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]{8,}", "Bearer [REDACTED]"),
-    (r"(?i)([?&](?:sig|signature|x-amz-signature|x-amz-credential|x-amz-security-token|x-goog-signature"
+    (r"(?i)((?:[?&]|&amp;)(?:sig|signature|x-amz-signature|x-amz-credential|x-amz-security-token|x-goog-signature"
      r"|x-goog-credential|token|access_token|refresh_token|id_token|api_key|apikey|key|secret|password|code)=)[^&\s#]+",
      r"\1[REDACTED]"),
     (r"(?i)((?<![a-z0-9+.-])[a-z][a-z0-9+.-]*://)[^/\s:@]+:[^/\s@]+@", r"\1[REDACTED]@"),
@@ -112,17 +111,16 @@ class GitHub:
         return found
 
     def recent_issues(self, limit: int) -> List[Dict[str, Any]]:
+        # Issue-only search, so pull requests cannot crowd issues out of the duplicate window.
+        query = urllib.parse.quote(f"repo:{self.repo} is:issue", safe="")
         found: List[Dict[str, Any]] = []
-        page = 1
-        # Pull requests share this endpoint, so the page cap bounds PR-heavy repositories.
-        while len(found) < limit and page <= MAX_RECENT_PAGES:
+        for page in range(1, -(-limit // 100) + 1):
             batch = self._api(
-                "GET", f"repos/{self.repo}/issues?state=all&sort=created&direction=desc&per_page=100&page={page}"
-            )
-            found += [item for item in batch if "pull_request" not in item]
+                "GET", f"search/issues?q={query}&sort=created&order=desc&per_page=100&page={page}"
+            )["items"]
+            found += batch
             if len(batch) < 100:
                 break
-            page += 1
         return found[:limit]
 
     def add_labels(self, number: int, labels: List[str]) -> None:
@@ -212,8 +210,9 @@ def gate(gh: GitHub, number: int, labels: Dict[str, str], run_url: str = "") -> 
         return False, f"#{number} is a pull request; triage labels apply to issues only"
     if issue.get("state") != "open":
         return False, f"#{number} is closed"
-    have = label_names(issue)
     comments = gh.comments(number)
+    # Labels are read after the comment fetch, which can be slow, so a decision made meanwhile counts.
+    have = label_names(gh.issue(number))
     decided = have & outcome_labels(labels)
     if decided:
         if finish_interrupted(gh, number, labels, have, comments):
