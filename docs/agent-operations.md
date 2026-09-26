@@ -11,7 +11,7 @@ hard rules and links here; tool-specific items migrate into the owning skill ove
 
 ## Communication
 
-- The `i-have-adhd` skill is authoritative for output shape: lead with the next action, number multi-step work, restate state each turn, end with one concrete next action, no preamble or recap. Where any other rule in this file conflicts with it, the skill wins.
+- Follow [i-have-adhd](../skills/i-have-adhd/SKILL.md) for output shape, accessible technical explanations, and necessary user handoffs; it takes precedence over conflicting communication guidance in this file.
 - Address every requested outcome. Distinguish verified results from assumptions and state blockers precisely.
 - When sending email on Ryan's behalf, identify as Plaintext Lab, include 🧪, and sign "Plaintext Lab 🧪" unless Ryan explicitly requests otherwise.
 
