@@ -18,6 +18,7 @@ The audit script named under Install reports whether a machine's rules pointers 
 | `agents/` | Subagent definitions per tool format. |
 | `config/` | Per-tool settings, hooks and MCP files that get linked into place. |
 | `docs/` | Engineering standards referenced from `AGENTS.MD`. |
+| `templates/github/` | Default issue forms, PR templates, triage playbook and triage workflow caller; see `docs/github-intake.md`. |
 | `scripts/` | Dependency-light helpers: skill sync and audit, validation, docs listing, browser tooling. |
 
 ## Install
