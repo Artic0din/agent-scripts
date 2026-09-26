@@ -40,6 +40,8 @@ Answer these from the codebase and only ask the user what you cannot observe:
   Screenshots, terminal transcripts, response bodies, logs, exit codes, DB state.
 - **Isolate:** can two instances run side by side (ports, data dirs, profiles)?
   If not, say so in the generated skill: refusing to double-drive a shared instance beats corrupting the user's session.
+  Can the app run against disposable local state (a scratch database, data directory, or profile, or a copy of fixture data)?
+  Create, update, and delete checks must use that state; if the only runnable setup uses the user's persistent data, the generated skill marks those paths blocked instead of mutating it.
 
 If the checkout doesn't build or start as-is, report the blocker before generating; repair product code only when the user has already authorized that work; a skill written against a broken base teaches wrong steps.
 When an irrelevant missing asset blocks startup (a static dir the API never serves, a sample config), the generated skill may create it, clearly marked as verification scaffolding, and remove it in cleanup.
