@@ -6,6 +6,16 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Blocked output whenever the output filter fails, restored Python 3.8 support, and redacted private-key PEM blocks and concatenated or multiline quoted secret values.
+
+- Redacted credentials split by terminal colour codes and values of secret-named fields such as an STS `SecretAccessKey` and `SessionToken`.
+
+- Isolated output filtering from inherited Python modules and recognized JWT headers containing JSON whitespace.
+
+- Covered temporary AWS identifiers and compact JWTs while preserving ordinary identifiers containing key-like substrings.
+
+- Published the Codex post-tool output filter with redacted blocking feedback and automatic checks for both output channels, GitHub token families and mixed-case hexadecimal values.
+
 - Made MVP scope the default, added YAGNI/KISS/DRY guidance, and improved ADHD-friendly explanations across unfamiliar technical stacks.
 - Made the retrospective writing-guide step portable and preserved standards until reviewers load their destination.
 - Updated Matt Pocock's session retrospective to favour automated checks for mechanical mistakes.
