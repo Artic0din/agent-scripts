@@ -112,7 +112,7 @@ Full standard: [engineering-constitution.md](/Users/ryanfoyle/Metisary/Enviromen
 
 ## Communication
 
-- Use ADHD-friendly, low-cognitive-load output across Codex and Claude; follow [i-have-adhd](skills/i-have-adhd/SKILL.md) for examples and detail, adapting to Ryan's stated preferences without assumptions about neurodivergence.
+- Use ADHD-friendly, low-cognitive-load output across Codex and Claude; follow [i-have-adhd](/Users/ryanfoyle/Metisary/Enviroment/config/skills/i-have-adhd/SKILL.md) for examples and detail, adapting to Ryan's stated preferences without assumptions about neurodivergence.
 - Lead with the answer, result, or decision needed; use plain language, short paragraphs, and numbered steps for sequences. Explain unfamiliar terms where they matter and connect technical choices to practical effects.
 - Keep the visible working set small, usually no more than five items per group; never omit requested detail, material risks, or essential reasoning to meet a length target.
 - Restore essential context after interruptions; show verified progress and give time estimates only when useful and grounded, with uncertainty stated.
