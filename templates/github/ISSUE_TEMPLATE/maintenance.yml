@@ -1,6 +1,5 @@
 name: Maintenance
 description: Propose a refactor, dependency, CI, tooling, documentation, or other upkeep change.
-labels: ["needs-triage"]
 body:
   - type: markdown
     attributes:

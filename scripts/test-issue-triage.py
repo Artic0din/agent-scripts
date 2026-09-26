@@ -417,8 +417,42 @@ class SanitiseTests(unittest.TestCase):
         triage.sanitise("<a" * 20000 + ">" * 20000, 3000)
         self.assertLess(time.monotonic() - started, 1.0)
 
+    def test_cloud_keys_and_windows_homes_are_redacted(self) -> None:
+        text = triage.redact("AWS_SECRET_ACCESS_KEY=" + "S" * 40 + " private_key: PRIVVALUE"
+                             " C:\\Users\\alice\\log.txt C:\\\\Users\\\\bob\\\\x")
+        for leaked in ("SSSS", "PRIVVALUE", "alice", "bob"):
+            self.assertNotIn(leaked, text)
+
     def test_long_text_is_truncated(self) -> None:
         self.assertEqual(len(triage.sanitise("x" * 50, 10)), 10)
+
+
+class PagedApi(triage.GitHub):
+    """Real pagination logic against a repository whose history is all pull requests."""
+
+    def __init__(self) -> None:
+        super().__init__("o/r")
+        self.calls = 0
+
+    def _api(self, method: str, path: str, payload: Optional[Any] = None) -> Any:
+        self.calls += 1
+        return [{"number": n, "pull_request": {}} for n in range(100)]
+
+
+class PaginationTests(unittest.TestCase):
+    def test_recent_issue_scan_is_bounded(self) -> None:
+        api = PagedApi()
+        self.assertEqual(api.recent_issues(triage.RECENT_ISSUE_LIMIT), [])
+        self.assertEqual(api.calls, triage.MAX_RECENT_PAGES)
+
+
+class TemplateTests(unittest.TestCase):
+    def test_forms_leave_the_pending_label_to_the_workflow(self) -> None:
+        forms = sorted((Path(__file__).parent.parent / "templates/github/ISSUE_TEMPLATE").glob("*.yml"))
+        self.assertTrue(forms)
+        for form in forms:
+            with self.subTest(form=form.name):
+                self.assertNotIn("needs-triage", form.read_text())
 
 
 class ContextTests(unittest.TestCase):

@@ -1,6 +1,6 @@
 name: Investigated report
 description: Filed after someone or an agent has already investigated a problem. For a first report, use Bug report.
-labels: ["bug", "needs-triage"]
+labels: ["bug"]
 body:
   - type: markdown
     attributes:

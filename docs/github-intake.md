@@ -53,6 +53,7 @@ Until #25 approves final names, the defaults are the role names:
 | wontfix | `wontfix` | Conflicts with documented scope |
 
 Type labels such as `bug` or `enhancement` are separate and never block triage.
+Forms apply only type labels; the workflow adds the repository's configured pending label, so a custom name needs no form edits.
 
 ## Automatic triage
 

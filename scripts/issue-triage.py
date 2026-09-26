@@ -24,6 +24,7 @@ OUTCOMES = ("needs-info", "ready-for-agent", "ready-for-human", "duplicate", "wo
 ROLES = ("pending",) + OUTCOMES
 TYPES = ("bug", "feature", "maintenance", "other")
 RECENT_ISSUE_LIMIT = 300
+MAX_RECENT_PAGES = 10
 MAX_BODY_CHARS = 20000
 MAX_CANDIDATE_BODY_CHARS = 400
 # Newest comments are kept first; older ones beyond this total are omitted and counted.
@@ -63,10 +64,11 @@ REDACTIONS: Sequence[Tuple[str, str]] = (
      r"\1[REDACTED]"),
     (r"(?i)((?<![a-z0-9+.-])[a-z][a-z0-9+.-]*://)[^/\s:@]+:[^/\s@]+@", r"\1[REDACTED]@"),
     # Leading lookbehinds start a match only at the beginning of a run, keeping long pasted text linear.
-    (r"""(?i)((?<![\w-])["']?[\w-]*(?:password|passwd|secret|token|api[_-]?key)["']?\s*[:=]\s*)("[^"]*"|'[^']*'|[^\s,}]+)""",
+    (r"""(?i)((?<![\w-])["']?[\w-]*(?:password|passwd|passphrase|secret|token|api[_-]?key|access[_-]?key|private[_-]?key|credentials?)["']?\s*[:=]\s*)("[^"]*"|'[^']*'|[^\s,}]+)""",
      r"\1[REDACTED]"),
     (r"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", "[REDACTED_EMAIL]"),
     (r"/(?:Users|home)/[^/\s]+", "~"),
+    (r"(?i)\b[a-z]:(?:\\{1,2})(?:Users|Documents and Settings)(?:\\{1,2})[^\\\s\"']+", "~"),
 )
 
 
@@ -103,7 +105,8 @@ class GitHub:
     def recent_issues(self, limit: int) -> List[Dict[str, Any]]:
         found: List[Dict[str, Any]] = []
         page = 1
-        while len(found) < limit:
+        # Pull requests share this endpoint, so the page cap bounds PR-heavy repositories.
+        while len(found) < limit and page <= MAX_RECENT_PAGES:
             batch = self._api(
                 "GET", f"repos/{self.repo}/issues?state=all&sort=created&direction=desc&per_page=100&page={page}"
             )
