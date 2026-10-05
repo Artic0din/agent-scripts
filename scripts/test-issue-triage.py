@@ -550,6 +550,12 @@ class TemplateTests(unittest.TestCase):
             with self.subTest(form=form.name):
                 self.assertNotIn("needs-triage", form.read_text())
 
+    def test_caller_passes_a_numeric_issue_number(self) -> None:
+        # Dispatch inputs arrive as strings; the reusable workflow declares issue-number as type: number.
+        caller = (Path(__file__).parent.parent / "templates/github/workflows/issue-triage.yml").read_text()
+        passed = [line.strip() for line in caller.splitlines() if line.strip().startswith("issue-number: ${{")]
+        self.assertEqual(passed, ["issue-number: ${{ fromJSON(github.event.issue.number || inputs.issue-number) }}"])
+
 
 class ContextTests(unittest.TestCase):
     def test_context_excludes_self_and_triage_comments(self) -> None:
