@@ -6,6 +6,7 @@ summary: Timeline of guardrail helper changes mirrored from Sweetistics and rela
 
 ## Unreleased
 
+- Fixed manually dispatched issue triage failing before any job ran: the caller template now converts the dispatch input to a number with `fromJSON`, so `gh workflow run issue-triage.yml -f issue-number=<n>` no longer fails with `Unexpected value '<n>'`.
 - Added default issue forms (bug, feature, maintenance, investigated report), PR templates, and an issue triage playbook under `templates/github/`, with repository-first precedence documented in `docs/github-intake.md`.
 - Added a reusable issue triage workflow that labels every new issue in an adopting repository `needs-triage`, has Claude investigate it read-only, and records one outcome label and one comment; failures stay visibly pending with a retry link.
 - Updated plain-language writing guidance and added portable, manually invoked Pstack verification skills with complete behavior coverage, read-only audits unless corrections are authorized, and action-specific authorization with safe downstream targets during skill maintenance.
