@@ -10,7 +10,7 @@ on:
         type: number
         required: true
       agent-scripts-ref:
-        description: Commit of Artic0din/agent-scripts to load the script and playbook from; match the pinned workflow ref.
+        description: Commit of Artic0din/devkit to load the script and playbook from; match the pinned workflow ref. The input name is retained for existing callers.
         type: string
         default: main
       model:
@@ -62,7 +62,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          repository: Artic0din/agent-scripts
+          repository: Artic0din/devkit
           ref: ${{ inputs.agent-scripts-ref }}
           path: .agent-scripts
           persist-credentials: false
@@ -101,7 +101,7 @@ jobs:
 
       - uses: actions/checkout@v7
         with:
-          repository: Artic0din/agent-scripts
+          repository: Artic0din/devkit
           ref: ${{ inputs.agent-scripts-ref }}
           path: .agent-scripts
           persist-credentials: false
@@ -162,7 +162,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          repository: Artic0din/agent-scripts
+          repository: Artic0din/devkit
           ref: ${{ inputs.agent-scripts-ref }}
           path: .agent-scripts
           persist-credentials: false

@@ -543,6 +543,18 @@ class PaginationTests(unittest.TestCase):
 
 
 class TemplateTests(unittest.TestCase):
+    def test_shared_triage_uses_the_current_repository_address(self) -> None:
+        root = Path(__file__).parent.parent
+        workflow = (root / ".github/workflows/issue-triage.yml").read_text()
+        repositories = [line.strip().split(": ", 1)[1] for line in workflow.splitlines()
+                        if line.strip().startswith("repository: ")]
+        self.assertTrue(repositories)
+        self.assertEqual(set(repositories), {"Artic0din/devkit"})
+        caller = (root / "templates/github/workflows/issue-triage.yml").read_text()
+        calls = [line.strip().split(": ", 1)[1] for line in caller.splitlines()
+                 if line.strip().startswith("uses: Artic0din/")]
+        self.assertEqual(calls, ["Artic0din/devkit/.github/workflows/issue-triage.yml@main"])
+
     def test_forms_leave_the_pending_label_to_the_workflow(self) -> None:
         forms = sorted((Path(__file__).parent.parent / "templates/github/ISSUE_TEMPLATE").glob("*.yml"))
         self.assertTrue(forms)
