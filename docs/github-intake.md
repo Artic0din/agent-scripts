@@ -24,7 +24,7 @@ For each item, use the first that exists:
 2. **PR template:** the repository's `.github/pull_request_template.md` or `.github/PULL_REQUEST_TEMPLATE/<type>.md` → the global default for the change type.
 3. **Triage playbook:** the repository's `.github/triage/PLAYBOOK.md` → the global playbook.
    A local playbook may add policy, such as how duplicates are handled, but the automated outcome set stays fixed.
-4. **Label names:** the repository's approved mapping from [#25](https://github.com/Artic0din/agent-scripts/issues/25) → the role names below.
+4. **Label names:** the repository's approved mapping from [#25](https://github.com/Artic0din/devkit/issues/25) → the role names below.
 
 Also honour repository rules in `AGENTS.md` and `CONTRIBUTING.md`, such as a generated changelog or required review sections.
 
@@ -94,6 +94,7 @@ An issue with more than 3,000 comments fails the gate with a message asking for 
    Replace generic wording with repository specifics such as support links, environment fields, and areas.
 2. Copy `templates/github/workflows/issue-triage.yml` to `.github/workflows/issue-triage.yml`.
    Pin the `uses:` ref and `agent-scripts-ref` to the same reviewed commit SHA, and set label inputs if the approved names differ.
+   The repository is `Artic0din/devkit`; `agent-scripts-ref` remains the public input name for compatibility.
 3. Make `CLAUDE_CODE_OAUTH_TOKEN` available as a repository or organisation secret.
 4. Create the role labels before enabling the workflow, or run the #25 label sync.
    GitHub silently ignores a label the repository lacks, so the workflow re-reads the issue and fails the run when a label did not apply.

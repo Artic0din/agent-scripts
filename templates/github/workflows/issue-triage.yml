@@ -2,7 +2,7 @@ name: Issue triage
 
 # Copy to .github/workflows/issue-triage.yml in an adopting repository.
 # Needs the CLAUDE_CODE_OAUTH_TOKEN repository or organisation secret.
-# See docs/github-intake.md in Artic0din/agent-scripts.
+# See docs/github-intake.md in Artic0din/devkit.
 
 on:
   issues:
@@ -26,7 +26,7 @@ jobs:
       contents: read
       issues: write
     # When adopting, replace both "main" values with the same reviewed commit SHA.
-    uses: Artic0din/agent-scripts/.github/workflows/issue-triage.yml@main
+    uses: Artic0din/devkit/.github/workflows/issue-triage.yml@main
     with:
       agent-scripts-ref: main
       issue-number: ${{ fromJSON(github.event.issue.number || inputs.issue-number) }}

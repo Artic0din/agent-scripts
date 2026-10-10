@@ -1,7 +1,8 @@
-# Environment
+# DevKit
 
 Global agent environment for Claude Code, Codex, Cursor, GitHub Copilot and Antigravity.
 One source of rules, skills, agents, hooks and MCP config, linked into each tool.
+Canonical repository: [Artic0din/devkit](https://github.com/Artic0din/devkit).
 
 ## Layout
 
@@ -22,6 +23,9 @@ The audit script named under Install reports whether a machine's rules pointers 
 | `scripts/` | Dependency-light helpers: skill sync and audit, validation, docs listing, browser tooling. |
 
 ## Install
+
+The GitHub rename keeps the local `~/Metisary/Enviroment/config` directory and installed `agent-scripts` skill link unchanged.
+The sync, audit and canonical instructions continue to use those installed paths.
 
 `install.sh` is the intended installer and is not written yet. Until it exists, `scripts/sync-skills`
 builds the per-machine skill mirror and instruction pointers:
@@ -115,6 +119,25 @@ For the specific legacy topology `~/.claude/skills/NAME/NAME -> ~/.codex/skills/
 ```
 
 This mode validates every candidate before unlinking only the extra nested leaves. It preserves the real skill directories, assets, and valid Codex backlinks, and exits before creating roots, building mirrors, pruning, or touching instruction pointers. Names must start with an ASCII letter or digit and contain only letters, digits, `.`, `_`, or `-`; duplicates, missing names, and unknown arguments are rejected. A missing nested leaf is a no-op only with the expected surrounding topology. Redirected or inaccessible roots, unexpected objects or literal targets, and changed directory or link identities cause refusal. Rechecks before each unlink are not atomic concurrency protection: a later error stops the batch and reports removals already completed, without rollback.
+
+## Repository rename and rollback
+
+Update an existing checkout's `origin` to `https://github.com/Artic0din/devkit.git`; keep its local directory in place.
+For a reusable workflow caller, change `Artic0din/agent-scripts/.github/workflows/` to `Artic0din/devkit/.github/workflows/` explicitly.
+GitHub does not redirect reusable workflow calls after a rename.
+Keep the reviewed commit SHA and the matching `agent-scripts-ref` value unchanged for an address-only migration.
+The input name and `.agent-scripts` checkout directory are retained for existing callers.
+New callers follow the adoption steps in [GitHub intake](docs/github-intake.md).
+
+The 2026-10-10 inventory inspected 208 workflow files on the default branches of all 46 active repositories visible under `Artic0din` and `Plaintext-Lab`, including forks.
+It found the old address in this repository's reusable triage workflow and in `Artic0din/unshackled`'s triage caller.
+Track downstream adoption and machine validation in [#46](https://github.com/Artic0din/devkit/issues/46).
+The installed instruction and skill root links resolved correctly on this Mac, but the broader skill-link audit reported 55 existing discrepancies before this patch; that audit remains a separate validation gap.
+
+To roll back a caller update, restore its previous reviewed SHA and matching `agent-scripts-ref`, keeping the current `Artic0din/devkit` address.
+To roll back local remote configuration, restore the recorded previous URL; GitHub currently redirects the old Git URL.
+Do not recreate a repository at `Artic0din/agent-scripts`, because that would remove the redirect.
+A GitHub name rollback must be coordinated with every migrated caller; reverting code alone does not restore the repository name.
 
 ## Syncing downstream
 
